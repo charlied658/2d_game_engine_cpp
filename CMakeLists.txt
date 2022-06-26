@@ -7,10 +7,10 @@ include_directories(gameEngine include)
 
 add_executable(gameEngine src/main.cpp)
 
-#GLFW
-find_package(glfw3 3.3 REQUIRED)
-target_link_libraries(gameEngine glfw)
-
 #OpenGL
 find_package(OpenGL REQUIRED)
 target_link_libraries(gameEngine OpenGL::GL)
+
+#GLUT
+find_package(GLUT REQUIRED)
+target_link_libraries(gameEngine GLUT::GLUT)

@@ -7,6 +7,8 @@
 #define GL_SILENCE_DEPRECATION
 #include <OpenGL/gl3.h>
 
+#include "mouse_listener.h"
+#include "key_listener.h"
 #include "vecmath.h"
 #include <cstdio>
 
@@ -73,41 +75,57 @@ int main()
     GLsizei length;
     GLchar *description;
 
+    // Set error callback
     glfwSetErrorCallback(error_callback);
 
+    // Initialize GLFW
     if (!glfwInit()) {
         return -1;
     }
 
+    // Set GLFW window hints
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
+    // Create GLFW window
     window = glfwCreateWindow(640, 480, "My Window", nullptr, nullptr);
     if (!window) {
         glfwTerminate();
         return -1;
     }
 
+    // Set mouse and key callbacks
+    glfwSetCursorPosCallback(window, Mouse::cursor_position_callback);
+    glfwSetMouseButtonCallback(window, Mouse::mouse_button_callback);
+    glfwSetScrollCallback(window, Mouse::scroll_callback);
+    glfwSetKeyCallback(window, Key::key_callback);
+
+    // Make OpenGL context current
     glfwMakeContextCurrent(window);
 
+    // Generate Vertex Array Object (VAO)
     glGenVertexArrays(1, &vaoID);
     glBindVertexArray(vaoID);
 
+    // Generate Vertex Buffer Object (VBO)
     glGenBuffers(1, &vboID);
     glBindBuffer(GL_ARRAY_BUFFER, vboID);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
 
+    // Generate Element Buffer Object (EBO)
     glGenBuffers(1, &eboID);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(element_indices), element_indices, GL_STATIC_DRAW);
 
+    // Enable vertex attributes
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6,nullptr);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)(sizeof(float) * 3));
     glEnableVertexAttribArray(1);
 
+    // Compile vertex shader
     vertex_shader = glCreateShader(GL_VERTEX_SHADER);
     glShaderSource(vertex_shader, 1, &vertex_shader_text, nullptr);
     glCompileShader(vertex_shader);
@@ -119,6 +137,7 @@ int main()
         printf("%s", description);
     }
 
+    // Compile fragment shader
     fragment_shader = glCreateShader(GL_FRAGMENT_SHADER);
     glShaderSource(fragment_shader, 1, &fragment_shader_text, nullptr);
     glCompileShader(fragment_shader);
@@ -130,6 +149,7 @@ int main()
         printf("%s", description);
     }
 
+    // Link shaders
     program = glCreateProgram();
     glAttachShader(program, vertex_shader);
     glAttachShader(program, fragment_shader);
@@ -145,30 +165,47 @@ int main()
     double startTime = glfwGetTime();
     double currentTime, dt;
 
+    // Main loop
     while(!glfwWindowShouldClose(window)) {
 
+        // Update dt (delta time)
         currentTime = glfwGetTime();
         dt = currentTime - startTime;
         startTime = currentTime;
 
-        glClear(GL_COLOR_BUFFER_BIT);
-
-        for (int i = 0; i < 4; i++) {
-            vector2 point = {vertices[i].x, vertices[i].y};
-            vector2 result = Math::rotate(point, vector2{0,0}, dt * 0.1f);
-            vertices[i].x = result.x;
-            vertices[i].y = result.y;
+        // User input
+        if (Key::get_key_pressed(GLFW_KEY_LEFT)) {
+            for (int i = 0; i < 4; i++) {
+                vector2 point = {vertices[i].x, vertices[i].y};
+                vector2 result = Math::rotate(point, vector2{0,0}, dt * 0.5f);
+                vertices[i].x = result.x;
+                vertices[i].y = result.y;
+            }
+        } else if (Key::get_key_pressed(GLFW_KEY_RIGHT)) {
+            for (int i = 0; i < 4; i++) {
+                vector2 point = {vertices[i].x, vertices[i].y};
+                vector2 result = Math::rotate(point, vector2{0,0}, dt * -0.5f);
+                vertices[i].x = result.x;
+                vertices[i].y = result.y;
+            }
         }
 
+        // Clear the screen
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // Update the buffer data
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
 
+        // Draw elements to the screen
         glUseProgram(program);
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
+        // Swap buffers and poll events
         glfwSwapBuffers(window);
         glfwPollEvents();
     }
 
+    // Terminate GLFW after the main loop has ended
     glfwTerminate();
     return 0;
 }

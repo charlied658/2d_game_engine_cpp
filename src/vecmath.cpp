@@ -6,6 +6,13 @@
 #include "vecmath.h"
 
 namespace Math {
+    /**
+     * Rotate a point about an origin by radian degrees
+     * @param point Point to be rotated
+     * @param origin Point of rotation
+     * @param radians Radians of rotation
+     * @return Rotated point
+     */
     vector2 rotate(vector2 point, vector2 origin, float radians) {
         point.x -= origin.x;
         point.y -= origin.y;

@@ -7,32 +7,27 @@
 
 const char* vertex_shader_text =
         "#version 330 core\n"
-        "layout (location = 0) in vec2 aPos;\n"
+        "layout (location = 0) in vec3 aPos;\n"
         "layout (location = 1) in vec3 aColor;\n"
-        "out vec3 fColor;\n"
+        "out vec3 fColor;"
         "void main() {\n"
-        "    fColor = fColor;\n"
-        "    gl_Position = vec4(aPos, 0.0, 1.0);\n"
+        "    fColor = aColor;\n"
+        "    gl_Position = vec4(aPos, 1.0);\n"
         "}";
 
 const char* fragment_shader_text =
         "#version 330 core\n"
         "in vec3 fColor;\n"
-        "out vec3 color;\n"
+        "out vec4 color;\n"
         "void main() {\n"
-        "    color = fColor;\n"
+        "    color = vec4(fColor, 1.0f);\n"
         "}";
 
-static const struct
-{
-    float x, y;
-    float r, g, b;
-} vertices[3] =
-        {
-                { -0.6f, -0.4f, 1.f, 0.f, 0.f },
-                {  0.6f, -0.4f, 0.f, 1.f, 0.f },
-                {   0.f,  0.6f, 0.f, 0.f, 1.f }
-        };
+float vertices[] = {
+        -0.5f, -0.5f, 0.0f, 1.0f,0.0f,0.0f,
+        0.5f, -0.5f, 0.0f, 0.0f,1.0f,0.0f,
+        0.0f,  0.5f, 0.0f, 0.0f,0.0f,1.0f
+};
 
 static void error_callback(int error, const char* description) {
     printf("Error: %s\n", description);
@@ -73,9 +68,9 @@ int main()
     glBindBuffer(GL_ARRAY_BUFFER, vboID);
     glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 5,nullptr);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6,nullptr);
     glEnableVertexAttribArray(0);
-    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 5, (void*)(sizeof(float) * 2));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6, (void*)(sizeof(float) * 3));
     glEnableVertexAttribArray(1);
 
     vertex_shader = glCreateShader(GL_VERTEX_SHADER);

@@ -1,8 +1,13 @@
+/**
+ * @author Charlie Davidson
+ */
+
 #define GLFW_INCLUDE_NONE
 #include <GLFW/glfw3.h>
 #define GL_SILENCE_DEPRECATION
 #include <OpenGL/gl3.h>
 
+#include "vecmath.h"
 #include <cstdio>
 
 const char* vertex_shader_text =
@@ -23,11 +28,37 @@ const char* fragment_shader_text =
         "    color = vec4(fColor, 1.0f);\n"
         "}";
 
-float vertices[] = {
-        -0.5f, -0.5f, 0.0f, 1.0f,0.0f,0.0f,
-        0.5f, -0.5f, 0.0f, 0.0f,1.0f,0.0f,
-        0.0f,  0.5f, 0.0f, 0.0f,0.0f,1.0f
+struct vertex {
+        float x, y, z;
+        float r, g, b;
 };
+
+vertex vertices[] = {
+        {-0.5f, -0.5f, 0.0f, 1.0f,0.0f,0.0f},
+        {0.5f, -0.5f, 0.0f, 0.0f,1.0f,0.0f},
+        {0.5f,  0.5f, 0.0f, 0.0f,0.0f,1.0f},
+        {-0.5f,  0.5f, 0.0f, 0.0f,1.0f,1.0f}
+};
+
+/*
+ * ========= Diagram of one Quad: ==========
+ *
+ *               3-----------2
+ *               |           |
+ *               |           |
+ *               |           |
+ *               0-----------1
+ *
+ *  Triangles:
+ *      0 -> 1 -> 2
+ *      0 -> 2 -> 3
+ *
+ *  NOTE: Vertices should be given in COUNTER-CLOCKWISE
+ *  order according to OpenGL
+ *
+ */
+
+int element_indices[] = {0,1,2, 0,2,3};
 
 static void error_callback(int error, const char* description) {
     printf("Error: %s\n", description);
@@ -37,7 +68,7 @@ int main()
 {
     GLFWwindow* window;
     GLuint vertex_shader, fragment_shader, program;
-    GLuint vaoID, vboID;
+    GLuint vaoID, vboID, eboID;
     GLint success, len;
     GLsizei length;
     GLchar *description;
@@ -66,7 +97,11 @@ int main()
 
     glGenBuffers(1, &vboID);
     glBindBuffer(GL_ARRAY_BUFFER, vboID);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
+
+    glGenBuffers(1, &eboID);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(element_indices), element_indices, GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(float) * 6,nullptr);
     glEnableVertexAttribArray(0);
@@ -107,11 +142,28 @@ int main()
         printf("%s", description);
     }
 
+    double startTime = glfwGetTime();
+    double currentTime, dt;
+
     while(!glfwWindowShouldClose(window)) {
+
+        currentTime = glfwGetTime();
+        dt = currentTime - startTime;
+        startTime = currentTime;
+
         glClear(GL_COLOR_BUFFER_BIT);
 
+        for (int i = 0; i < 4; i++) {
+            vector2 point = {vertices[i].x, vertices[i].y};
+            vector2 result = Math::rotate(point, vector2{0,0}, dt * 0.1f);
+            vertices[i].x = result.x;
+            vertices[i].y = result.y;
+        }
+
+        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+
         glUseProgram(program);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
 
         glfwSwapBuffers(window);
         glfwPollEvents();

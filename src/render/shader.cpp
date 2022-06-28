@@ -5,6 +5,8 @@
 #define GL_SILENCE_DEPRECATION
 #include <OpenGL/gl3.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/type_ptr.hpp>
 #include <cstdio>
 
 #include "render/shader.h"
@@ -20,11 +22,12 @@ using std::ifstream; using std::ostringstream;
 
 namespace Shader {
 
+    static GLuint program_ID;
+
     /**
      * Create and compile the shader program
-     * @param program Program index
      */
-    void create_program(GLuint* program) {
+    void create_program() {
 
         string vertex_shader_source, fragment_shader_source;
         GLuint vertex_shader, fragment_shader;
@@ -81,17 +84,30 @@ namespace Shader {
         }
 
         // Link shaders
-        *program = glCreateProgram();
-        glAttachShader(*program, vertex_shader);
-        glAttachShader(*program, fragment_shader);
-        glLinkProgram(*program);
-        glGetProgramiv(*program, GL_LINK_STATUS, &success);
+        program_ID = glCreateProgram();
+        glAttachShader(program_ID, vertex_shader);
+        glAttachShader(program_ID, fragment_shader);
+        glLinkProgram(program_ID);
+        glGetProgramiv(program_ID, GL_LINK_STATUS, &success);
         if (success == GL_FALSE) {
-            glGetProgramiv(*program, GL_INFO_LOG_LENGTH, &len);
-            glGetProgramInfoLog(*program, len, &length, description);
+            glGetProgramiv(program_ID, GL_INFO_LOG_LENGTH, &len);
+            glGetProgramInfoLog(program_ID, len, &length, description);
             printf("Error: Linking of shaders failed\n");
             printf("%s", description);
             exit(EXIT_FAILURE);
         }
+    }
+
+    void use_program() {
+        glUseProgram(program_ID);
+    }
+
+    void detach() {
+        glUseProgram(0);
+    }
+
+    void upload_mat4(const char* varName, glm::mat4 matrix) {
+        GLint var_location = glGetUniformLocation(program_ID, varName);
+        glUniformMatrix4fv(var_location, 1, false, glm::value_ptr(matrix));
     }
 }

@@ -8,6 +8,9 @@
 #include <GLFW/glfw3.h>
 #define GL_SILENCE_DEPRECATION
 #include <OpenGL/gl3.h>
+
+#include "render/shader.h"
+#include "render/camera.h"
 #include "core/key_listener.h"
 #include "util/vecmath.h"
 
@@ -70,6 +73,8 @@ namespace Render {
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * 3));
         glEnableVertexAttribArray(1);
+
+        Camera::adjust_projection();
     }
 
     /**
@@ -97,6 +102,9 @@ namespace Render {
 
         // Update the buffer data
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+
+        Shader::upload_mat4("uProjection", Camera::get_projection());
+        Shader::upload_mat4("uView", Camera::get_view());
 
         // Draw elements to the screen
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);

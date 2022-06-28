@@ -22,7 +22,6 @@ static void error_callback(int error, const char* description) {
 namespace Window {
 
     static GLFWwindow* window;
-    static GLuint program;
 
     /**
      * Initializes the GLFW window
@@ -63,7 +62,7 @@ namespace Window {
         Render::init();
 
         // Create and compile the shader program
-        Shader::create_program(&program);
+        Shader::create_program();
 
         return 0;
     }
@@ -87,7 +86,7 @@ namespace Window {
             glClear(GL_COLOR_BUFFER_BIT);
 
             // Set the shader program
-            glUseProgram(program);
+            Shader::use_program();
 
             // Draw elements to the screen
             Render::draw(dt);

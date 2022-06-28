@@ -2,7 +2,7 @@
 // Created by Charlie Davidson on 6/27/22.
 //
 #include <GLFW/glfw3.h>
-#include "mouse_listener.h"
+#include "core/mouse_listener.h"
 
 namespace Mouse {
     static double xPos, yPos;

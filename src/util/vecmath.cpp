@@ -3,7 +3,7 @@
 //
 
 #include <cmath>
-#include "vecmath.h"
+#include "util/vecmath.h"
 
 namespace Math {
     /**

@@ -9,25 +9,16 @@
 
 #include "render/shader.h"
 
+#include <regex>
+#include <filesystem>
+#include <iostream>
+#include <fstream>
+
+using std::cout; using std::cerr;
+using std::endl; using std::string;
+using std::ifstream; using std::ostringstream;
+
 namespace Shader {
-
-    static const char* vertex_shader_text =
-            "#version 330 core\n"
-            "layout (location = 0) in vec3 aPos;\n"
-            "layout (location = 1) in vec3 aColor;\n"
-            "out vec3 fColor;"
-            "void main() {\n"
-            "    fColor = aColor;\n"
-            "    gl_Position = vec4(aPos, 1.0);\n"
-            "}";
-
-    static const char* fragment_shader_text =
-            "#version 330 core\n"
-            "in vec3 fColor;\n"
-            "out vec4 color;\n"
-            "void main() {\n"
-            "    color = vec4(fColor, 1.0f);\n"
-            "}";
 
     /**
      * Create and compile the shader program
@@ -35,10 +26,33 @@ namespace Shader {
      */
     void create_program(GLuint* program) {
 
+        string vertex_shader_source, fragment_shader_source;
         GLuint vertex_shader, fragment_shader;
         GLint success, len;
         GLsizei length;
         GLchar description[1000];
+
+        // Read shader source file
+        string path = "../default.glsl";
+        ifstream input_file;
+        input_file.open(path);
+        if (!input_file.is_open()) {
+            cerr << "Could not open the file - '"
+                 << path << "'" << endl;
+            exit(EXIT_FAILURE);
+        }
+        string shader_source = string((std::istreambuf_iterator<char>(input_file)), std::istreambuf_iterator<char>());
+
+        // Use regex to split the shader into vertex and fragment
+        std::regex rgx("#type( )+([a-zA-Z])+");
+        std::sregex_token_iterator iter(shader_source.begin(),shader_source.end(),rgx,-1);
+        iter++;
+        vertex_shader_source = string(*iter);
+        iter++;
+        fragment_shader_source = string(*iter);
+
+        const char *vertex_shader_text = vertex_shader_source.c_str();
+        const char *fragment_shader_text = fragment_shader_source.c_str();
 
         // Compile vertex shader
         vertex_shader = glCreateShader(GL_VERTEX_SHADER);
@@ -50,6 +64,7 @@ namespace Shader {
             glGetShaderInfoLog(vertex_shader, len, &length, description);
             printf("Error: Vertex shader compilation failed\n");
             printf("%s", description);
+            exit(EXIT_FAILURE);
         }
 
         // Compile fragment shader
@@ -62,6 +77,7 @@ namespace Shader {
             glGetShaderInfoLog(fragment_shader, len, &length, description);
             printf("Error: Fragment shader compilation failed\n");
             printf("%s", description);
+            exit(EXIT_FAILURE);
         }
 
         // Link shaders
@@ -75,6 +91,7 @@ namespace Shader {
             glGetProgramInfoLog(*program, len, &length, description);
             printf("Error: Linking of shaders failed\n");
             printf("%s", description);
+            exit(EXIT_FAILURE);
         }
     }
 }

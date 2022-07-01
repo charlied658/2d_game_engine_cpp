@@ -11,6 +11,7 @@
 
 #include "core/mouse_listener.h"
 #include "core/key_listener.h"
+#include "render/camera.h"
 #include "render/shader.h"
 #include "render/render.h"
 #include <cstdio>
@@ -87,6 +88,20 @@ namespace Window {
 
             // Set the shader program
             Shader::use_program();
+
+            // Camera controls
+            if (Key::get_key_pressed(GLFW_KEY_LEFT) && !Key::get_key_pressed(GLFW_KEY_RIGHT)) {
+                Camera::move_camera(glm::vec2 (dt, 0));
+            }
+            if (Key::get_key_pressed(GLFW_KEY_RIGHT) && !Key::get_key_pressed(GLFW_KEY_LEFT)) {
+                Camera::move_camera(glm::vec2 (-dt, 0));
+            }
+            if (Key::get_key_pressed(GLFW_KEY_UP) && !Key::get_key_pressed(GLFW_KEY_DOWN)) {
+                Camera::move_camera(glm::vec2 (0, -dt));
+            }
+            if (Key::get_key_pressed(GLFW_KEY_DOWN) && !Key::get_key_pressed(GLFW_KEY_UP)) {
+                Camera::move_camera(glm::vec2 (0, dt));
+            }
 
             // Draw elements to the screen
             Render::draw(dt);

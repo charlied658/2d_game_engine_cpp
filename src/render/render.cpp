@@ -82,8 +82,8 @@ namespace Render {
      * @param dt Delta time
      */
     void draw(double dt) {
-        // Rotate the square when user presses left/right (temp feature)
-        if (Key::get_key_pressed(GLFW_KEY_LEFT) && !Key::get_key_pressed(GLFW_KEY_RIGHT)) {
+        // Rotate the square when user presses A/D (temp feature)
+        if (Key::get_key_pressed(GLFW_KEY_A) && !Key::get_key_pressed(GLFW_KEY_D)) {
             for (int i = 0; i < 4; i++) {
                 vector2 point = {vertices[i].x, vertices[i].y};
                 vector2 result = Math::rotate(point, vector2{0,0}, dt * 0.5f);
@@ -91,7 +91,7 @@ namespace Render {
                 vertices[i].y = result.y;
             }
         }
-        if (Key::get_key_pressed(GLFW_KEY_RIGHT) && !Key::get_key_pressed(GLFW_KEY_LEFT)) {
+        if (Key::get_key_pressed(GLFW_KEY_D) && !Key::get_key_pressed(GLFW_KEY_A)) {
             for (int i = 0; i < 4; i++) {
                 vector2 point = {vertices[i].x, vertices[i].y};
                 vector2 result = Math::rotate(point, vector2{0,0}, dt * -0.5f);
@@ -104,7 +104,7 @@ namespace Render {
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
 
         Shader::upload_mat4("uProjection", Camera::get_projection());
-        Shader::upload_mat4("uView", Camera::get_view());
+        //Shader::upload_mat4("uView", Camera::get_view());
 
         // Draw elements to the screen
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);

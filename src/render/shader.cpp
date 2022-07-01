@@ -36,7 +36,7 @@ namespace Shader {
         GLchar description[1000];
 
         // Read shader source file
-        string path = "../default.glsl";
+        string path = "../assets/shaders/default.glsl";
         ifstream input_file;
         input_file.open(path);
         if (!input_file.is_open()) {
@@ -106,8 +106,8 @@ namespace Shader {
         glUseProgram(0);
     }
 
-    void upload_mat4(const char* varName, glm::mat4 matrix) {
+    void upload_mat4(const char *varName, float *value) {
         GLint var_location = glGetUniformLocation(program_ID, varName);
-        glUniformMatrix4fv(var_location, 1, false, glm::value_ptr(matrix));
+        glUniformMatrix4fv(var_location, 1, false, value);
     }
 }

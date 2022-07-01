@@ -13,5 +13,5 @@ namespace Shader {
 
     void detach();
 
-    void upload_mat4(const char* varName, glm::mat4 matrix);
+    void upload_mat4(const char *varName, float *value);
 }

@@ -14,5 +14,5 @@ namespace Camera {
 
     glm::mat4 get_view();
 
-    glm::mat4 get_projection();
+    float *get_projection();
 }

@@ -23,6 +23,14 @@ static void error_callback(int error, const char* description) {
 namespace Window {
 
     static GLFWwindow* window;
+    static const int default_width = 640;
+    static const int default_height = 480;
+    static float aspect_ratio = (float) default_width / (float) default_height;
+
+    void window_size_callback(GLFWwindow* window_ptr, int w, int h)
+    {
+        aspect_ratio = (float) w / (float) h;
+    }
 
     /**
      * Initializes the GLFW window
@@ -44,11 +52,14 @@ namespace Window {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
         // Create GLFW window
-        window = glfwCreateWindow(640, 480, "My Window", nullptr, nullptr);
+        window = glfwCreateWindow(default_width, default_height, "My Window", nullptr, nullptr);
         if (!window) {
             glfwTerminate();
             return -1;
         }
+
+        // Set window size callback
+        glfwSetWindowSizeCallback(window, window_size_callback);
 
         // Set mouse and key callbacks
         glfwSetCursorPosCallback(window, Mouse::cursor_position_callback);
@@ -61,6 +72,9 @@ namespace Window {
 
         // Initialize OpenGL buffers
         Render::init();
+
+        // Initialize the camera
+        Camera::init();
 
         // Create and compile the shader program
         Shader::create_program();
@@ -89,7 +103,8 @@ namespace Window {
             // Set the shader program
             Shader::use_program();
 
-            // Camera controls
+            // ================ Camera controls
+            // Move camera
             if (Key::get_key_pressed(GLFW_KEY_LEFT) && !Key::get_key_pressed(GLFW_KEY_RIGHT)) {
                 Camera::move_camera(glm::vec2 (dt, 0));
             }
@@ -103,6 +118,20 @@ namespace Window {
                 Camera::move_camera(glm::vec2 (0, dt));
             }
 
+            // Zoom in/out
+            if (Key::get_key_pressed(GLFW_KEY_W) && !Key::get_key_pressed(GLFW_KEY_S)) {
+                Camera::scale_camera(1.01f);
+            }
+            if (Key::get_key_pressed(GLFW_KEY_S) && !Key::get_key_pressed(GLFW_KEY_W)) {
+                Camera::scale_camera(1/1.01f);
+            }
+
+            // Reset camera
+            if (Key::get_key_begin_press(GLFW_KEY_SPACE)) {
+                Camera::init();
+            }
+            // =============================
+
             // Draw elements to the screen
             Render::draw(dt);
 
@@ -113,5 +142,9 @@ namespace Window {
 
         // Terminate GLFW after the main loop has ended
         glfwTerminate();
+    }
+
+    float get_aspect_ratio() {
+        return aspect_ratio;
     }
 }

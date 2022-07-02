@@ -4,10 +4,21 @@
 
 #pragma once
 
-struct vector2 {
-    float x, y;
-};
-
 namespace Math {
-    vector2 rotate(vector2 point, vector2 origin, float radians);
+
+    struct vec2 {
+        float x, y;
+    };
+
+    struct mat4 {
+        float m[16];
+    };
+
+    vec2 rotate(vec2 point, vec2 origin, float radians);
+
+    mat4 mul(mat4 m1, mat4 m2);
+
+    mat4 identity();
+
+    void print_mat4(mat4 matrix);
 }

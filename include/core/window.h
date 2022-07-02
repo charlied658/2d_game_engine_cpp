@@ -9,4 +9,6 @@ namespace Window {
     int init();
 
     void loop();
+
+    float get_aspect_ratio();
 }

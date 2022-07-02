@@ -73,8 +73,6 @@ namespace Render {
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * 3));
         glEnableVertexAttribArray(1);
-
-        Camera::adjust_projection();
     }
 
     /**
@@ -85,16 +83,16 @@ namespace Render {
         // Rotate the square when user presses A/D (temp feature)
         if (Key::get_key_pressed(GLFW_KEY_A) && !Key::get_key_pressed(GLFW_KEY_D)) {
             for (int i = 0; i < 4; i++) {
-                vector2 point = {vertices[i].x, vertices[i].y};
-                vector2 result = Math::rotate(point, vector2{0,0}, dt * 0.5f);
+                Math::vec2 point = {vertices[i].x, vertices[i].y};
+                Math::vec2 result = Math::rotate(point, Math::vec2{0, 0}, (float) dt * 0.5f);
                 vertices[i].x = result.x;
                 vertices[i].y = result.y;
             }
         }
         if (Key::get_key_pressed(GLFW_KEY_D) && !Key::get_key_pressed(GLFW_KEY_A)) {
             for (int i = 0; i < 4; i++) {
-                vector2 point = {vertices[i].x, vertices[i].y};
-                vector2 result = Math::rotate(point, vector2{0,0}, dt * -0.5f);
+                Math::vec2 point = {vertices[i].x, vertices[i].y};
+                Math::vec2 result = Math::rotate(point, Math::vec2{0, 0}, (float) dt * -0.5f);
                 vertices[i].x = result.x;
                 vertices[i].y = result.y;
             }
@@ -103,8 +101,9 @@ namespace Render {
         // Update the buffer data
         glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
 
-        Shader::upload_mat4("uProjection", Camera::get_projection());
-        //Shader::upload_mat4("uView", Camera::get_view());
+        // Upload projection and view matrices to the shader program
+        //Shader::upload_mat4("uProjection", Camera::get_projection().m);
+        Shader::upload_mat4("uView", Camera::get_view().m);
 
         // Draw elements to the screen
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);

@@ -5,14 +5,17 @@
 #pragma once
 
 #include <glm/glm.hpp>
+#include "util/vecmath.h"
 
 namespace Camera {
 
+    void init();
+
     void move_camera(glm::vec2 dv);
 
-    void adjust_projection();
+    void scale_camera(float scale);
 
-    glm::mat4 get_view();
+    Math::mat4 get_view();
 
-    float *get_projection();
+    Math::mat4 get_projection();
 }

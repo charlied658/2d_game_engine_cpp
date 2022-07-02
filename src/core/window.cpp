@@ -25,6 +25,7 @@ namespace Window {
     static GLFWwindow* window;
     static const int default_width = 640;
     static const int default_height = 480;
+    static const char *title = "Game Engine";
     static float aspect_ratio = (float) default_width / (float) default_height;
 
     void window_size_callback(GLFWwindow* window_ptr, int w, int h)
@@ -52,7 +53,7 @@ namespace Window {
         glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
         // Create GLFW window
-        window = glfwCreateWindow(default_width, default_height, "My Window", nullptr, nullptr);
+        window = glfwCreateWindow(default_width, default_height, title, nullptr, nullptr);
         if (!window) {
             glfwTerminate();
             return -1;
@@ -79,6 +80,8 @@ namespace Window {
         // Create and compile the shader program
         Shader::create_program();
 
+        glEnable(GL_DEPTH_TEST);
+
         return 0;
     }
 
@@ -98,7 +101,7 @@ namespace Window {
             startTime = currentTime;
 
             // Clear the screen
-            glClear(GL_COLOR_BUFFER_BIT);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
             // Set the shader program
             Shader::use_program();
@@ -119,11 +122,25 @@ namespace Window {
             }
 
             // Zoom in/out
+//            if (Key::get_key_pressed(GLFW_KEY_W) && !Key::get_key_pressed(GLFW_KEY_S)) {
+//                Camera::scale_camera(1.01f);
+//            }
+//            if (Key::get_key_pressed(GLFW_KEY_S) && !Key::get_key_pressed(GLFW_KEY_W)) {
+//                Camera::scale_camera(1/1.01f);
+//            }
+
+            // Rotate
+            if (Key::get_key_pressed(GLFW_KEY_A) && !Key::get_key_pressed(GLFW_KEY_D)) {
+                Camera::rotate_camera(glm::vec2 (dt, 0));
+            }
+            if (Key::get_key_pressed(GLFW_KEY_D) && !Key::get_key_pressed(GLFW_KEY_A)) {
+                Camera::rotate_camera(glm::vec2 (-dt, 0));
+            }
             if (Key::get_key_pressed(GLFW_KEY_W) && !Key::get_key_pressed(GLFW_KEY_S)) {
-                Camera::scale_camera(1.01f);
+                Camera::rotate_camera(glm::vec2 (0, -dt));
             }
             if (Key::get_key_pressed(GLFW_KEY_S) && !Key::get_key_pressed(GLFW_KEY_W)) {
-                Camera::scale_camera(1/1.01f);
+                Camera::rotate_camera(glm::vec2 (0, dt));
             }
 
             // Reset camera

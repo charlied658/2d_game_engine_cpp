@@ -106,8 +106,8 @@ namespace Shader {
         glUseProgram(0);
     }
 
-    void upload_mat4(const char *varName, float *value) {
+    void upload_mat4(const char *varName, glm::mat4 matrix) {
         GLint var_location = glGetUniformLocation(program_ID, varName);
-        glUniformMatrix4fv(var_location, 1, false, value);
+        glUniformMatrix4fv(var_location, 1, false, glm::value_ptr(matrix));
     }
 }

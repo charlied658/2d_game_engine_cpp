@@ -5,7 +5,6 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include "util/vecmath.h"
 
 namespace Camera {
 
@@ -15,7 +14,11 @@ namespace Camera {
 
     void scale_camera(float scale);
 
-    Math::mat4 get_view();
+    void rotate_camera(glm::vec2 dv);
 
-    Math::mat4 get_projection();
+    glm::mat4 get_model();
+
+    glm::mat4 get_view();
+
+    glm::mat4 get_projection();
 }

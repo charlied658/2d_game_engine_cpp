@@ -3,19 +3,19 @@
 //
 
 #include "render/camera.h"
-#include "util/vecmath.h"
 
 #include "core/window.h"
 
-#include <glm/glm.hpp>
+#include <glm/glm.hpp> // glm::mat4
+#include <glm/gtc/matrix_transform.hpp> // glm::transform, glm::perspective
 
 namespace Camera {
-    static glm::vec2 position;
-    static Math::mat4 view_matrix;
+    static glm::vec2 position, rotation;
     static float zoom = 1.0f;
 
     void init() {
         position = {0.0f,0.0f};
+        rotation = {1.0f, 0.5f};
         zoom = 1.0f;
     }
 
@@ -27,30 +27,38 @@ namespace Camera {
         zoom *= scale;
     }
 
+    void rotate_camera(glm::vec2 dv) {
+        rotation += dv;
+    }
+
+    /**
+     * Calculate the model matrix.
+     * @return Model matrix
+     */
+    glm::mat4 get_model() {
+        glm::mat4 model = glm::mat4(1.0f);
+        model = glm::rotate(model, rotation.y, glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::rotate(model, rotation.x, glm::vec3(0.0f, 1.0f, 0.0f));
+        return model;
+    }
+
     /**
      * Calculate the view matrix.
      * @return View matrix
      */
-    Math::mat4 get_view() {
-        view_matrix = Math::identity();
-        view_matrix.m[12] = position.x;
-        view_matrix.m[13] = position.y;
-
-        Math::mat4 scale = Math::identity();
-        float ratio = Window::get_aspect_ratio();
-        if (ratio < 1) {
-            scale.m[0] = zoom;
-            scale.m[5] = zoom * Window::get_aspect_ratio();
-        } else {
-            scale.m[0] = zoom / Window::get_aspect_ratio();
-            scale.m[5] = zoom;
-        }
-
-        Math::mat4 result = Math::mul(scale, view_matrix);
-        return result;
+    glm::mat4 get_view() {
+        glm::mat4 view = glm::mat4(1.0f);
+        view = glm::translate(view, glm::vec3(position.x, position.y, -3.0f));
+        return view;
     }
 
-    Math::mat4 get_projection() {
-        return Math::identity();
+    /**
+     * Calculate the projection matrix.
+     * @return Projection matrix
+     */
+    glm::mat4 get_projection() {
+        glm::mat4 projection;
+        projection = glm::perspective(glm::radians(45.0f), Window::get_aspect_ratio(), 0.1f, 100.0f);
+        return projection;
     }
 }

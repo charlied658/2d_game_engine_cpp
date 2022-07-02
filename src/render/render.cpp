@@ -4,15 +4,11 @@
 
 #include "render/render.h"
 
-#define GLFW_INCLUDE_NONE
-#include <GLFW/glfw3.h>
 #define GL_SILENCE_DEPRECATION
 #include <OpenGL/gl3.h>
 
 #include "render/shader.h"
 #include "render/camera.h"
-#include "core/key_listener.h"
-#include "util/vecmath.h"
 
 struct vertex {
     float x, y, z;
@@ -23,10 +19,19 @@ vertex vertices[] = {
         {-0.5f, -0.5f, 0.0f, 1.0f,0.0f,0.0f},
         {0.5f, -0.5f, 0.0f, 0.0f,1.0f,0.0f},
         {0.5f,  0.5f, 0.0f, 0.0f,0.0f,1.0f},
-        {-0.5f,  0.5f, 0.0f, 0.0f,1.0f,1.0f}
+        {-0.5f,  0.5f, 0.0f, 0.0f,1.0f,1.0f},
+        {-0.5f, -0.5f, -1.0f, 1.0f,0.0f,0.0f},
+        {0.5f, -0.5f, -1.0f, 0.0f,1.0f,0.0f},
+        {0.5f,  0.5f, -1.0f, 0.0f,0.0f,1.0f},
+        {-0.5f,  0.5f, -1.0f, 0.0f,1.0f,1.0f}
 };
 
-int element_indices[] = {0,1,2, 0,2,3};
+int element_indices[] = {0,1,2, 0,2,3,
+                         4,5,1,4,1,0,
+                         7,6,5,7,5,4,
+                         3,2,6,3,6,7,
+                         4,0,3,4,3,7,
+                         6,2,1,6,1,5};
 
 /*
  * ========= Diagram of one Quad: ==========
@@ -80,32 +85,16 @@ namespace Render {
      * @param dt Delta time
      */
     void draw(double dt) {
-        // Rotate the square when user presses A/D (temp feature)
-        if (Key::get_key_pressed(GLFW_KEY_A) && !Key::get_key_pressed(GLFW_KEY_D)) {
-            for (int i = 0; i < 4; i++) {
-                Math::vec2 point = {vertices[i].x, vertices[i].y};
-                Math::vec2 result = Math::rotate(point, Math::vec2{0, 0}, (float) dt * 0.5f);
-                vertices[i].x = result.x;
-                vertices[i].y = result.y;
-            }
-        }
-        if (Key::get_key_pressed(GLFW_KEY_D) && !Key::get_key_pressed(GLFW_KEY_A)) {
-            for (int i = 0; i < 4; i++) {
-                Math::vec2 point = {vertices[i].x, vertices[i].y};
-                Math::vec2 result = Math::rotate(point, Math::vec2{0, 0}, (float) dt * -0.5f);
-                vertices[i].x = result.x;
-                vertices[i].y = result.y;
-            }
-        }
 
-        // Update the buffer data
-        glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
+        // Update the buffer data (do not need to do this every frame)
+        // glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
 
-        // Upload projection and view matrices to the shader program
-        //Shader::upload_mat4("uProjection", Camera::get_projection().m);
-        Shader::upload_mat4("uView", Camera::get_view().m);
+        // Upload model, view, and projection matrices to the shader program
+        Shader::upload_mat4("model", Camera::get_model());
+        Shader::upload_mat4("view", Camera::get_view());
+        Shader::upload_mat4("projection", Camera::get_projection());
 
         // Draw elements to the screen
-        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr);
     }
 }

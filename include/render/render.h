@@ -8,6 +8,6 @@ namespace Render {
 
     void init();
 
-    void draw(double dt);
+    void draw();
 
 }

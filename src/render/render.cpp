@@ -16,22 +16,13 @@ struct vertex {
 };
 
 vertex vertices[] = {
-        {-0.5f, -0.5f, 0.0f, 1.0f,0.0f,0.0f},
-        {0.5f, -0.5f, 0.0f, 0.0f,1.0f,0.0f},
-        {0.5f,  0.5f, 0.0f, 0.0f,0.0f,1.0f},
-        {-0.5f,  0.5f, 0.0f, 0.0f,1.0f,1.0f},
-        {-0.5f, -0.5f, -1.0f, 1.0f,0.0f,0.0f},
-        {0.5f, -0.5f, -1.0f, 0.0f,1.0f,0.0f},
-        {0.5f,  0.5f, -1.0f, 0.0f,0.0f,1.0f},
-        {-0.5f,  0.5f, -1.0f, 0.0f,1.0f,1.0f}
+        {0.0f, 0.0f, 0.0f, 1.0f,0.0f,0.0f},
+        {1.0f, 0.0f, 0.0f, 0.0f,1.0f,0.0f},
+        {1.0f,  1.0f, 0.0f, 0.0f,0.0f,1.0f},
+        {0.0f,  1.0f, 0.0f, 0.0f,1.0f,1.0f}
 };
 
-int element_indices[] = {0,1,2, 0,2,3,
-                         4,5,1,4,1,0,
-                         7,6,5,7,5,4,
-                         3,2,6,3,6,7,
-                         4,0,3,4,3,7,
-                         6,2,1,6,1,5};
+int element_indices[] = {0,1,2,0,2,3};
 
 /*
  * ========= Diagram of one Quad: ==========
@@ -56,7 +47,7 @@ namespace Render {
     static GLuint vaoID, vboID, eboID;
 
     /**
-     * Initialize OpenGL buffers to be drawn to the window
+     * Initialize OpenGL buffers to be drawn to the window.
      */
     void init() {
         // Generate Vertex Array Object (VAO)
@@ -81,20 +72,15 @@ namespace Render {
     }
 
     /**
-     * Draw elements to the screen
-     * @param dt Delta time
+     * Draw elements to the screen.
      */
-    void draw(double dt) {
+    void draw() {
 
-        // Update the buffer data (do not need to do this every frame)
-        // glBufferSubData(GL_ARRAY_BUFFER, 0, sizeof(vertices), vertices);
-
-        // Upload model, view, and projection matrices to the shader program
-        Shader::upload_mat4("model", Camera::get_model());
+        // Upload view and projection matrices to the shader program
         Shader::upload_mat4("view", Camera::get_view());
         Shader::upload_mat4("projection", Camera::get_projection());
 
         // Draw elements to the screen
-        glDrawElements(GL_TRIANGLES, 36, GL_UNSIGNED_INT, nullptr);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
     }
 }

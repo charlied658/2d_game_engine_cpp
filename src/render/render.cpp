@@ -1,6 +1,7 @@
-//
-// Created by Charlie Davidson on 6/27/22.
-//
+/**
+ * @author Charlie Davidson 
+ * Created on 6/27/22.
+ */
 
 #include "render/render.h"
 
@@ -48,7 +49,7 @@ int element_indices[] = {0,1,2,0,2,3};
 namespace Render {
 
     static GLuint vaoID, vboID, eboID;
-    static unsigned int textureID;
+    static unsigned int textureID ,textureID2;
 
     /**
      * Initialize OpenGL buffers to be drawn to the window.
@@ -80,9 +81,8 @@ namespace Render {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         //Generate texture
-        Texture::create_texture();
-
-        textureID = Texture::get_texture();
+        textureID = Texture::create_texture("../assets/images/testImage.png");
+        //textureID2 = Texture::create_texture("../assets/images/testImage2.png");
     }
 
     /**

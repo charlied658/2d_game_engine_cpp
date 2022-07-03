@@ -1,6 +1,7 @@
-//
-// Created by Charlie Davidson on 6/27/22.
-//
+/**
+ * @author Charlie Davidson
+ * Created on 6/27/22.
+ */
 
 #define GL_SILENCE_DEPRECATION
 #include <OpenGL/gl3.h>

@@ -1,6 +1,7 @@
-//
-// Created by Charlie Davidson on 6/28/22.
-//
+/**
+ * @author Charlie Davidson
+ * Created on 6/28/22.
+ */
 
 #include "core/camera.h"
 

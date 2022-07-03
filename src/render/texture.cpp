@@ -1,6 +1,7 @@
-//
-// Created by Charlie Davidson on 7/2/22.
-//
+/**
+ * @author Charlie Davidson
+ * Created on 7/2/22.
+ */
 
 #include "render/texture.h"
 
@@ -10,14 +11,17 @@
 
 namespace Texture {
 
-    static unsigned int texture;
-
-    void create_texture() {
+    /**
+     * Generate a texture and return the texture ID.
+     * @param filepath Filepath of texture
+     * @return Texture ID
+     */
+    unsigned int create_texture(const char *filepath) {
 
         // Load image data
         int width, height, channels;
         stbi_set_flip_vertically_on_load(true);
-        unsigned char *data = stbi_load("../assets/images/testImage.png", &width, &height, &channels, 0);
+        unsigned char *data = stbi_load(filepath, &width, &height, &channels, 0);
 
         if (!data) {
             printf("Failed to load texture\n");
@@ -25,6 +29,7 @@ namespace Texture {
         }
 
         // Generate texture
+        unsigned int texture;
         glGenTextures(1, &texture);
         glBindTexture(GL_TEXTURE_2D, texture);
 
@@ -45,9 +50,8 @@ namespace Texture {
 
         // Free resources
         stbi_image_free(data);
-    }
 
-    unsigned int get_texture() {
+        // Return textureID
         return texture;
     }
 }

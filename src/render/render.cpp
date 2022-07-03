@@ -83,7 +83,6 @@ namespace Render {
         Texture::create_texture();
 
         textureID = Texture::get_texture();
-        printf("textureID: %d\n", textureID);
     }
 
     /**

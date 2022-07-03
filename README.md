@@ -7,3 +7,8 @@ Tools this project is built on:
 - [X] [OpenGL](https://www.opengl.org/) - Graphics rendering
 - [ ] [Dear ImGui](https://github.com/ocornut/imgui) - User Interface
 - [ ] [Box2D](https://box2d.org/) - Physics
+
+## Running
+The file "stb_image.h" is not included in this project because it is too large (~7,000 lines) and I did not write it.
+To properly compile this project, download the file [stb_image.h](https://github.com/nothings/stb/blob/master/stb_image.h)
+and place it into the path: `include/lib/stb_image.h` within this project.

@@ -11,7 +11,7 @@
 
 #include "core/mouse_listener.h"
 #include "core/key_listener.h"
-#include "render/camera.h"
+#include "core/camera.h"
 #include "render/shader.h"
 #include "render/render.h"
 #include <cstdio>
@@ -89,6 +89,8 @@ namespace Window {
     void loop() {
         double startTime = glfwGetTime();
         double currentTime, dt;
+
+        glClearColor(1.0f,1.0f,1.0f,1.0f);
 
         // Main loop
         while(!glfwWindowShouldClose(window)) {

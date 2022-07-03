@@ -6,20 +6,23 @@
 
 #define GL_SILENCE_DEPRECATION
 #include <OpenGL/gl3.h>
+#include <cstdio>
 
 #include "render/shader.h"
-#include "render/camera.h"
+#include "core/camera.h"
+#include "render/texture.h"
 
 struct vertex {
-    float x, y, z;
-    float r, g, b;
+    float x, y, z; // Position
+    float r, g, b; // Color
+    float u, v;    // Texture coordinates
 };
 
 vertex vertices[] = {
-        {0.0f, 0.0f, 0.0f, 1.0f,0.0f,0.0f},
-        {1.0f, 0.0f, 0.0f, 0.0f,1.0f,0.0f},
-        {1.0f,  1.0f, 0.0f, 0.0f,0.0f,1.0f},
-        {0.0f,  1.0f, 0.0f, 0.0f,1.0f,1.0f}
+        {2.5f, 1.0f, 0.0f, 1.0f,0.0f,0.0f, 0.0f, 0.0f},
+        {3.5f, 1.0f, 0.0f, 0.0f,1.0f,0.0f, 1.0f, 0.0f},
+        {3.5f,  2.0f, 0.0f, 0.0f,0.0f,1.0f, 1.0f, 1.0f},
+        {2.5f,  2.0f, 0.0f, 0.0f,1.0f,1.0f, 0.0f, 1.0f}
 };
 
 int element_indices[] = {0,1,2,0,2,3};
@@ -45,6 +48,7 @@ int element_indices[] = {0,1,2,0,2,3};
 namespace Render {
 
     static GLuint vaoID, vboID, eboID;
+    static unsigned int textureID;
 
     /**
      * Initialize OpenGL buffers to be drawn to the window.
@@ -69,6 +73,17 @@ namespace Render {
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * 3));
         glEnableVertexAttribArray(1);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * 6));
+        glEnableVertexAttribArray(2);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
+        //Generate texture
+        Texture::create_texture();
+
+        textureID = Texture::get_texture();
+        printf("textureID: %d\n", textureID);
     }
 
     /**
@@ -79,6 +94,10 @@ namespace Render {
         // Upload view and projection matrices to the shader program
         Shader::upload_mat4("view", Camera::get_view());
         Shader::upload_mat4("projection", Camera::get_projection());
+
+        // Bind texture
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, textureID);
 
         // Draw elements to the screen
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);

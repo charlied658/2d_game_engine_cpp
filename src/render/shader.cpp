@@ -110,4 +110,9 @@ namespace Shader {
         GLint var_location = glGetUniformLocation(program_ID, varName);
         glUniformMatrix4fv(var_location, 1, false, glm::value_ptr(matrix));
     }
+
+    void upload_texture(const char *varName, int slot) {
+        GLint var_location = glGetUniformLocation(program_ID, varName);
+        glUniform1i(var_location, slot);
+    }
 }

@@ -2,7 +2,7 @@
 // Created by Charlie Davidson on 6/28/22.
 //
 
-#include "render/camera.h"
+#include "core/camera.h"
 
 #include <glm/glm.hpp> // glm::vec2, glm::mat4
 #include <glm/gtc/matrix_transform.hpp> // glm::transform, glm::ortho

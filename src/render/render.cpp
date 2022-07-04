@@ -1,5 +1,5 @@
 /**
- * @author Charlie Davidson 
+ * @author Charlie Davidson
  * Created on 6/27/22.
  */
 
@@ -20,13 +20,18 @@ struct vertex {
 };
 
 vertex vertices[] = {
-        {2.5f, 1.0f, 0.0f, 1.0f,0.0f,0.0f, 0.0f, 0.0f},
-        {3.5f, 1.0f, 0.0f, 0.0f,1.0f,0.0f, 1.0f, 0.0f},
-        {3.5f,  2.0f, 0.0f, 0.0f,0.0f,1.0f, 1.0f, 1.0f},
-        {2.5f,  2.0f, 0.0f, 0.0f,1.0f,1.0f, 0.0f, 1.0f}
+        {2.0f, 1.0f, 0.0f, 1.0f,0.0f,0.0f, 0.0f, 0.0f},
+        {3.0f, 1.0f, 0.0f, 0.0f,1.0f,0.0f, 1.0f, 0.0f},
+        {3.0f,  2.0f, 0.0f, 0.0f,0.0f,1.0f, 1.0f, 1.0f},
+        {2.0f,  2.0f, 0.0f, 0.0f,1.0f,1.0f, 0.0f, 1.0f},
+        {3.0f, 1.0f, 0.0f, 1.0f,0.0f,0.0f, 0.0f, 0.0f},
+        {4.0f, 1.0f, 0.0f, 0.0f,1.0f,0.0f, 1.0f, 0.0f},
+        {4.0f,  2.0f, 0.0f, 0.0f,0.0f,1.0f, 1.0f, 1.0f},
+        {3.0f,  2.0f, 0.0f, 0.0f,1.0f,1.0f, 0.0f, 1.0f}
 };
 
-int element_indices[] = {0,1,2,0,2,3};
+int element_indices[] = {0,1,2,0,2,3,
+                         4,5,6,4,6,7};
 
 /*
  * ========= Diagram of one Quad: ==========
@@ -80,9 +85,9 @@ namespace Render {
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        //Generate texture
-        textureID = Texture::create_texture("../assets/images/testImage.png");
-        //textureID2 = Texture::create_texture("../assets/images/testImage2.png");
+        //Generate textures
+        textureID = Texture::get_texture("../assets/images/testImage.png")->textureID;
+        textureID2 = Texture::get_texture("../assets/images/testImage2.png")->textureID;
     }
 
     /**
@@ -94,11 +99,15 @@ namespace Render {
         Shader::upload_mat4("view", Camera::get_view());
         Shader::upload_mat4("projection", Camera::get_projection());
 
-        // Bind texture
+        // Bind texture 1
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, textureID);
 
-        // Draw elements to the screen
+        // Draw first texture
         glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, nullptr);
+
+        // Draw second texture
+        glBindTexture(GL_TEXTURE_2D, textureID2);
+        glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, (void*) (sizeof(unsigned int) * 6));
     }
 }

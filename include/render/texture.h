@@ -6,5 +6,13 @@
 #pragma once
 
 namespace Texture {
-    unsigned int create_texture(const char *filepath);
+
+    struct texture {
+        unsigned int textureID;
+        const char* filepath;
+    };
+
+    texture *get_texture(const char *filepath);
+
+    static unsigned int create_texture(const char *filepath);
 }

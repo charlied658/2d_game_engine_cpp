@@ -11,12 +11,50 @@
 
 namespace Texture {
 
+    static texture texture_list[100];
+    static int texture_count;
+
+    /**
+     * Get a texture from the texture list. If it is not in the list, add it to the list.
+     * @param filepath Filepath of texture
+     * @return Texture
+     */
+    texture *get_texture(const char *filepath) {
+        for (int i = 0; i < texture_count; i++) {
+            const char *texture_filepath = texture_list[i].filepath;
+            int char_pointer = 0;
+            bool match_texture = true;
+            while (texture_filepath[char_pointer] != '\0' && filepath[char_pointer] != '\0') {
+                if (texture_filepath[char_pointer] != filepath[char_pointer]) {
+                    match_texture = false;
+                    break;
+                }
+                char_pointer++;
+            }
+            if (texture_filepath[char_pointer] != '\0' || filepath[char_pointer] != '\0') {
+                match_texture = false;
+            }
+            if (match_texture) {
+                printf("Loaded texture '%s' at texture slot %d\n", filepath, i);
+                return &texture_list[i];
+            }
+        }
+        // If no match is found, create a texture and add it to the texture list.
+        texture_list[texture_count] = texture {};
+        texture_list[texture_count].filepath = filepath;
+        texture_list[texture_count].textureID = create_texture(filepath);
+        printf("Created texture '%s' at texture slot %d\n", filepath, texture_count);
+        texture *to_return = &texture_list[texture_count];
+        texture_count++;
+        return to_return;
+    }
+
     /**
      * Generate a texture and return the texture ID.
      * @param filepath Filepath of texture
      * @return Texture ID
      */
-    unsigned int create_texture(const char *filepath) {
+    static unsigned int create_texture(const char *filepath) {
 
         // Load image data
         int width, height, channels;
@@ -24,7 +62,7 @@ namespace Texture {
         unsigned char *data = stbi_load(filepath, &width, &height, &channels, 0);
 
         if (!data) {
-            printf("Failed to load texture\n");
+            printf("Failed to load texture '%s'\n", filepath);
             exit(EXIT_FAILURE);
         }
 

@@ -18,21 +18,8 @@ struct vertex {
     float x, y, z; // Position
     float r, g, b; // Color
     float u, v;    // Texture coordinates
+    float t;       // Texture ID
 };
-
-vertex vertices[] = {
-        {2.0f, 1.0f, 0.0f, 1.0f,0.0f,0.0f, 0.0f, 0.0f},
-        {3.0f, 1.0f, 0.0f, 0.0f,1.0f,0.0f, 1.0f, 0.0f},
-        {3.0f,  2.0f, 0.0f, 0.0f,0.0f,1.0f, 1.0f, 1.0f},
-        {2.0f,  2.0f, 0.0f, 0.0f,1.0f,1.0f, 0.0f, 1.0f},
-        {3.0f, 1.0f, 0.0f, 1.0f,0.0f,0.0f, 0.0f, 0.0f},
-        {4.0f, 1.0f, 0.0f, 0.0f,1.0f,0.0f, 1.0f, 0.0f},
-        {4.0f,  2.0f, 0.0f, 0.0f,0.0f,1.0f, 1.0f, 1.0f},
-        {3.0f,  2.0f, 0.0f, 0.0f,1.0f,1.0f, 0.0f, 1.0f}
-};
-
-int element_indices[] = {0,1,2,0,2,3,
-                         4,5,6,4,6,7};
 
 /*
  * ========= Diagram of one Quad: ==========
@@ -59,6 +46,9 @@ namespace Render {
     static int vertex_count;
     static float vertex_data[10000];
     static int element_data[10000];
+    static int tex_slots[] = {0,1,2,3,4,5,6,7};
+    static unsigned int texture_list[8];
+    static int texture_count = 0;
 
     /**
      * Initialize OpenGL buffers to be drawn to the window.
@@ -71,12 +61,10 @@ namespace Render {
         // Generate Vertex Buffer Object (VBO)
         glGenBuffers(1, &vboID);
         glBindBuffer(GL_ARRAY_BUFFER, vboID);
-        //glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_DYNAMIC_DRAW);
 
         // Generate Element Buffer Object (EBO)
         glGenBuffers(1, &eboID);
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
-        //glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(element_indices), element_indices, GL_STATIC_DRAW);
 
         // Enable vertex attributes
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertex),nullptr);
@@ -85,28 +73,28 @@ namespace Render {
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * 6));
         glEnableVertexAttribArray(2);
+        glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * 8));
+        glEnableVertexAttribArray(3);
 
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
+        unsigned int textureID3;
+
         // Generate textures
         textureID = Texture::get_texture("../assets/images/testImage.png")->textureID;
         textureID2 = Texture::get_texture("../assets/images/testImage2.png")->textureID;
+        textureID3 = Texture::get_texture("../assets/images/turtle.png")->textureID;
 
         // Generate game objects
-        GameObject::game_object obj1 {"obj1", 2.0f, 1.0f, 1.0f, 1.0f, textureID};
-        GameObject::game_object obj2 {"obj2", 3.0f, 1.0f, 1.0f, 1.0f, textureID2};
+        GameObject::game_object obj1 {"obj1", 0.0f, 1.0f, 1.0f, 1.0f, textureID};
+        GameObject::game_object obj2 {"obj2", 1.0f, 1.0f, 1.0f, 1.0f, textureID2};
+        GameObject::game_object obj3 {"obj3", 2.0f, 1.0f, 4.0f, 1.5f, textureID3};
 
-        //GameObject::add_game_object(&obj1);
-        //GameObject::add_game_object(&obj2);
-
-        // Generate 100 game objects to test vertex generation
-        for (int i = 0; i < 100; i++) {
-            float xPos = 2.0f + (float) (i % 10) / 10.0f;
-            float yPos = 2.0f - (float) (i / 10) / 10.0f;
-            GameObject::game_object obj {"obj", xPos, yPos, 0.1f, 0.1f, textureID};
-            GameObject::add_game_object(&obj);
-        }
+        // Add game objects to the scene
+        GameObject::add_game_object(&obj1);
+        GameObject::add_game_object(&obj2);
+        GameObject::add_game_object(&obj3);
 
         // Generate vertex data from list of game objects
         generate_vertex_data();
@@ -122,9 +110,14 @@ namespace Render {
         Shader::upload_mat4("view", Camera::get_view());
         Shader::upload_mat4("projection", Camera::get_projection());
 
-        // Bind texture 1
-        glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_2D, textureID2);
+        // Upload texture slots to shader program
+        Shader::upload_textures("tex_sampler", tex_slots);
+
+        // Bind textures
+        for (int i = 0; i < texture_count; i++) {
+            glActiveTexture(GL_TEXTURE0 + i);
+            glBindTexture(GL_TEXTURE_2D, texture_list[i]);
+        }
 
         // Draw elements
         glDrawElements(GL_TRIANGLES, vertex_count, GL_UNSIGNED_INT, nullptr);
@@ -152,6 +145,7 @@ namespace Render {
                     xAdd = 0.0f;
                 }
 
+                // ============== Upload vertex information
                 // Position
                 vertex_data[offset + 0] = (xAdd * game_object_list.game_objects[i].x_scale) + game_object_list.game_objects[i].x_pos;
                 vertex_data[offset + 1] = (yAdd * game_object_list.game_objects[i].y_scale) + game_object_list.game_objects[i].y_pos;
@@ -166,7 +160,10 @@ namespace Render {
                 vertex_data[offset + 6] = xAdd;
                 vertex_data[offset + 7] = yAdd;
 
-                offset += 8;
+                // Texture ID
+                vertex_data[offset + 8] = (float) get_texture_slot(game_object_list.game_objects[i].textureID);
+
+                offset += 9;
             }
 
             // Update element indices
@@ -183,5 +180,27 @@ namespace Render {
         // Bind data to buffers
         glBufferData(GL_ARRAY_BUFFER, sizeof(vertex_data), vertex_data, GL_DYNAMIC_DRAW);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(element_data), element_data, GL_STATIC_DRAW);
+    }
+
+    /**
+     * Get the texture slot for the specified texture
+     * @param texture_ID Texture ID
+     * @return Texture slot
+     */
+    static int get_texture_slot(unsigned int texture_ID) {
+        for (int i = 0; i < texture_count; i++) {
+            if (texture_ID == texture_list[i]) {
+                return i;
+            }
+        }
+        // If no matching texture is found, then add it to the list.
+        if (texture_count < 8) {
+            texture_list[texture_count] = texture_ID;
+            int texture_slot = texture_count;
+            texture_count++;
+            return texture_slot;
+        } else {
+            return -1;
+        }
     }
 }

@@ -116,4 +116,9 @@ namespace Shader {
         GLint var_location = glGetUniformLocation(program_ID, varName);
         glUniform1i(var_location, slot);
     }
+
+    void upload_textures(const char *varName, int *slots) {
+        GLint var_location = glGetUniformLocation(program_ID, varName);
+        glUniform1iv(var_location, 8, slots);
+    }
 }

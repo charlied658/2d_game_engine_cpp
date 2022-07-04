@@ -17,4 +17,6 @@ namespace Shader {
     void upload_mat4(const char *varName, glm::mat4);
 
     void upload_texture(const char *varName, int slot);
+
+    void upload_textures(const char *varName, int *slots);
 }

@@ -11,4 +11,6 @@ namespace Render {
 
     void draw();
 
+    static void generate_vertex_data();
+
 }

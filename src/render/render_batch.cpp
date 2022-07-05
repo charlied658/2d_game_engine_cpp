@@ -1,0 +1,184 @@
+/**
+ * @author Charlie Davidson 
+ * Created on 7/4/22.
+ */
+
+#include "render/render_batch.h"
+
+#define GL_SILENCE_DEPRECATION
+#include <OpenGL/gl3.h>
+#include <cstdio>
+
+#include "core/game_object.h"
+#include "render/shader.h"
+#include "core/camera.h"
+
+namespace RenderBatch {
+
+    static int tex_slots[] = {0,1,2,3,4,5,6,7};
+
+    // Vertex information
+    static const int position_size = 3;
+    static const int color_size = 3;
+    static const int tex_coords_size = 2;
+    static const int tex_id_size = 1;
+
+    static const int vertex_size = position_size + color_size + tex_coords_size + tex_id_size;
+
+    /**
+     * Create and initialize a render batch.
+     * @param batch Render batch reference
+     * @param max_batch_size Maximum number of allowed game objects
+     */
+    void init(render_batch *batch, int max_batch_size) {
+        batch->max_batch_size = max_batch_size;
+        batch->game_object_list = new GameObject::game_object *[max_batch_size];
+        batch->game_object_count = 0;
+        batch->has_room = true;
+        batch->vertex_data = new float[batch->max_batch_size * 4 * vertex_size];
+        batch->element_data = new int[batch->max_batch_size * 6];
+        batch->texture_list = new unsigned int[8];
+        batch->texture_count = 0;
+
+        printf("count: %d\n",batch->game_object_count);
+
+        // Generate element indices
+        generate_element_indices(batch);
+
+        // Bind data to buffers
+        glBufferData(GL_ARRAY_BUFFER, sizeof(batch->vertex_data), batch->vertex_data, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(batch->element_data), batch->element_data, GL_STATIC_DRAW);
+    }
+
+    /**
+     * Render vertex data for the given batch.
+     * @param batch Render batch reference
+     */
+    void render(render_batch *batch) {
+
+        // Upload view and projection matrices to the shader program
+        Shader::upload_mat4("view", Camera::get_view());
+        Shader::upload_mat4("projection", Camera::get_projection());
+
+        // Upload texture slots to shader program
+        Shader::upload_textures("tex_sampler", tex_slots);
+
+        // Bind textures
+        for (int i = 0; i < batch->texture_count; i++) {
+            glActiveTexture(GL_TEXTURE0 + i);
+            glBindTexture(GL_TEXTURE_2D, batch->texture_list[i]);
+        }
+
+        //printf("count: %d\n",batch->game_object_count);
+
+        // Draw elements
+        glDrawElements(GL_TRIANGLES, vertex_size * batch->game_object_count, GL_UNSIGNED_INT, nullptr);
+    }
+
+    /**
+     * Add a game object to the batch.
+     * @param batch Render batch reference
+     * @param obj Game object to be added
+     */
+    void add_game_object(render_batch *batch, GameObject::game_object *obj) {
+        batch->game_object_list[batch->game_object_count] = obj;
+        if (batch->game_object_count >= batch->max_batch_size) {
+            batch->has_room = false;
+        }
+
+        // Generate vertex data for the newly added game object
+        generate_vertex_data(batch, batch->game_object_count);
+
+        batch->game_object_count++;
+//        printf("count: %d\n",batch->game_object_count);
+//        for (int i = 0; i < batch->game_object_count * vertex_size; i++) {
+//            printf("%f\n", batch->vertex_data[i]);
+//        }
+//        printf("\n");
+    }
+
+    /**
+     * Generate vertex data for the given game object.
+     * @param batch Render batch reference
+     * @param index Index to begin adding vertex data
+     */
+    static void generate_vertex_data(render_batch *batch, int index) {
+        printf("Generating vertex data at index %d\n", index);
+        int offset = index * vertex_size;
+        float xAdd, yAdd;
+        xAdd = 0.0f;
+        yAdd = 0.0f;
+        for (int j = 0; j < 4; j++) {
+            if (j == 1) {
+                xAdd = 1.0f;
+            } else if (j == 2) {
+                yAdd = 1.0f;
+            } else if (j == 3){
+                xAdd = 0.0f;
+            }
+
+            // ============== Upload vertex information
+            // Position
+            batch->vertex_data[offset + 0] = (xAdd * batch->game_object_list[index]->x_scale) + batch->game_object_list[index]->x_pos;
+            batch->vertex_data[offset + 1] = (yAdd * batch->game_object_list[index]->y_scale) + batch->game_object_list[index]->y_pos;
+            batch->vertex_data[offset + 2] = 0.0f;
+
+            // Color
+            batch->vertex_data[offset + 3] = 1.0f;
+            batch->vertex_data[offset + 4] = 1.0f;
+            batch->vertex_data[offset + 5] = 1.0f;
+
+            // Texture Coordinates
+            batch->vertex_data[offset + 6] = xAdd;
+            batch->vertex_data[offset + 7] = yAdd;
+
+            // Texture ID
+            batch->vertex_data[offset + 8] = (float) get_texture_slot(batch, batch->game_object_list[index]->textureID);
+        }
+
+        glBufferSubData(GL_ARRAY_BUFFER,0, sizeof(batch->vertex_data), batch->vertex_data);
+    }
+
+    /**
+     * Generate element indices.
+     * @param batch Render batch reference
+     */
+    static void generate_element_indices(render_batch *batch) {
+        printf("Generating element indices\n");
+        int element_offset = 0;
+        for (int i = 0; i < batch->max_batch_size; i++) {
+            batch->element_data[i * 6 + 0] = element_offset + 0;
+            batch->element_data[i * 6 + 1] = element_offset + 1;
+            batch->element_data[i * 6 + 2] = element_offset + 2;
+            batch->element_data[i * 6 + 3] = element_offset + 0;
+            batch->element_data[i * 6 + 4] = element_offset + 2;
+            batch->element_data[i * 6 + 5] = element_offset + 3;
+
+            element_offset += 4;
+        }
+    }
+
+    /**
+     * Get the texture slot for the specified texture.
+     * @param batch Render batch reference
+     * @param texture_ID Texture ID
+     * @return Texture slot
+     */
+    static int get_texture_slot(render_batch *batch, unsigned int texture_ID) {
+        for (int i = 0; i < batch->texture_count; i++) {
+            if (texture_ID == batch->texture_list[i]) {
+                return i;
+            }
+        }
+        // If no matching texture is found, then add it to the list.
+        printf("Adding texture %d\n", texture_ID);
+        if (batch->texture_count < 8) {
+            batch->texture_list[batch->texture_count] = texture_ID;
+            int texture_slot = batch->texture_count;
+            batch->texture_count++;
+            return texture_slot;
+        } else {
+            return -1;
+        }
+    }
+}

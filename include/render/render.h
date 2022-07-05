@@ -5,14 +5,14 @@
 
 #pragma once
 
+#include "core/game_object.h"
+
 namespace Render {
 
     void init();
 
-    void draw();
+    void render();
 
-    static void generate_vertex_data();
-
-    static int get_texture_slot(unsigned int texture_ID);
+    void add_game_object(GameObject::game_object *obj);
 
 }

@@ -14,7 +14,7 @@ namespace GameObject {
     };
 
     struct list {
-        game_object game_objects[100];
+        game_object game_objects[1000];
         int count;
     };
 

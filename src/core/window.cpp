@@ -101,6 +101,8 @@ namespace Window {
             dt = currentTime - startTime;
             startTime = currentTime;
 
+            //printf("FPS: %f\n", 1/dt);
+
             // Clear the screen
             glClear(GL_COLOR_BUFFER_BIT);
 
@@ -110,16 +112,16 @@ namespace Window {
             // ================ Camera controls
             // Move camera
             if (Key::get_key_pressed(GLFW_KEY_LEFT) && !Key::get_key_pressed(GLFW_KEY_RIGHT)) {
-                Camera::move_camera(glm::vec2 (dt, 0));
+                Camera::move_camera(glm::vec2 (dt * 1.5, 0));
             }
             if (Key::get_key_pressed(GLFW_KEY_RIGHT) && !Key::get_key_pressed(GLFW_KEY_LEFT)) {
-                Camera::move_camera(glm::vec2 (-dt, 0));
+                Camera::move_camera(glm::vec2 (-dt * 1.5, 0));
             }
             if (Key::get_key_pressed(GLFW_KEY_UP) && !Key::get_key_pressed(GLFW_KEY_DOWN)) {
-                Camera::move_camera(glm::vec2 (0, -dt));
+                Camera::move_camera(glm::vec2 (0, -dt * 1.5));
             }
             if (Key::get_key_pressed(GLFW_KEY_DOWN) && !Key::get_key_pressed(GLFW_KEY_UP)) {
-                Camera::move_camera(glm::vec2 (0, dt));
+                Camera::move_camera(glm::vec2 (0, dt * 1.5));
             }
 
             // Zoom in/out
@@ -137,7 +139,7 @@ namespace Window {
             // =============================
 
             // Draw elements to the screen
-            Render::draw();
+            Render::render();
 
             // Swap buffers and poll events
             glfwSwapBuffers(window);

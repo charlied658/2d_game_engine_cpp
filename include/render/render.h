@@ -13,6 +13,6 @@ namespace Render {
 
     void render();
 
-    void add_game_object(GameObject::game_object *obj);
+    static void add_game_object(GameObject::game_object *obj);
 
 }

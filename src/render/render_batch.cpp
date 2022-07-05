@@ -7,14 +7,39 @@
 
 #define GL_SILENCE_DEPRECATION
 #include <OpenGL/gl3.h>
-#include <cstdio>
 
 #include "core/game_object.h"
 #include "render/shader.h"
 #include "core/camera.h"
 
+struct vertex {
+    float x, y, z; // Position
+    float r, g, b; // Color
+    float u, v;    // Texture coordinates
+    float t;       // Texture ID
+};
+
+/*
+ * ========= Diagram of one Quad: ==========
+ *
+ *               3-----------2
+ *               |           |
+ *               |           |
+ *               |           |
+ *               0-----------1
+ *
+ *  Triangles:
+ *      0 -> 1 -> 2
+ *      0 -> 2 -> 3
+ *
+ *  NOTE: Vertices should be given in COUNTER-CLOCKWISE
+ *  order according to OpenGL
+ *
+ */
+
 namespace RenderBatch {
 
+    static GLuint vaoID, vboID, eboID;
     static int tex_slots[] = {0,1,2,3,4,5,6,7};
 
     // Vertex information
@@ -40,14 +65,12 @@ namespace RenderBatch {
         batch->texture_list = new unsigned int[8];
         batch->texture_count = 0;
 
-        printf("count: %d\n",batch->game_object_count);
-
         // Generate element indices
         generate_element_indices(batch);
 
         // Bind data to buffers
-        glBufferData(GL_ARRAY_BUFFER, sizeof(batch->vertex_data), batch->vertex_data, GL_DYNAMIC_DRAW);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(batch->element_data), batch->element_data, GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, (long) sizeof(float) * batch->max_batch_size * 4 * vertex_size, batch->vertex_data, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, (long) sizeof(float) * batch->max_batch_size * 6, batch->element_data, GL_STATIC_DRAW);
     }
 
     /**
@@ -55,6 +78,10 @@ namespace RenderBatch {
      * @param batch Render batch reference
      */
     void render(render_batch *batch) {
+
+        // Bind data to buffers
+        glBufferData(GL_ARRAY_BUFFER, (long) sizeof(float) * batch->max_batch_size * 4 * vertex_size, batch->vertex_data, GL_DYNAMIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, (long) sizeof(float) * batch->max_batch_size * 6, batch->element_data, GL_STATIC_DRAW);
 
         // Upload view and projection matrices to the shader program
         Shader::upload_mat4("view", Camera::get_view());
@@ -69,10 +96,8 @@ namespace RenderBatch {
             glBindTexture(GL_TEXTURE_2D, batch->texture_list[i]);
         }
 
-        //printf("count: %d\n",batch->game_object_count);
-
         // Draw elements
-        glDrawElements(GL_TRIANGLES, vertex_size * batch->game_object_count, GL_UNSIGNED_INT, nullptr);
+        glDrawElements(GL_TRIANGLES, 6 * batch->game_object_count, GL_UNSIGNED_INT, nullptr);
     }
 
     /**
@@ -82,19 +107,15 @@ namespace RenderBatch {
      */
     void add_game_object(render_batch *batch, GameObject::game_object *obj) {
         batch->game_object_list[batch->game_object_count] = obj;
-        if (batch->game_object_count >= batch->max_batch_size) {
-            batch->has_room = false;
-        }
 
         // Generate vertex data for the newly added game object
         generate_vertex_data(batch, batch->game_object_count);
 
+        // Increment game object count
         batch->game_object_count++;
-//        printf("count: %d\n",batch->game_object_count);
-//        for (int i = 0; i < batch->game_object_count * vertex_size; i++) {
-//            printf("%f\n", batch->vertex_data[i]);
-//        }
-//        printf("\n");
+        if (batch->game_object_count >= batch->max_batch_size) {
+            batch->has_room = false;
+        }
     }
 
     /**
@@ -103,8 +124,7 @@ namespace RenderBatch {
      * @param index Index to begin adding vertex data
      */
     static void generate_vertex_data(render_batch *batch, int index) {
-        printf("Generating vertex data at index %d\n", index);
-        int offset = index * vertex_size;
+        int offset = index * vertex_size * 4;
         float xAdd, yAdd;
         xAdd = 0.0f;
         yAdd = 0.0f;
@@ -134,9 +154,12 @@ namespace RenderBatch {
 
             // Texture ID
             batch->vertex_data[offset + 8] = (float) get_texture_slot(batch, batch->game_object_list[index]->textureID);
+
+            offset += 9;
         }
 
-        glBufferSubData(GL_ARRAY_BUFFER,0, sizeof(batch->vertex_data), batch->vertex_data);
+        // Rebuffer data
+        glBufferSubData(GL_ARRAY_BUFFER,0, (long) sizeof(float) * (batch->game_object_count + 1) * 4 * 9, batch->vertex_data);
     }
 
     /**
@@ -144,7 +167,6 @@ namespace RenderBatch {
      * @param batch Render batch reference
      */
     static void generate_element_indices(render_batch *batch) {
-        printf("Generating element indices\n");
         int element_offset = 0;
         for (int i = 0; i < batch->max_batch_size; i++) {
             batch->element_data[i * 6 + 0] = element_offset + 0;
@@ -171,7 +193,6 @@ namespace RenderBatch {
             }
         }
         // If no matching texture is found, then add it to the list.
-        printf("Adding texture %d\n", texture_ID);
         if (batch->texture_count < 8) {
             batch->texture_list[batch->texture_count] = texture_ID;
             int texture_slot = batch->texture_count;
@@ -180,5 +201,35 @@ namespace RenderBatch {
         } else {
             return -1;
         }
+    }
+
+    /**
+     * Generate OpenGL buffers.
+     */
+    void generate_buffers() {
+        // Generate Vertex Array Object (VAO)
+        glGenVertexArrays(1, &vaoID);
+        glBindVertexArray(vaoID);
+
+        // Generate Vertex Buffer Object (VBO)
+        glGenBuffers(1, &vboID);
+        glBindBuffer(GL_ARRAY_BUFFER, vboID);
+
+        // Generate Element Buffer Object (EBO)
+        glGenBuffers(1, &eboID);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
+
+        // Enable vertex attributes
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertex),nullptr);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * 3));
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * 6));
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * 8));
+        glEnableVertexAttribArray(3);
+
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 }

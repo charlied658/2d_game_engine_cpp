@@ -31,4 +31,6 @@ namespace RenderBatch {
     static void generate_element_indices(render_batch *batch);
 
     static int get_texture_slot(render_batch *batch, unsigned int texture_ID);
+
+    void generate_buffers();
 }

@@ -7,6 +7,7 @@
 
 #define GL_SILENCE_DEPRECATION
 #include <OpenGL/gl3.h>
+#include <cstdio>
 
 #include "core/game_object.h"
 #include "render/shader.h"
@@ -39,7 +40,6 @@ struct vertex {
 
 namespace RenderBatch {
 
-    static GLuint vaoID, vboID, eboID;
     static int tex_slots[] = {0,1,2,3,4,5,6,7};
 
     // Vertex information
@@ -68,9 +68,34 @@ namespace RenderBatch {
         // Generate element indices
         generate_element_indices(batch);
 
-        // Bind data to buffers
+        // Generate Vertex Array Object (VAO)
+        glGenVertexArrays(1, &batch->vaoID);
+        glBindVertexArray(batch->vaoID);
+
+        // Generate Vertex Buffer Object (VBO)
+        glGenBuffers(1, &batch->vboID);
+        glBindBuffer(GL_ARRAY_BUFFER, batch->vboID);
         glBufferData(GL_ARRAY_BUFFER, (long) sizeof(float) * batch->max_batch_size * 4 * vertex_size, batch->vertex_data, GL_DYNAMIC_DRAW);
+
+        // Generate Element Buffer Object (EBO)
+        glGenBuffers(1, &batch->eboID);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, batch->eboID);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, (long) sizeof(float) * batch->max_batch_size * 6, batch->element_data, GL_STATIC_DRAW);
+
+        // Enable vertex attributes
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertex),nullptr);
+        glEnableVertexAttribArray(0);
+        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * 3));
+        glEnableVertexAttribArray(1);
+        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * 6));
+        glEnableVertexAttribArray(2);
+        glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * 8));
+        glEnableVertexAttribArray(3);
+
+        // Enable alpha blending
+        glEnable(GL_BLEND);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+
     }
 
     /**
@@ -79,9 +104,9 @@ namespace RenderBatch {
      */
     void render(render_batch *batch) {
 
-        // Bind data to buffers
-        glBufferData(GL_ARRAY_BUFFER, (long) sizeof(float) * batch->max_batch_size * 4 * vertex_size, batch->vertex_data, GL_DYNAMIC_DRAW);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, (long) sizeof(float) * batch->max_batch_size * 6, batch->element_data, GL_STATIC_DRAW);
+        // Rebuffer vertex data (do this every frame for now)
+        glBindBuffer(GL_ARRAY_BUFFER, batch->vboID);
+        glBufferSubData(GL_ARRAY_BUFFER,0, (long) sizeof(float) * (batch->max_batch_size) * 4 * 9, batch->vertex_data);
 
         // Upload view and projection matrices to the shader program
         Shader::upload_mat4("view", Camera::get_view());
@@ -97,6 +122,7 @@ namespace RenderBatch {
         }
 
         // Draw elements
+        glBindVertexArray(batch->vaoID);
         glDrawElements(GL_TRIANGLES, 6 * batch->game_object_count, GL_UNSIGNED_INT, nullptr);
     }
 
@@ -157,9 +183,6 @@ namespace RenderBatch {
 
             offset += 9;
         }
-
-        // Rebuffer data
-        glBufferSubData(GL_ARRAY_BUFFER,0, (long) sizeof(float) * (batch->game_object_count + 1) * 4 * 9, batch->vertex_data);
     }
 
     /**
@@ -201,35 +224,5 @@ namespace RenderBatch {
         } else {
             return -1;
         }
-    }
-
-    /**
-     * Generate OpenGL buffers.
-     */
-    void generate_buffers() {
-        // Generate Vertex Array Object (VAO)
-        glGenVertexArrays(1, &vaoID);
-        glBindVertexArray(vaoID);
-
-        // Generate Vertex Buffer Object (VBO)
-        glGenBuffers(1, &vboID);
-        glBindBuffer(GL_ARRAY_BUFFER, vboID);
-
-        // Generate Element Buffer Object (EBO)
-        glGenBuffers(1, &eboID);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, eboID);
-
-        // Enable vertex attributes
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertex),nullptr);
-        glEnableVertexAttribArray(0);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * 3));
-        glEnableVertexAttribArray(1);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * 6));
-        glEnableVertexAttribArray(2);
-        glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * 8));
-        glEnableVertexAttribArray(3);
-
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 }

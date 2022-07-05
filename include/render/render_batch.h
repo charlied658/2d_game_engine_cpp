@@ -5,6 +5,9 @@
 
 #pragma once
 
+#define GL_SILENCE_DEPRECATION
+#include <OpenGL/gl3.h>
+
 #include "core/game_object.h"
 
 namespace RenderBatch {
@@ -18,6 +21,7 @@ namespace RenderBatch {
         int *element_data;
         unsigned int *texture_list;
         int texture_count;
+        GLuint vaoID, vboID, eboID;
     };
 
     void init(render_batch *batch, int max_batch_size);
@@ -32,5 +36,4 @@ namespace RenderBatch {
 
     static int get_texture_slot(render_batch *batch, unsigned int texture_ID);
 
-    void generate_buffers();
 }

@@ -13,6 +13,7 @@
 #include "core/mouse_listener.h"
 #include "core/key_listener.h"
 #include "core/camera.h"
+#include "core/scene.h"
 #include "render/shader.h"
 #include "render/render.h"
 #include <cstdio>
@@ -72,8 +73,8 @@ namespace Window {
         // Make OpenGL context current
         glfwMakeContextCurrent(window);
 
-        // Initialize OpenGL buffers
-        Render::init();
+        // Initialize the scene
+        Scene::init();
 
         // Initialize the camera
         Camera::init();
@@ -101,13 +102,14 @@ namespace Window {
             dt = currentTime - startTime;
             startTime = currentTime;
 
-            //printf("FPS: %f\n", 1/dt);
-
             // Clear the screen
             glClear(GL_COLOR_BUFFER_BIT);
 
             // Set the shader program
             Shader::use_program();
+
+            // Update the scene
+            Scene::update(dt);
 
             // ================ Camera controls
             // Move camera

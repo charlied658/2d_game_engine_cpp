@@ -9,10 +9,8 @@
 
 namespace Render {
 
-    void init();
-
     void render();
 
-    static void add_game_object(GameObject::game_object *obj);
+    void add_game_object(GameObject::game_object *obj);
 
 }

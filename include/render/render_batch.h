@@ -21,10 +21,11 @@ namespace RenderBatch {
         int *element_data;
         unsigned int *texture_list;
         int texture_count;
+        int z_index;
         GLuint vaoID, vboID, eboID;
     };
 
-    void init(render_batch *batch, int max_batch_size);
+    void init(render_batch *batch, int max_batch_size, int z_index);
 
     void render(render_batch *batch);
 

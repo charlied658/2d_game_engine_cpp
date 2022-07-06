@@ -12,6 +12,7 @@ namespace GameObject {
         const char *name;
         float x_pos, y_pos;
         float x_scale, y_scale;
+        int z_index;
         Sprite::sprite sprite;
         bool is_dirty;
     };

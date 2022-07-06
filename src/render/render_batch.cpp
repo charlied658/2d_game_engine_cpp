@@ -55,7 +55,7 @@ namespace RenderBatch {
      * @param batch Render batch reference
      * @param max_batch_size Maximum number of allowed game objects
      */
-    void init(render_batch *batch, int max_batch_size) {
+    void init(render_batch *batch, int max_batch_size, int z_index) {
         batch->max_batch_size = max_batch_size;
         batch->game_object_list = new GameObject::game_object *[max_batch_size];
         batch->game_object_count = 0;
@@ -64,6 +64,7 @@ namespace RenderBatch {
         batch->element_data = new int[batch->max_batch_size * 6];
         batch->texture_list = new unsigned int[8];
         batch->texture_count = 0;
+        batch->z_index = z_index;
 
         // Generate element indices
         generate_element_indices(batch);

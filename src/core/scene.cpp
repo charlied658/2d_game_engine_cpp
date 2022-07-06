@@ -44,12 +44,12 @@ namespace Scene {
         sprite4 = Spritesheet::get_sprite(&spritesheet1, 2);
 
         // Generate game objects
-        obj1 = GameObject::game_object {"obj1", 2.0f, 1.0f, 1.0f, 1.0f, sprite1};
-        obj2 = GameObject::game_object {"obj2", 3.0f, 1.0f, 1.0f, 1.0f, sprite2};
+        obj1 = GameObject::game_object {"obj1", 2.0f, 1.0f, 1.0f, 1.0f, 1, sprite1};
+        obj2 = GameObject::game_object {"obj2", 3.0f, 1.0f, 1.0f, 1.0f, 0, sprite2};
 
         // Add game objects to the scene
-        Scene::add_game_object(&obj2);
         Scene::add_game_object(&obj1);
+        Scene::add_game_object(&obj2);
     }
 
     /**

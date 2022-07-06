@@ -18,7 +18,7 @@ namespace Scene {
     static GameObject::game_object game_objects[1000];
     static int game_object_count = 0;
 
-    static unsigned int textureID1 ,textureID2;
+    static unsigned int textureID1, textureID2;
     static Spritesheet::spritesheet spritesheet1, spritesheet2;
     static Sprite::sprite sprite1, sprite2, sprite3, sprite4;
     static GameObject::game_object obj1, obj2;
@@ -44,8 +44,12 @@ namespace Scene {
         sprite4 = Spritesheet::get_sprite(&spritesheet1, 2);
 
         // Generate game objects
-        obj1 = GameObject::game_object {"obj1", 2.0f, 1.0f, 1.0f, 1.0f, 1, sprite1};
-        obj2 = GameObject::game_object {"obj2", 3.0f, 1.0f, 1.0f, 1.0f, 0, sprite2};
+        GameObject::init(&obj1, "obj1", 2.0f, 1.0f, 1.0f, 1.0f, 1, &sprite1);
+        GameObject::init (&obj2, "obj2", 3.0f, 1.0f, 1.0f, 1.0f, 0, &sprite2);
+
+        GameObject::set_color(&obj1, 1.0f, 1.0f, 1.0f, 0.8f);
+        GameObject::set_color(&obj2, 1.0f, 1.0f, 1.0f, 0.8f);
+
 
         // Add game objects to the scene
         Scene::add_game_object(&obj1);

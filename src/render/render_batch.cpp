@@ -14,10 +14,10 @@
 #include "core/camera.h"
 
 struct vertex {
-    float x, y, z; // Position
-    float r, g, b; // Color
-    float u, v;    // Texture coordinates
-    float t;       // Texture ID
+    float x, y;       // Position
+    float r, g, b, a; // Color
+    float u, v;       // Texture coordinates
+    float t;          // Texture ID
 };
 
 /*
@@ -43,10 +43,14 @@ namespace RenderBatch {
     static int tex_slots[] = {0,1,2,3,4,5,6,7};
 
     // Vertex information
-    static const int position_size = 3;
-    static const int color_size = 3;
+    static const int position_size = 2;
+    static const int color_size = 4;
     static const int tex_coords_size = 2;
     static const int tex_id_size = 1;
+
+    static const int color_offset = position_size;
+    static const int tex_coords_offset = color_offset + color_size;
+    static const int tex_id_offset = tex_coords_offset + tex_coords_size;
 
     static const int vertex_size = position_size + color_size + tex_coords_size + tex_id_size;
 
@@ -84,13 +88,13 @@ namespace RenderBatch {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, (long) sizeof(float) * batch->max_batch_size * 6, batch->element_data, GL_STATIC_DRAW);
 
         // Enable vertex attributes
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(vertex),nullptr);
+        glVertexAttribPointer(0, position_size, GL_FLOAT, GL_FALSE, sizeof(vertex),nullptr);
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * 3));
+        glVertexAttribPointer(1, color_size, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * color_offset));
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * 6));
+        glVertexAttribPointer(2, tex_coords_size, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * tex_coords_offset));
         glEnableVertexAttribArray(2);
-        glVertexAttribPointer(3, 1, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * 8));
+        glVertexAttribPointer(3, tex_id_size, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * tex_id_offset));
         glEnableVertexAttribArray(3);
 
         // Enable alpha blending
@@ -115,7 +119,7 @@ namespace RenderBatch {
 
         // Rebuffer vertex data (do this every frame for now)
         glBindBuffer(GL_ARRAY_BUFFER, batch->vboID);
-        glBufferSubData(GL_ARRAY_BUFFER,0, (long) sizeof(float) * (batch->max_batch_size) * 4 * 9, batch->vertex_data);
+        glBufferSubData(GL_ARRAY_BUFFER,0, (long) sizeof(float) * (batch->game_object_count) * 4 * vertex_size, batch->vertex_data);
 
         // Upload view and projection matrices to the shader program
         Shader::upload_mat4("view", Camera::get_view());
@@ -176,12 +180,12 @@ namespace RenderBatch {
             // Position
             batch->vertex_data[offset + 0] = (xAdd * batch->game_object_list[index]->x_scale) + batch->game_object_list[index]->x_pos;
             batch->vertex_data[offset + 1] = (yAdd * batch->game_object_list[index]->y_scale) + batch->game_object_list[index]->y_pos;
-            batch->vertex_data[offset + 2] = 0.0f;
 
             // Color
-            batch->vertex_data[offset + 3] = 1.0f;
-            batch->vertex_data[offset + 4] = 1.0f;
-            batch->vertex_data[offset + 5] = 1.0f;
+            batch->vertex_data[offset + 2] = batch->game_object_list[index]->r;
+            batch->vertex_data[offset + 3] = batch->game_object_list[index]->g;
+            batch->vertex_data[offset + 4] = batch->game_object_list[index]->b;
+            batch->vertex_data[offset + 5] = batch->game_object_list[index]->a;
 
             // Texture Coordinates
             batch->vertex_data[offset + 6] = (xAdd * batch->game_object_list[index]->sprite.x_tex_scale) + batch->game_object_list[index]->sprite.x_tex0;

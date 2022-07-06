@@ -13,16 +13,11 @@ namespace GameObject {
         float x_pos, y_pos;
         float x_scale, y_scale;
         Sprite::sprite sprite;
+        bool is_dirty;
     };
 
-    struct list {
-        game_object game_objects[1000];
-        int count;
-    };
+    void set_sprite(GameObject::game_object *obj, Sprite::sprite *spr);
 
-    void init();
+    void set_position(GameObject::game_object *obj, float xPos, float yPos);
 
-    void add_game_object(game_object *obj);
-
-    GameObject::list *get_game_object_list();
 }

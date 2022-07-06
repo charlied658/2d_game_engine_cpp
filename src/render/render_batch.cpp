@@ -104,6 +104,14 @@ namespace RenderBatch {
      */
     void render(render_batch *batch) {
 
+        // Check if vertex data needs to be updated
+        for (int i = 0; i < batch->game_object_count; i++) {
+            if (batch->game_object_list[i]->is_dirty) {
+                generate_vertex_data(batch, i);
+                batch->game_object_list[i]->is_dirty = false;
+            }
+        }
+
         // Rebuffer vertex data (do this every frame for now)
         glBindBuffer(GL_ARRAY_BUFFER, batch->vboID);
         glBufferSubData(GL_ARRAY_BUFFER,0, (long) sizeof(float) * (batch->max_batch_size) * 4 * 9, batch->vertex_data);

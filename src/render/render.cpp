@@ -33,7 +33,6 @@ namespace Render {
      * @param obj Game object to be added
      */
     void add_game_object(GameObject::game_object *obj) {
-        GameObject::add_game_object(obj);
         for (int i = 0; i < batch_count; i++) {
             // If there is enough space to add the object and its texture, add it to the first available batch
             if (batches[i].has_room && RenderBatch::contains_texture(&batches[i], obj->sprite.texture_ID)) {

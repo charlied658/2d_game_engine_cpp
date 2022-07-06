@@ -15,9 +15,17 @@
 
 namespace Scene {
 
+    static GameObject::game_object game_objects[1000];
+    static int game_object_count = 0;
+
     static unsigned int textureID1 ,textureID2;
-    Spritesheet::spritesheet spritesheet1, spritesheet2;
-    Sprite::sprite sprite1, sprite2, sprite3, sprite4;
+    static Spritesheet::spritesheet spritesheet1, spritesheet2;
+    static Sprite::sprite sprite1, sprite2, sprite3, sprite4;
+    static GameObject::game_object obj1, obj2;
+
+    static double frameTime = 0.2f;
+    static double frameTimeLeft = 0.0f;
+    static int frame = 0;
 
     /**
      * Initialize the scene.
@@ -25,29 +33,23 @@ namespace Scene {
     void init() {
         // Generate textures
         textureID1 = Texture::get_texture("../assets/images/spritesheet.png")->textureID;
-        textureID2 = Texture::get_texture("../assets/images/turtle.png")->textureID;
 
         // Create spritesheet
         spritesheet1 = Spritesheet::spritesheet {14,2,textureID1};
-        spritesheet2 = Spritesheet::spritesheet {4,1,textureID2};
 
         // Create sprites
-        sprite1 = Spritesheet::get_sprite(&spritesheet1, 0);
+        sprite1 = Spritesheet::get_sprite(&spritesheet1, 3);
         sprite2 = Spritesheet::get_sprite(&spritesheet1, 14);
-        sprite3 = Spritesheet::get_sprite(&spritesheet1, 5);
-        sprite4 = Spritesheet::get_sprite(&spritesheet2, 0);
+        sprite3 = Spritesheet::get_sprite(&spritesheet1, 1);
+        sprite4 = Spritesheet::get_sprite(&spritesheet1, 2);
 
         // Generate game objects
-        GameObject::game_object obj1 {"obj1", 2.0f, 1.0f, 1.0f, 1.0f, sprite1};
-        GameObject::game_object obj2 {"obj2", 3.0f, 1.0f, 1.0f, 1.0f, sprite2};
-        GameObject::game_object obj3 {"obj3", 4.0f, 1.0f, 1.0f, 1.0f, sprite3};
-        GameObject::game_object obj4 {"obj4", 1.0f, 1.0f, 1.0f, 1.5f, sprite4};
+        obj1 = GameObject::game_object {"obj1", 2.0f, 1.0f, 1.0f, 1.0f, sprite1};
+        obj2 = GameObject::game_object {"obj2", 3.0f, 1.0f, 1.0f, 1.0f, sprite2};
 
         // Add game objects to the scene
-        Render::add_game_object(&obj1);
-        Render::add_game_object(&obj2);
-        Render::add_game_object(&obj3);
-        Render::add_game_object(&obj4);
+        Scene::add_game_object(&obj2);
+        Scene::add_game_object(&obj1);
     }
 
     /**
@@ -56,5 +58,34 @@ namespace Scene {
      */
     void update(double dt) {
         //printf("FPS: %f\n", 1/dt);
+
+        // Animate mario
+        frameTimeLeft -= dt;
+        if (frameTimeLeft < 0) {
+            frameTimeLeft = frameTime;
+            frame++;
+            frame %= 3;
+            if (frame == 0) {
+                GameObject::set_sprite(&obj1, &sprite1);
+            } else if (frame == 1) {
+                GameObject::set_sprite(&obj1, &sprite3);
+            } else if (frame == 2) {
+                GameObject::set_sprite(&obj1, &sprite4);
+            }
+        }
+
+        // Move mario
+        GameObject::set_position(&obj1, obj1.x_pos + (float) dt * 0.2f, obj1.y_pos);
+
+    }
+
+    /**
+     * Add a game object to the scene.
+     * @param obj Game object reference
+     */
+    void add_game_object(GameObject::game_object *obj) {
+        game_objects[game_object_count] = *obj;
+        game_object_count++;
+        Render::add_game_object(obj);
     }
 }

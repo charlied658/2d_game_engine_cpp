@@ -5,10 +5,14 @@
 
 #pragma once
 
+#include "core/game_object.h"
+
 namespace Scene {
 
     void init();
 
     void update(double dt);
+
+    void add_game_object(GameObject::game_object *obj);
 
 }

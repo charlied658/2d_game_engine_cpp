@@ -5,7 +5,7 @@
 
 #include "render/texture.h"
 
-#include "lib/stb_image.h"
+#include "lib/stb/stb_image.h"
 #define GL_SILENCE_DEPRECATION
 #include <OpenGL/gl3.h>
 
@@ -35,7 +35,7 @@ namespace Texture {
                 match_texture = false;
             }
             if (match_texture) {
-                printf("Loaded texture '%s'\n", filepath);
+                //printf("Loaded texture '%s'\n", filepath);
                 return &texture_list[i];
             }
         }
@@ -43,7 +43,7 @@ namespace Texture {
         texture_list[texture_count] = texture {};
         texture_list[texture_count].filepath = filepath;
         texture_list[texture_count].textureID = create_texture(filepath);
-        printf("Created texture '%s'\n", filepath);
+        //printf("Created texture '%s'\n", filepath);
         texture *to_return = &texture_list[texture_count];
         texture_count++;
         return to_return;

@@ -6,7 +6,8 @@ set(CMAKE_CXX_STANDARD 14)
 include_directories(gameEngine include)
 
 file(GLOB SOURCES "src/*/*.cpp")
-add_executable(gameEngine ${SOURCES} src/main.cpp)
+file(GLOB LIB "src/lib/*/*.cpp")
+add_executable(gameEngine ${SOURCES} ${LIB} src/main.cpp)
 
 #GLFW
 find_package(glfw3 3.3 REQUIRED)

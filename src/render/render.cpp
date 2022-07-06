@@ -42,7 +42,7 @@ namespace Render {
             }
         }
         // If no batch has space for the game object or if there are no available texture slots, or if there is a new z-index, create a new batch
-        printf("Created new batch with z-index %d\n", obj->z_index);
+        //printf("Created new batch with z-index %d\n", obj->z_index);
         RenderBatch::render_batch batch {};
         RenderBatch::init(&batch, max_batch_size, obj->z_index);
         batches[batch_count] = batch;

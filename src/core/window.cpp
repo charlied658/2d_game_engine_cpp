@@ -10,6 +10,10 @@
 #define GL_SILENCE_DEPRECATION
 #include <OpenGL/gl3.h>
 
+#include "lib/imgui/imgui.h"
+#include "lib/imgui/imgui_impl_glfw.h"
+#include "lib/imgui/imgui_impl_opengl3.h"
+
 #include "core/mouse_listener.h"
 #include "core/key_listener.h"
 #include "core/camera.h"
@@ -25,8 +29,8 @@ static void error_callback(int error, const char* description) {
 namespace Window {
 
     static GLFWwindow* window;
-    static const int default_width = 800;
-    static const int default_height = 400;
+    static const int default_width = 1280;
+    static const int default_height = 720;
     static const char *title = "Game Engine";
     static float aspect_ratio = (float) default_width / (float) default_height;
 
@@ -73,6 +77,9 @@ namespace Window {
         // Make OpenGL context current
         glfwMakeContextCurrent(window);
 
+        // Maximize the window;
+        glfwMaximizeWindow(window);
+
         // Initialize the scene
         Scene::init();
 
@@ -81,6 +88,12 @@ namespace Window {
 
         // Create and compile the shader program
         Shader::create_program();
+
+        // Create ImGui context
+        ImGui::CreateContext();
+
+        ImGui_ImplGlfw_InitForOpenGL(window, true);
+        ImGui_ImplOpenGL3_Init(nullptr);
 
         return 0;
     }
@@ -96,6 +109,16 @@ namespace Window {
 
         // Main loop
         while(!glfwWindowShouldClose(window)) {
+
+            // Setup ImGui
+            ImGui_ImplOpenGL3_NewFrame();
+            ImGui_ImplGlfw_NewFrame();
+            ImGui::NewFrame();
+
+            // Show ImGui Demo Window
+            ImGui::ShowDemoWindow();
+
+            ImGui::Render();
 
             // Update dt (delta time)
             currentTime = glfwGetTime();
@@ -142,6 +165,9 @@ namespace Window {
 
             // Draw elements to the screen
             Render::render();
+
+            // Render ImGui elements
+            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
             // Swap buffers and poll events
             glfwSwapBuffers(window);

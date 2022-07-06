@@ -35,12 +35,13 @@ namespace Render {
     void add_game_object(GameObject::game_object *obj) {
         GameObject::add_game_object(obj);
         for (int i = 0; i < batch_count; i++) {
-            if (batches[i].has_room) {
+            // If there is enough space to add the object and its texture, add it to the first available batch
+            if (batches[i].has_room && RenderBatch::contains_texture(&batches[i], obj->textureID)) {
                 RenderBatch::add_game_object(&batches[i], obj);
                 return;
             }
         }
-        // If no batch has space for the game object, create a new batch
+        // If no batch has space for the game object or if there are no available texture slots, create a new batch
         RenderBatch::render_batch batch {};
         RenderBatch::init(&batch, max_batch_size);
         batches[batch_count] = batch;

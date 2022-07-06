@@ -225,4 +225,22 @@ namespace RenderBatch {
             return -1;
         }
     }
+
+    /**
+     * Check if a batch contains a texture or if it has texture room.
+     * @param batch Render batch reference
+     * @param texture_ID Texture ID
+     * @return True if the batch contains a texture or if it has space to add a new texture
+     */
+    bool contains_texture(render_batch *batch, unsigned int texture_ID) {
+        if (batch->texture_count < 8) {
+            return true;
+        }
+        for (int i = 0; i < batch->texture_count; i++) {
+            if (texture_ID == batch->texture_list[i]) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

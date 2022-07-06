@@ -36,4 +36,6 @@ namespace RenderBatch {
 
     static int get_texture_slot(render_batch *batch, unsigned int texture_ID);
 
+    bool contains_texture(render_batch *batch, unsigned int texture_ID);
+
 }

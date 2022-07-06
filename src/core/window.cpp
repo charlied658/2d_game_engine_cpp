@@ -92,7 +92,7 @@ namespace Window {
         double startTime = glfwGetTime();
         double currentTime, dt;
 
-        glClearColor(1.0f,1.0f,1.0f,1.0f);
+        glClearColor(0.9f,0.9f,0.9f,1.0f);
 
         // Main loop
         while(!glfwWindowShouldClose(window)) {

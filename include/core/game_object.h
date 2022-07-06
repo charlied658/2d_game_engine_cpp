@@ -5,12 +5,14 @@
 
 #pragma once
 
+#include "core/sprite.h"
+
 namespace GameObject {
     struct game_object {
         const char *name;
         float x_pos, y_pos;
         float x_scale, y_scale;
-        unsigned int textureID;
+        Sprite::sprite sprite;
     };
 
     struct list {

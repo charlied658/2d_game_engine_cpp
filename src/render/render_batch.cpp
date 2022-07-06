@@ -175,11 +175,11 @@ namespace RenderBatch {
             batch->vertex_data[offset + 5] = 1.0f;
 
             // Texture Coordinates
-            batch->vertex_data[offset + 6] = xAdd;
-            batch->vertex_data[offset + 7] = yAdd;
+            batch->vertex_data[offset + 6] = (xAdd * batch->game_object_list[index]->sprite.x_tex_scale) + batch->game_object_list[index]->sprite.x_tex0;
+            batch->vertex_data[offset + 7] = (yAdd * batch->game_object_list[index]->sprite.y_tex_scale) + batch->game_object_list[index]->sprite.y_tex0;
 
             // Texture ID
-            batch->vertex_data[offset + 8] = (float) get_texture_slot(batch, batch->game_object_list[index]->textureID);
+            batch->vertex_data[offset + 8] = (float) get_texture_slot(batch, batch->game_object_list[index]->sprite.texture_ID);
 
             offset += 9;
         }

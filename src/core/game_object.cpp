@@ -12,26 +12,21 @@ namespace GameObject {
      * Initialize a game object
      * @param obj Game object reference
      * @param name Name
-     * @param x_pos X position
-     * @param y_pos Y position
-     * @param x_scale X scale
-     * @param y_scale Y scale
+     * @param position Position
+     * @param scale Scale
      * @param z_index Z-index
      * @param sprite Sprite reference
      */
-    void init(GameObject::game_object *obj, const char *name, float x_pos, float y_pos, float x_scale, float y_scale, int z_index, Sprite::sprite *sprite) {
+    void init(GameObject::game_object *obj, const char *name, glm::vec2 position, glm::vec2 scale, int z_index, Sprite::sprite *sprite) {
         obj->name = name;
-        obj->x_pos = x_pos;
-        obj->y_pos = y_pos;
-        obj->x_scale = x_scale;
-        obj->y_scale = y_scale;
+        obj->position = position;
+        obj->scale = scale;
         obj->z_index = z_index;
         obj->sprite = *sprite;
         obj->is_dirty = false;
-        obj->r = 1.0f;
-        obj->g = 1.0f;
-        obj->b = 1.0f;
-        obj->a = 1.0f;
+        obj->color = glm::vec4 {1.0f, 1.0f, 1.0f, 1.0f};
+        obj->out_color = glm::vec4 {1.0f, 1.0f, 1.0f, 1.0f};
+        obj->selected = false;
     }
 
     /**
@@ -47,12 +42,10 @@ namespace GameObject {
     /**
      * Set position of a game object
      * @param obj Game object reference
-     * @param xPos X position
-     * @param yPos Y position
+     * @param position Position
      */
-    void set_position(GameObject::game_object *obj, float xPos, float yPos) {
-        obj->x_pos = xPos;
-        obj->y_pos = yPos;
+    void set_position(GameObject::game_object *obj, glm::vec2 position) {
+        obj->position = position;
         obj->is_dirty = true;
     }
 
@@ -64,11 +57,37 @@ namespace GameObject {
      * @param b Blue value
      * @param a Alpha value
      */
-    void set_color(GameObject::game_object *obj, float r, float g, float b, float a) {
-        obj->r = r;
-        obj->g = g;
-        obj->b = b;
-        obj->a = a;
+    void set_color(GameObject::game_object *obj, glm::vec4 color) {
+        obj->color = color;
+        update_color(obj);
+    }
+
+    /**
+     * Set a game object to be selected or not
+     * @param obj Game object reference
+     * @param selected Set whether the object is selected
+     */
+    void set_selected(GameObject::game_object *obj, bool selected) {
+        if (obj->selected == selected) {
+            return;
+        }
+        obj->selected = selected;
+        update_color(obj);
+    }
+
+    /**
+     * Update the output color of a game object
+     * @param obj Game object reference
+     */
+    void update_color(GameObject::game_object *obj) {
+        obj->out_color.x = obj->color.x;
+        obj->out_color.y = obj->color.y;
+        obj->out_color.z = obj->color.z;
+        if (obj->selected) {
+            obj->out_color.w = obj->color.w * 0.8f;
+        } else {
+            obj->out_color.w = obj->color.w;
+        }
         obj->is_dirty = true;
     }
 }

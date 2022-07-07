@@ -10,14 +10,11 @@
 #define GL_SILENCE_DEPRECATION
 #include <OpenGL/gl3.h>
 
-#include "lib/imgui/imgui.h"
-#include "lib/imgui/imgui_impl_glfw.h"
-#include "lib/imgui/imgui_impl_opengl3.h"
-
 #include "core/mouse_listener.h"
 #include "core/key_listener.h"
 #include "core/camera.h"
 #include "core/scene.h"
+#include "core/imgui_layer.h"
 #include "render/shader.h"
 #include "render/render.h"
 #include <cstdio>
@@ -28,15 +25,16 @@ static void error_callback(int error, const char* description) {
 
 namespace Window {
 
-    static GLFWwindow* window;
+    static GLFWwindow *window;
     static const int default_width = 1280;
     static const int default_height = 720;
     static const char *title = "Game Engine";
-    static float aspect_ratio = (float) default_width / (float) default_height;
+    static int width, height;
 
     void window_size_callback(GLFWwindow* window_ptr, int w, int h)
     {
-        aspect_ratio = (float) w / (float) h;
+        width = w;
+        height = h;
     }
 
     /**
@@ -74,26 +72,17 @@ namespace Window {
         glfwSetScrollCallback(window, Mouse::scroll_callback);
         glfwSetKeyCallback(window, Key::key_callback);
 
-        // Make OpenGL context current
-        glfwMakeContextCurrent(window);
-
         // Maximize the window;
         glfwMaximizeWindow(window);
 
-        // Initialize the scene
+        // Make OpenGL context current
+        glfwMakeContextCurrent(window);
+
+        // Initialize scene
         Scene::init();
-
-        // Initialize the camera
         Camera::init();
-
-        // Create and compile the shader program
         Shader::create_program();
-
-        // Create ImGui context
-        ImGui::CreateContext();
-
-        ImGui_ImplGlfw_InitForOpenGL(window, true);
-        ImGui_ImplOpenGL3_Init(nullptr);
+        ImGuiLayer::init(window);
 
         return 0;
     }
@@ -105,69 +94,32 @@ namespace Window {
         double startTime = glfwGetTime();
         double currentTime, dt;
 
+        // Set the clear color
         glClearColor(0.9f,0.9f,0.9f,1.0f);
 
         // Main loop
         while(!glfwWindowShouldClose(window)) {
-
-            // Setup ImGui
-            ImGui_ImplOpenGL3_NewFrame();
-            ImGui_ImplGlfw_NewFrame();
-            ImGui::NewFrame();
-
-            // Show ImGui Demo Window
-            ImGui::ShowDemoWindow();
-
-            ImGui::Render();
 
             // Update dt (delta time)
             currentTime = glfwGetTime();
             dt = currentTime - startTime;
             startTime = currentTime;
 
-            // Clear the screen
-            glClear(GL_COLOR_BUFFER_BIT);
-
-            // Set the shader program
-            Shader::use_program();
+            // Print the FPS (Frames per second)
+            //printf("FPS: %f\n", 1/dt);
 
             // Update the scene
             Scene::update(dt);
 
-            // ================ Camera controls
-            // Move camera
-            if (Key::get_key_pressed(GLFW_KEY_LEFT) && !Key::get_key_pressed(GLFW_KEY_RIGHT)) {
-                Camera::move_camera(glm::vec2 (dt * 1.5, 0));
-            }
-            if (Key::get_key_pressed(GLFW_KEY_RIGHT) && !Key::get_key_pressed(GLFW_KEY_LEFT)) {
-                Camera::move_camera(glm::vec2 (-dt * 1.5, 0));
-            }
-            if (Key::get_key_pressed(GLFW_KEY_UP) && !Key::get_key_pressed(GLFW_KEY_DOWN)) {
-                Camera::move_camera(glm::vec2 (0, -dt * 1.5));
-            }
-            if (Key::get_key_pressed(GLFW_KEY_DOWN) && !Key::get_key_pressed(GLFW_KEY_UP)) {
-                Camera::move_camera(glm::vec2 (0, dt * 1.5));
-            }
+            // Clear the screen
+            glClear(GL_COLOR_BUFFER_BIT);
 
-            // Zoom in/out
-            if (Key::get_key_pressed(GLFW_KEY_W) && !Key::get_key_pressed(GLFW_KEY_S)) {
-                Camera::scale_camera(1.01f);
-            }
-            if (Key::get_key_pressed(GLFW_KEY_S) && !Key::get_key_pressed(GLFW_KEY_W)) {
-                Camera::scale_camera(1/1.01f);
-            }
-
-            // Reset camera
-            if (Key::get_key_begin_press(GLFW_KEY_SPACE)) {
-                Camera::init();
-            }
-            // =============================
-
-            // Draw elements to the screen
+            // Draw sprites to the screen
+            Shader::use_program();
             Render::render();
 
             // Render ImGui elements
-            ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+            ImGuiLayer::render();
 
             // Swap buffers and poll events
             glfwSwapBuffers(window);
@@ -178,7 +130,11 @@ namespace Window {
         glfwTerminate();
     }
 
-    float get_aspect_ratio() {
-        return aspect_ratio;
+    int get_width() {
+        return width;
+    }
+
+    int get_height() {
+        return height;
     }
 }

@@ -3,15 +3,18 @@
  * Created on 7/5/22.
  */
 
+#include <cstdio>
 #include "core/scene.h"
+
+#include "lib/imgui/imgui.h"
 
 #include "render/texture.h"
 #include "render/render.h"
 #include "core/game_object.h"
 #include "core/sprite.h"
 #include "core/spritesheet.h"
-
-#include <cstdio>
+#include "core/camera.h"
+#include "core/mouse_listener.h"
 
 namespace Scene {
 
@@ -23,9 +26,7 @@ namespace Scene {
     static Sprite::sprite sprite1, sprite2, sprite3, sprite4;
     static GameObject::game_object obj1, obj2;
 
-    static double frameTime = 0.2f;
-    static double frameTimeLeft = 0.0f;
-    static int frame = 0;
+    static float color[4] = {1.0f, 1.0f, 1.0f, 1.0f};
 
     /**
      * Initialize the scene.
@@ -42,8 +43,8 @@ namespace Scene {
         sprite2 = Spritesheet::get_sprite(&spritesheet1, 14);
 
         // Generate game objects
-        GameObject::init(&obj1, "obj1", 2.0f, 1.0f, 1.0f, 1.0f, 1, &sprite1);
-        GameObject::init (&obj2, "obj2", 3.0f, 1.0f, 1.0f, 1.0f, 0, &sprite2);
+        GameObject::init(&obj1, "obj1", glm::vec2 {2.0f, 1.0f}, glm::vec2 {1.0f, 1.0f}, 1, &sprite1);
+        GameObject::init (&obj2, "obj2", glm::vec2 {3.0f, 1.0f}, glm::vec2 {1.0f, 1.0f}, 0, &sprite2);
 
         // Add game objects to the scene
         Scene::add_game_object(&obj1);
@@ -56,7 +57,23 @@ namespace Scene {
      * @param dt Delta time
      */
     void update(double dt) {
-        //printf("FPS: %f\n", 1/dt);
+        // Camera controls
+        Camera::update(dt);
+
+        // Update color of active game object
+        GameObject::set_color(&obj1, glm::vec4{color[0], color[1], color[2], color[3]});
+
+        // Select a game object based on the mouse position
+        Render::select_game_object();
+    }
+
+    /**
+     * Update scene ImGui.
+     */
+    void imgui() {
+        ImGui::Begin("Test window");
+        ImGui::ColorPicker4("Color Picker", color);
+        ImGui::End();
     }
 
     /**

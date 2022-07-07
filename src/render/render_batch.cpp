@@ -178,18 +178,18 @@ namespace RenderBatch {
 
             // ============== Upload vertex information
             // Position
-            batch->vertex_data[offset + 0] = (xAdd * batch->game_object_list[index]->x_scale) + batch->game_object_list[index]->x_pos;
-            batch->vertex_data[offset + 1] = (yAdd * batch->game_object_list[index]->y_scale) + batch->game_object_list[index]->y_pos;
+            batch->vertex_data[offset + 0] = (xAdd * batch->game_object_list[index]->scale.x) + batch->game_object_list[index]->position.x;
+            batch->vertex_data[offset + 1] = (yAdd * batch->game_object_list[index]->scale.y) + batch->game_object_list[index]->position.y;
 
             // Color
-            batch->vertex_data[offset + 2] = batch->game_object_list[index]->r;
-            batch->vertex_data[offset + 3] = batch->game_object_list[index]->g;
-            batch->vertex_data[offset + 4] = batch->game_object_list[index]->b;
-            batch->vertex_data[offset + 5] = batch->game_object_list[index]->a;
+            batch->vertex_data[offset + 2] = batch->game_object_list[index]->out_color.x;
+            batch->vertex_data[offset + 3] = batch->game_object_list[index]->out_color.y;
+            batch->vertex_data[offset + 4] = batch->game_object_list[index]->out_color.z;
+            batch->vertex_data[offset + 5] = batch->game_object_list[index]->out_color.w;
 
             // Texture Coordinates
-            batch->vertex_data[offset + 6] = (xAdd * batch->game_object_list[index]->sprite.x_tex_scale) + batch->game_object_list[index]->sprite.x_tex0;
-            batch->vertex_data[offset + 7] = (yAdd * batch->game_object_list[index]->sprite.y_tex_scale) + batch->game_object_list[index]->sprite.y_tex0;
+            batch->vertex_data[offset + 6] = (xAdd * batch->game_object_list[index]->sprite.tex_scale.x) + batch->game_object_list[index]->sprite.tex_coords.x;
+            batch->vertex_data[offset + 7] = (yAdd * batch->game_object_list[index]->sprite.tex_scale.y) + batch->game_object_list[index]->sprite.tex_coords.y;
 
             // Texture ID
             batch->vertex_data[offset + 8] = (float) get_texture_slot(batch, batch->game_object_list[index]->sprite.texture_ID);

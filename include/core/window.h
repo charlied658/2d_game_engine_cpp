@@ -11,5 +11,8 @@ namespace Window {
 
     void loop();
 
-    float get_aspect_ratio();
+    int get_width();
+
+    int get_height();
+
 }

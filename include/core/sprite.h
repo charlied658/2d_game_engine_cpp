@@ -5,10 +5,12 @@
 
 #pragma once
 
+#include <glm/glm.hpp>
+
 namespace Sprite {
     struct sprite {
         unsigned int texture_ID;
-        float x_tex0, y_tex0;
-        float x_tex_scale, y_tex_scale;
+        glm::vec2 tex_coords;
+        glm::vec2 tex_scale;
     };
 }

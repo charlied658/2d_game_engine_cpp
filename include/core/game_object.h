@@ -5,25 +5,33 @@
 
 #pragma once
 
+#include <glm/glm.hpp>
+
 #include "core/sprite.h"
 
 namespace GameObject {
     struct game_object {
         const char *name;
-        float x_pos, y_pos;
-        float x_scale, y_scale;
+        glm::vec2 position;
+        glm::vec2 scale;
         int z_index;
         Sprite::sprite sprite;
         bool is_dirty;
-        float r,g,b,a;
+        glm::vec4 color;
+        glm::vec4 out_color;
+        bool selected;
     };
 
-    void init(GameObject::game_object *obj, const char *name, float x_pos, float y_pos, float x_scale, float y_scale, int z_index, Sprite::sprite *sprite);
+    void init(GameObject::game_object *obj, const char *name, glm::vec2 position, glm::vec2 scale, int z_index, Sprite::sprite *sprite);
 
     void set_sprite(GameObject::game_object *obj, Sprite::sprite *spr);
 
-    void set_position(GameObject::game_object *obj, float xPos, float yPos);
+    void set_position(GameObject::game_object *obj, glm::vec2 position);
 
-    void set_color(GameObject::game_object *obj, float r, float g, float b, float a);
+    void set_color(GameObject::game_object *obj, glm::vec4 color);
+
+    void set_selected(GameObject::game_object *obj, bool selected);
+
+    void update_color(GameObject::game_object *obj);
 
 }

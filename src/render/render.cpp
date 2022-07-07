@@ -9,6 +9,7 @@
 
 #include "core/game_object.h"
 #include "render/render_batch.h"
+#include "core/mouse_listener.h"
 
 using namespace std;
 
@@ -58,6 +59,32 @@ namespace Render {
                     temp = sorted_batches[j];
                     sorted_batches[j] = sorted_batches[j + 1];
                     sorted_batches[j + 1] = temp;
+                }
+            }
+        }
+    }
+
+    /**
+     * Select a game object according to the mouse position.
+     */
+    void select_game_object() {
+        Mouse::calculate_world_coords();
+        double xPos = Mouse::get_worldX();
+        double yPos = Mouse::get_worldY();
+        bool found_selected = false;
+
+        // Loop through each batch, starting at the highest z-index
+        for (int i = batch_count - 1; i >= 0; i--) {
+            // Loop through the game objects, starting with the most recently rendered
+            for (int j = sorted_batches[i]->game_object_count - 1; j >= 0; j--) {
+                // Check if the mouse position is within the object's bounding box
+                GameObject::game_object *obj = sorted_batches[i]->game_object_list[j];
+                if (!found_selected && xPos > obj->position.x && xPos < obj->position.x + obj->scale.x
+                    && yPos > obj->position.y && yPos < obj->position.y + obj->scale.y) {
+                    GameObject::set_selected(obj, true);
+                    found_selected = true;
+                } else {
+                    GameObject::set_selected(obj, false);
                 }
             }
         }

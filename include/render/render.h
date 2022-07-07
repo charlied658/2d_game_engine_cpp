@@ -13,4 +13,6 @@ namespace Render {
 
     void add_game_object(GameObject::game_object *obj);
 
+    void select_game_object();
+
 }

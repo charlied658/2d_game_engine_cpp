@@ -7,11 +7,11 @@ Tools this project is built on:
 - [X] [GLFW](https://www.glfw.org/) - Window handling
 - [X] [OpenGL](https://www.opengl.org/) - Graphics rendering
 - [X] [STB](https://github.com/nothings/stb) - Image loading
-- [ ] [Dear ImGui](https://github.com/ocornut/imgui) - User Interface
+- [X] [Dear ImGui](https://github.com/ocornut/imgui) - User Interface
 - [ ] [Box2D](https://box2d.org/) - Physics
 
 ## Running
-I am running MacOS and using the CLion IDE. 
+I am running macOS and using the CLion IDE. 
 You should be able to compile and run this project by 
 running `cmake` using `CMakeLists.txt`
 

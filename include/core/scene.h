@@ -13,6 +13,8 @@ namespace Scene {
 
     void update(double dt);
 
+    void imgui();
+
     void add_game_object(GameObject::game_object *obj);
 
 }

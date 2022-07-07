@@ -3,20 +3,12 @@
  * Created on 6/27/22.
  */
 
-#define GL_SILENCE_DEPRECATION
-#include <OpenGL/gl3.h>
+#include "render/shader.h"
 
-#include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>
 #include <cstdio>
 
-#include "render/shader.h"
 #include "util/properties.h"
-
-#include <regex>
-#include <filesystem>
-#include <iostream>
-#include <fstream>
 
 using std::cout; using std::cerr;
 using std::endl; using std::string;

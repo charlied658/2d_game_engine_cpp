@@ -6,9 +6,8 @@
 #include "render/texture.h"
 #include "util/properties.h"
 
-#include "lib/stb/stb_image.h"
-#define GL_SILENCE_DEPRECATION
-#include <OpenGL/gl3.h>
+#include <stb/stb_image.h>
+#include <glad/glad.h>
 
 #include <string>
 

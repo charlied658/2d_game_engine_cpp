@@ -5,7 +5,8 @@
 
 #pragma once
 
-#include <glm/glm.hpp>
+#include <glm/vec2.hpp> // glm::vec2
+#include <glm/vec4.hpp> // glm::vec4
 
 #include "core/sprite.h"
 

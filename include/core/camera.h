@@ -6,7 +6,9 @@
 #pragma once
 
 #include <GLFW/glfw3.h>
-#include <glm/glm.hpp>
+
+#include <glm/vec2.hpp> // glm::vec2
+#include <glm/mat4x4.hpp> // glm::mat4
 
 #include "core/key_listener.h"
 

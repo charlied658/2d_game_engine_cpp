@@ -6,8 +6,6 @@
 #include <GLFW/glfw3.h>
 #include "core/mouse_listener.h"
 
-#include <glm/glm.hpp>
-
 #include "core/window.h"
 #include "core/camera.h"
 

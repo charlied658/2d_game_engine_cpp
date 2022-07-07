@@ -5,8 +5,7 @@
 
 #pragma once
 
-#define GL_SILENCE_DEPRECATION
-#include <OpenGL/gl3.h>
+#include <glad/glad.h>
 
 #include "core/game_object.h"
 

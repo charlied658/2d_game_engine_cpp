@@ -5,10 +5,8 @@
 
 #include "core/window.h"
 
-#define GLFW_INCLUDE_NONE
+#include <glad/glad.h>
 #include <GLFW/glfw3.h>
-#define GL_SILENCE_DEPRECATION
-#include <OpenGL/gl3.h>
 
 #include "core/mouse_listener.h"
 #include "core/key_listener.h"
@@ -75,8 +73,13 @@ namespace Window {
         // Maximize the window;
         glfwMaximizeWindow(window);
 
-        // Make OpenGL context current
+        // Load OpenGL with GLAD
         glfwMakeContextCurrent(window);
+        if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
+            printf("Failed to initialize OpenGL context");
+            return -1;
+        }
+        glfwSwapInterval(1);
 
         // Initialize scene
         Scene::init();

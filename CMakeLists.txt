@@ -4,15 +4,16 @@ project(gameEngine)
 set(CMAKE_CXX_STANDARD 14)
 
 include_directories(gameEngine include)
+include_directories(gameEngine include/lib)
 
 file(GLOB SOURCES "src/*/*.cpp")
-file(GLOB LIB "src/lib/*/*.cpp")
+file(GLOB LIB "src/lib/*/*.cpp" "src/lib/*/*.c")
 add_executable(gameEngine ${SOURCES} ${LIB} src/main.cpp)
 
-#GLFW
-find_package(glfw3 3.3 REQUIRED)
-target_link_libraries(gameEngine glfw)
+# GLFW
+add_subdirectory(glfw)
+include_directories(glfw/include)
+target_link_libraries(gameEngine glfw ${GLFW_LIBRARIES})
 
-#OpenGL
-find_package(OpenGL REQUIRED)
-target_link_libraries(gameEngine OpenGL::GL)
+# GLM
+include_directories(glm)

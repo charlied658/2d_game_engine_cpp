@@ -5,7 +5,14 @@
 
 #pragma once
 
-#include <glm/glm.hpp>
+#include <glad/glad.h>
+
+#include <glm/mat4x4.hpp> // glm::mat4
+
+#include <regex>
+#include <filesystem>
+#include <iostream>
+#include <fstream>
 
 namespace Shader {
     void create_program();

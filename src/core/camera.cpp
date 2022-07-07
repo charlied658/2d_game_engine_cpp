@@ -5,7 +5,6 @@
 
 #include "core/camera.h"
 
-#include <glm/glm.hpp> // glm::vec2, glm::mat4
 #include <glm/gtc/matrix_transform.hpp> // glm::transform, glm::ortho
 
 namespace Camera {

@@ -10,9 +10,17 @@ file(GLOB LIB "src/lib/*/*.cpp")
 add_executable(gameEngine ${SOURCES} ${LIB} src/main.cpp)
 
 #GLFW
-find_package(glfw3 3.3 REQUIRED)
+set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+
+add_subdirectory(glfw)
 target_link_libraries(gameEngine glfw)
 
-#OpenGL
-find_package(OpenGL REQUIRED)
-target_link_libraries(gameEngine OpenGL::GL)
+#GLAD
+add_subdirectory(glad)
+target_link_libraries(gameEngine glad)
+
+#GLM
+add_subdirectory(glm)
+target_link_libraries(gameEngine glm)

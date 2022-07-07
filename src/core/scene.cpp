@@ -32,7 +32,7 @@ namespace Scene {
      */
     void init() {
         // Generate textures
-        textureID1 = Texture::get_texture("../assets/images/spritesheet.png")->textureID;
+        textureID1 = Texture::get_texture("../../../assets/images/spritesheet.png")->textureID;
 
         // Create spritesheet
         spritesheet1 = Spritesheet::spritesheet {14,2,textureID1};

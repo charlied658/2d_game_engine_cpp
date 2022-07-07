@@ -5,10 +5,8 @@
 
 #include "core/window.h"
 
-#define GLFW_INCLUDE_NONE
+#include <glad/gl.h>
 #include <GLFW/glfw3.h>
-#define GL_SILENCE_DEPRECATION
-#include <OpenGL/gl3.h>
 
 #include "lib/imgui/imgui.h"
 #include "lib/imgui/imgui_impl_glfw.h"

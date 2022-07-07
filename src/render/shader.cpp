@@ -3,8 +3,8 @@
  * Created on 6/27/22.
  */
 
-#define GL_SILENCE_DEPRECATION
-#include <OpenGL/gl3.h>
+#include <glad/gl.h>
+#include <GLFW/glfw3.h>
 
 #include <glm/glm.hpp>
 #include <glm/gtc/type_ptr.hpp>

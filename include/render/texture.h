@@ -5,14 +5,18 @@
 
 #pragma once
 
+#include <string>
+
+using namespace std;
+
 namespace Texture {
 
     struct texture {
         unsigned int textureID;
-        const char* filepath;
+        string filepath;
     };
 
-    texture *get_texture(const char *filepath);
+    texture *get_texture(const string& filepath);
 
-    static unsigned int create_texture(const char *filepath);
+    static unsigned int create_texture(const string& filepath);
 }

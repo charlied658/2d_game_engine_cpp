@@ -11,6 +11,7 @@
 #include <cstdio>
 
 #include "render/shader.h"
+#include "util/properties.h"
 
 #include <regex>
 #include <filesystem>
@@ -37,12 +38,13 @@ namespace Shader {
         GLchar description[1000];
 
         // Read shader source file
-        string path = "../assets/shaders/default.glsl";
+        string path = "assets/shaders/default.glsl";
+        string absolute_path = PROJECT_PATH + path;
         ifstream input_file;
-        input_file.open(path);
+        input_file.open(absolute_path);
         if (!input_file.is_open()) {
             cerr << "Could not open the file - '"
-                 << path << "'" << endl;
+                 << absolute_path << "'" << endl;
             exit(EXIT_FAILURE);
         }
         string shader_source = string((std::istreambuf_iterator<char>(input_file)), std::istreambuf_iterator<char>());

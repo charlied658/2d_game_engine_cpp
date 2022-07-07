@@ -11,6 +11,16 @@ Tools this project is built on:
 - [ ] [Box2D](https://box2d.org/) - Physics
 
 ## Running
+After cloning this repository, navigate to `include/util/properties.h.example`.
+Replace the `PROJECT_PATH` identifier with the absolute path of this project on your machine,
+then remove the `.example` extension.
+Example: `/Users/projects/.../gameEngine/`.
+This allows the engine to access resources within the `assets` folder, like textures.
+- You may also replace it with a relative path if you know where the executable
+is generated within the project.
+- Example: With CLion you can set it to `../`, with Visual Studio 
+you can set it to `../../../`
+
 I am running macOS and using the CLion IDE. 
 You should be able to compile and run this project by 
 running `cmake` using `CMakeLists.txt`

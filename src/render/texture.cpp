@@ -4,10 +4,15 @@
  */
 
 #include "render/texture.h"
+#include "util/properties.h"
 
 #include "lib/stb/stb_image.h"
 #define GL_SILENCE_DEPRECATION
 #include <OpenGL/gl3.h>
+
+#include <string>
+
+using namespace std;
 
 namespace Texture {
 
@@ -19,31 +24,18 @@ namespace Texture {
      * @param filepath Filepath of texture
      * @return Texture
      */
-    texture *get_texture(const char *filepath) {
+    texture *get_texture(const string& filepath) {
+        string absolute_filepath = PROJECT_PATH + filepath;
         for (int i = 0; i < texture_count; i++) {
-            const char *texture_filepath = texture_list[i].filepath;
-            int char_pointer = 0;
-            bool match_texture = true;
-            while (texture_filepath[char_pointer] != '\0' && filepath[char_pointer] != '\0') {
-                if (texture_filepath[char_pointer] != filepath[char_pointer]) {
-                    match_texture = false;
-                    break;
-                }
-                char_pointer++;
-            }
-            if (texture_filepath[char_pointer] != '\0' || filepath[char_pointer] != '\0') {
-                match_texture = false;
-            }
-            if (match_texture) {
-                //printf("Loaded texture '%s'\n", filepath);
+            if (texture_list[i].filepath == absolute_filepath) {
                 return &texture_list[i];
             }
         }
         // If no match is found, create a texture and add it to the texture list.
         texture_list[texture_count] = texture {};
         texture_list[texture_count].filepath = filepath;
-        texture_list[texture_count].textureID = create_texture(filepath);
-        //printf("Created texture '%s'\n", filepath);
+        texture_list[texture_count].textureID = create_texture(absolute_filepath);
+        printf("Created texture '%s'\n", absolute_filepath.c_str());
         texture *to_return = &texture_list[texture_count];
         texture_count++;
         return to_return;
@@ -54,15 +46,15 @@ namespace Texture {
      * @param filepath Filepath of texture
      * @return Texture ID
      */
-    static unsigned int create_texture(const char *filepath) {
+    static unsigned int create_texture(const string& filepath) {
 
         // Load image data
         int width, height, channels;
         stbi_set_flip_vertically_on_load(true);
-        unsigned char *data = stbi_load(filepath, &width, &height, &channels, 0);
+        unsigned char *data = stbi_load(filepath.c_str(), &width, &height, &channels, 0);
 
         if (!data) {
-            printf("Failed to load texture '%s'\n", filepath);
+            printf("Failed to load texture '%s'\n", filepath.c_str());
             exit(EXIT_FAILURE);
         }
 

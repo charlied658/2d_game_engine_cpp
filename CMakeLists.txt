@@ -11,9 +11,9 @@ file(GLOB LIB "src/lib/*/*.cpp" "src/lib/*/*.c")
 add_executable(gameEngine ${SOURCES} ${LIB} src/main.cpp)
 
 # GLFW
-add_subdirectory(glfw)
+add_subdirectory(lib/glfw)
 include_directories(glfw/include)
 target_link_libraries(gameEngine glfw ${GLFW_LIBRARIES})
 
 # GLM
-include_directories(glm)
+include_directories(lib/glm)

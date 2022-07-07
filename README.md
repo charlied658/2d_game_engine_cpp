@@ -7,6 +7,7 @@ Tools this project is built on:
 - [X] [GLFW](https://www.glfw.org/) - Window handling
 - [X] [OpenGL](https://www.opengl.org/) - Graphics rendering
 - [X] [STB](https://github.com/nothings/stb) - Image loading
+- [X] [GLM](https://github.com/g-truc/glm) - Vector & Matrix math
 - [X] [Dear ImGui](https://github.com/ocornut/imgui) - User Interface
 - [ ] [Box2D](https://box2d.org/) - Physics
 

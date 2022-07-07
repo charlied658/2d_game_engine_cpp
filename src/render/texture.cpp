@@ -6,13 +6,8 @@
 #include "render/texture.h"
 
 #include "lib/stb/stb_image.h"
-
-#include <glad/gl.h>
-#include <GLFW/glfw3.h>
-
-#include <string>
-
-using namespace std;
+#define GL_SILENCE_DEPRECATION
+#include <OpenGL/gl3.h>
 
 namespace Texture {
 

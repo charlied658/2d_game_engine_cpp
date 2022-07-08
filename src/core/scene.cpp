@@ -6,7 +6,7 @@
 #include <cstdio>
 #include "core/scene.h"
 
-#include "lib/imgui/imgui.h"
+#include "imgui/imgui.h"
 
 #include "render/texture.h"
 #include "render/render.h"

@@ -33,7 +33,11 @@ namespace Window {
     {
         width = w;
         height = h;
-        glViewport(0, 0, w, h);
+
+        // Adjust viewport
+        int frame_width, frame_height;
+        glfwGetFramebufferSize(window_ptr, &frame_width, &frame_height);
+        glViewport(0, 0, frame_width, frame_height);
     }
 
     /**

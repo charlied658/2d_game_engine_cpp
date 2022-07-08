@@ -1,4 +1,4 @@
 #pragma once
 
 // Replace with absolute filepath of this project directory on your machine, then remove the .example extension
-#define PROJECT_PATH "/Users/projects/.../gameEngine"
+#define PROJECT_PATH "/Users/projects/.../2d_game_engine_cpp/"

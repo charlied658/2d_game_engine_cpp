@@ -33,6 +33,7 @@ namespace Window {
     {
         width = w;
         height = h;
+        glViewport(0, 0, w, h);
     }
 
     /**
@@ -70,9 +71,6 @@ namespace Window {
         glfwSetScrollCallback(window, Mouse::scroll_callback);
         glfwSetKeyCallback(window, Key::key_callback);
 
-        // Maximize the window;
-        glfwMaximizeWindow(window);
-
         // Load OpenGL with GLAD
         glfwMakeContextCurrent(window);
         if (!gladLoadGLLoader((GLADloadproc) glfwGetProcAddress)) {
@@ -80,6 +78,9 @@ namespace Window {
             return -1;
         }
         glfwSwapInterval(1);
+
+        // Maximize the window;
+        glfwMaximizeWindow(window);
 
         // Initialize scene
         Scene::init();

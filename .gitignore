@@ -2,3 +2,7 @@
 .idea
 *.DS_STORE
 include/util/properties.h
+
+.vs
+/out/
+/build-dir/

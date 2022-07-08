@@ -55,6 +55,16 @@ namespace GameObject {
     }
 
     /**
+     * Set scale of a game object
+     * @param obj Game object reference
+     * @param scale Scale
+     */
+    void set_scale(GameObject::game_object *obj, glm::vec2 scale) {
+        obj->scale = scale;
+        obj->is_dirty = true;
+    }
+
+    /**
      * Set color of a game object
      * @param obj Game object reference
      * @param r Red value

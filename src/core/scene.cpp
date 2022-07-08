@@ -19,50 +19,76 @@
 
 namespace Scene {
 
-    static GameObject::game_object game_objects[1000];
+    static GameObject::game_object *game_objects;
     static int game_object_count = 0;
+
+    static GameObject::game_object **selected_objects;
+    static int selected_object_count = 0;
+
+    static GameObject::game_object **active_objects;
+    static int active_object_count = 0;
+
+    static GameObject::game_object *shadow_objects;
+    static int shadow_object_count = 0;
 
     static unsigned int textureID1, textureID2;
     static Spritesheet::spritesheet spritesheet1, spritesheet2;
     static Sprite::sprite sprite1, sprite2, sprite3, sprite4;
+    static Sprite::sprite sprite_null;
     static GameObject::game_object obj1, obj2, obj3;
-    static GameObject::game_object *selected_obj, *active_obj;
+    static GameObject::game_object selection_box;
+    static GameObject::game_object *selected_obj;
 
-    bool begin_drag;
+    bool obj_drag;
+    bool select_drag;
     static double start_x, start_y;
-    static double obj_start_x, obj_start_y;
+    static glm::vec2 *obj_start_pos;
 
     static float color[4] = {1.0f, 1.0f, 1.0f, 1.0f};
+    static bool reset_color = false;
 
     /**
      * Initialize the scene.
      */
     void init() {
+
+        game_objects = new GameObject::game_object[1000];
+        selected_objects = new GameObject::game_object *[1000];
+        active_objects = new GameObject::game_object *[1000];
+        shadow_objects = new GameObject::game_object[1000];
+
+        obj_start_pos = new glm::vec2[1000];
+
         // Generate textures
         textureID1 = Texture::get_texture("assets/images/spritesheet.png")->textureID;
+        textureID2 = Texture::get_texture("assets/images/turtle.png")->textureID;
 
         // Create spritesheet
         spritesheet1 = Spritesheet::spritesheet {14,2,textureID1};
+        spritesheet2 = Spritesheet::spritesheet {4,1,textureID2};
 
         // Create sprites
         sprite1 = Spritesheet::get_sprite(&spritesheet1, 0);
         sprite2 = Spritesheet::get_sprite(&spritesheet1, 14);
+        sprite3 = Spritesheet::get_sprite(&spritesheet2, 0);
+        sprite_null = Sprite::sprite {0, glm::vec2{0.0f, 0.0f}, glm::vec2{1.0f, 1.0f}};
+        sprite_null.is_null = true;
 
         // Generate game objects
-        GameObject::init(&obj1, "obj1", glm::vec2 {2.0f, 1.0f}, glm::vec2 {1.0f, 1.0f}, 1, &sprite1);
-        GameObject::init (&obj2, "obj2", glm::vec2 {3.0f, 1.0f}, glm::vec2 {1.0f, 1.0f}, 0, &sprite2);
-        GameObject::init (&obj3, "obj3", glm::vec2 {3.0f, 1.0f}, glm::vec2 {1.0f, 1.0f}, -5, &sprite2);
-        obj3.pickable = false;
+        GameObject::init(&obj1, "obj1", glm::vec2 {2.5f, 1.0f}, glm::vec2 {0.5f, 0.5f}, 1, &sprite1);
+        GameObject::init (&obj2, "obj2", glm::vec2 {3.0f, 1.0f}, glm::vec2 {0.5f, 0.5f}, 0, &sprite2);
+        GameObject::init (&obj3, "obj3", glm::vec2 {2.0f, 1.0f}, glm::vec2 {0.5f, 0.75f}, 0, &sprite3);
+
+        GameObject::init(&selection_box, "selection_box", glm::vec2 {1.0f, 1.5f}, glm::vec2 {1.0f, 1.0f}, 2, &sprite_null);
+        GameObject::set_color(&selection_box, glm::vec4 {1.0f, 1.0f, 0.0f, 0.2f});
+        selection_box.pickable = false;
+        selection_box.visible = false;
 
         // Add game objects to the scene
         Scene::add_game_object(&obj1);
         Scene::add_game_object(&obj2);
         Scene::add_game_object(&obj3);
-
-        selected_obj = nullptr;
-        active_obj = nullptr;
-
-        begin_drag = false;
+        Scene::add_game_object(&selection_box);
 
     }
 
@@ -79,66 +105,112 @@ namespace Scene {
 
         // Reset position of objects
         if (Key::get_key_pressed(GLFW_KEY_SPACE)) {
-            GameObject::set_position(&obj1, glm::vec2 {2.0f, 1.0f});
+            GameObject::set_position(&obj1, glm::vec2 {2.5f, 1.0f});
             GameObject::set_position(&obj2, glm::vec2 {3.0f, 1.0f});
+            GameObject::set_position(&obj3, glm::vec2 {2.0f, 1.0f});
         }
 
-        // Render shadow for active game object
-        if (active_obj) {
-            obj3.visible = true;
-            GameObject::init(&obj3, "shadow", active_obj->position + glm::vec2 {0.02f,-0.02f}, active_obj->scale, -5, &active_obj->sprite);
-            GameObject::set_color(&obj3, glm::vec4(0.0f,0.0f,0.0f,0.7f));
-        } else {
-            obj3.visible = false;
-            GameObject::update_color(&obj3);
+        // Render shadow for each active game object
+        for (int i = 0; i < active_object_count; i++) {
+            if (i < shadow_object_count) {
+                shadow_objects[i].visible = true;
+                GameObject::init(&shadow_objects[i], "shadow", active_objects[i]->position + glm::vec2 {0.02f, -0.02f}, active_objects[i]->scale, -5, &active_objects[i]->sprite);
+                GameObject::set_color(&shadow_objects[i], glm::vec4(0.0f, 0.0f, 0.0f, 0.7f));
+            } else {
+                // Add new shadows if necessary
+                shadow_objects[i] = GameObject::game_object {};
+                shadow_objects[i].pickable = false;
+                GameObject::init(&shadow_objects[i], "shadow", active_objects[i]->position + glm::vec2 {0.02f, -0.02f}, active_objects[i]->scale, -5, &active_objects[i]->sprite);
+                GameObject::set_color(&shadow_objects[i], glm::vec4(0.0f, 0.0f, 0.0f, 0.7f));
+                add_game_object(&shadow_objects[i]);
+                shadow_object_count++;
+            }
+        }
+        // Set the remaining shadows to be invisible
+        if (shadow_object_count > active_object_count) {
+            for (int i = active_object_count; i < shadow_object_count; i++) {
+                shadow_objects[i].visible = false;
+                GameObject::update_color(&shadow_objects[i]);
+            }
         }
 
-        // Select a game object based on the mouse position
-        if (!ImGuiLayer::want_mouse_capture()) {
+        // Select one game object based on mouse position
+        if (!select_drag && !ImGuiLayer::want_mouse_capture()) {
             if (!Mouse::get_mouse_pressed(GLFW_MOUSE_BUTTON_LEFT)) {
                 Render::select_game_object(&selected_obj);
             }
         } else {
-            if (!Mouse::get_mouse_pressed(GLFW_MOUSE_BUTTON_LEFT)) {
-                if (selected_obj) {
-                    GameObject::set_selected(selected_obj, false);
-                    selected_obj = nullptr;
-                }
+            if (selected_obj) {
+                selected_obj->selected = false;
+                GameObject::update_color(selected_obj);
+                selected_obj = nullptr;
             }
         }
 
-        // Set active game object
-        if (Mouse::get_mouse_pressed(GLFW_MOUSE_BUTTON_LEFT)) {
-            if (selected_obj) {
-                if (active_obj != selected_obj) {
-                    active_obj = selected_obj;
-                    active_obj->active = true;
-                    active_obj->is_dirty = true;
-                } else {
-                    if (!begin_drag) {
-                        begin_drag = true;
-                        active_obj->dragging = true;
-                        start_x = Mouse::get_worldX();
-                        start_y = Mouse::get_worldY();
-                        obj_start_x = active_obj->position.x;
-                        obj_start_y = active_obj->position.y;
-                    }
-                    GameObject::set_position(active_obj,
-                                             glm::vec2 {Mouse::get_worldX() - start_x + obj_start_x, Mouse::get_worldY() - start_y + obj_start_y});
+        // Select multiple objects if the mouse is being dragged
+        if (select_drag) {
+            if (active_object_count > 0) {
+                for (int i = 0; i  < active_object_count; i++) {
+                    active_objects[i]->active = false;
                 }
-            } else {
-                if (active_obj) {
-                    active_obj->active = false;
-                    active_obj = nullptr;
-                }
+                active_object_count = 0;
             }
+            Render::select_game_objects(selected_objects, &selected_object_count, selection_box.position, selection_box.scale);
         } else {
-            begin_drag = false;
-            if (selected_obj) {
-                selected_obj->dragging = false;
-                GameObject::update_color(selected_obj);
+            // Activate all selected objects when mouse is released
+            if (selected_object_count > 0) {
+                for (int i = 0; i < selected_object_count; i++) {
+                    active_objects[i] = selected_objects[i];
+                    active_objects[i]->active = true;
+                }
+                active_object_count = selected_object_count;
+                selected_object_count = 0;
             }
         }
+
+        // Handle whether the mouse is dragging or not
+        if (Mouse::get_mouse_pressed(GLFW_MOUSE_BUTTON_LEFT)) {
+            if (selected_obj) {
+                if (selected_obj->active) {
+                    if (!obj_drag) {
+                        obj_drag = true;
+                        start_x = Mouse::get_worldX();
+                        start_y = Mouse::get_worldY();
+                        for (int i = 0; i < active_object_count; i++) {
+                            obj_start_pos[i] = active_objects[i]->position;
+                        }
+                    }
+                    for (int i = 0; i < active_object_count; i++) {
+                        GameObject::set_position(active_objects[i], glm::vec2 {Mouse::get_worldX() - start_x + obj_start_pos[i].x, Mouse::get_worldY() - start_y + + obj_start_pos[i].y});
+                    }
+                } else {
+                    if (active_object_count > 0) {
+                        for (int i = 0; i  < active_object_count; i++) {
+                            active_objects[i]->active = false;
+                        }
+                    }
+                    active_objects[0] = selected_obj;
+                    active_objects[0]->active = true;
+                    active_object_count = 1;
+                }
+            } else {
+                if (!select_drag) {
+                    select_drag = true;
+                    start_x = Mouse::get_worldX();
+                    start_y = Mouse::get_worldY();
+                    GameObject::set_position(&selection_box, glm::vec2 {start_x, start_y});
+                    selection_box.visible = true;
+                    GameObject::update_color(&selection_box);
+                }
+                GameObject::set_scale(&selection_box, glm::vec2 {Mouse::get_worldX() - start_x, Mouse::get_worldY() - start_y});
+            }
+        } else {
+            obj_drag = false;
+            select_drag = false;
+            selection_box.visible = false;
+            GameObject::update_color(&selection_box);
+        }
+
     }
 
     /**
@@ -157,13 +229,27 @@ namespace Scene {
             ImGui::EndMenuBar();
         }
         // Set color of active game object
-        if (active_obj) {
-            color[0] = active_obj->color.x;
-            color[1] = active_obj->color.y;
-            color[2] = active_obj->color.z;
-            color[3] = active_obj->color.w;
+        if (active_object_count == 1) {
+            reset_color = true;
+            color[0] = active_objects[0]->color.x;
+            color[1] = active_objects[0]->color.y;
+            color[2] = active_objects[0]->color.z;
+            color[3] = active_objects[0]->color.w;
             ImGui::ColorPicker4("Color Picker", color);
-            GameObject::set_color(active_obj, glm::vec4{color[0], color[1], color[2], color[3]});
+            GameObject::set_color(active_objects[0], glm::vec4{color[0], color[1], color[2], color[3]});
+        } else if (active_object_count > 1) {
+            if (reset_color) {
+                color[0] = 1.0f;
+                color[1] = 1.0f;
+                color[2] = 1.0f;
+                color[3] = 1.0f;
+            }
+            if (ImGui::ColorPicker4("Color Picker", color)) {
+                reset_color = false;
+                for (int i = 0; i < active_object_count; i++) {
+                    GameObject::set_color(active_objects[i], glm::vec4{color[0], color[1], color[2], color[3]});
+                }
+            }
         }
         ImGui::End();
     }

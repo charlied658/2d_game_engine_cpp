@@ -17,5 +17,6 @@ namespace Sprite {
         glm::vec2 tex_coords;
         glm::vec2 tex_scale;
         string texture_filepath;
+        bool is_null;
     };
 }

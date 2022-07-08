@@ -33,5 +33,9 @@ out vec4 color;
 
 void main() {
     int id = int(fTexID);
-    color = fColor * texture(tex_sampler[id], fTexCoords);
+    if (id == 0) {
+        color = fColor;
+    } else {
+        color = fColor * texture(tex_sampler[id], fTexCoords);
+    }
 }

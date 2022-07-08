@@ -63,7 +63,7 @@ namespace RenderBatch {
         batch->vertex_data = new float[batch->max_batch_size * 4 * vertex_size];
         batch->element_data = new int[batch->max_batch_size * 6];
         batch->texture_list = new unsigned int[8];
-        batch->texture_count = 0;
+        batch->texture_count = 1;
         batch->z_index = z_index;
 
         // Generate element indices
@@ -125,7 +125,7 @@ namespace RenderBatch {
         Shader::upload_textures("tex_sampler", tex_slots);
 
         // Bind textures
-        for (int i = 0; i < batch->texture_count; i++) {
+        for (int i = 1; i < batch->texture_count; i++) {
             glActiveTexture(GL_TEXTURE0 + i);
             glBindTexture(GL_TEXTURE_2D, batch->texture_list[i]);
         }
@@ -188,7 +188,11 @@ namespace RenderBatch {
             batch->vertex_data[offset + 7] = (yAdd * batch->game_object_list[index]->sprite.tex_scale.y) + batch->game_object_list[index]->sprite.tex_coords.y;
 
             // Texture ID
-            batch->vertex_data[offset + 8] = (float) get_texture_slot(batch, batch->game_object_list[index]->sprite.texture_ID);
+            if (batch->game_object_list[index]->sprite.is_null) {
+                batch->vertex_data[offset + 8] = 0.0f;
+            } else {
+                batch->vertex_data[offset + 8] = (float) get_texture_slot(batch,batch->game_object_list[index]->sprite.texture_ID);
+            }
 
             offset += 9;
         }
@@ -242,7 +246,7 @@ namespace RenderBatch {
      * @return True if the batch contains a texture or if it has space to add a new texture
      */
     bool contains_texture(render_batch *batch, unsigned int texture_ID) {
-        if (batch->texture_count < 8) {
+        if (batch->texture_count < 7) {
             return true;
         }
         for (int i = 0; i < batch->texture_count; i++) {

@@ -10,6 +10,7 @@
 #include "core/game_object.h"
 #include "render/render_batch.h"
 #include "core/mouse_listener.h"
+#include "util/collision_math.h"
 
 using namespace std;
 
@@ -37,7 +38,7 @@ namespace Render {
     void add_game_object(GameObject::game_object *obj) {
         for (int i = 0; i < batch_count; i++) {
             // If there is enough space to add the object and its texture, and the z-index matches, add it to the first available batch
-            if (batches[i].has_room && RenderBatch::contains_texture(&batches[i], obj->sprite.texture_ID) && obj->z_index == batches[i].z_index) {
+            if (batches[i].has_room && (RenderBatch::contains_texture(&batches[i], obj->sprite.texture_ID) || obj->sprite.is_null) && obj->z_index == batches[i].z_index) {
                 RenderBatch::add_game_object(&batches[i], obj);
                 return;
             }
@@ -92,6 +93,33 @@ namespace Render {
         // If no object is found, set the selected object to null
         if (!found_selected) {
             *selected_obj = nullptr;
+        }
+    }
+
+    /**
+     * Select multiple game objects from a box selection.
+     * @param selected_objects Selected game objects list
+     * @param selection_pos Starting position of selection
+     * @param selection_scale Size of selection
+     */
+    void select_game_objects(GameObject::game_object **selected_objects, int *selected_count, glm::vec2 selection_pos, glm::vec2 selection_scale) {
+        *selected_count = 0;
+        // Loop through each batch
+        for (int i = batch_count - 1; i >= 0; i--) {
+            // Loop through the game objects
+            for (int j = sorted_batches[i]->game_object_count - 1; j >= 0; j--) {
+                // Check if the object's bounding box intersects with the selection box
+                GameObject::game_object *obj = sorted_batches[i]->game_object_list[j];
+                if (obj->pickable && obj->visible &&
+                    Math::line_segment_collision(obj->position.x, obj->position.x + obj->scale.x, selection_pos.x, selection_pos.x + selection_scale.x) &&
+                    Math::line_segment_collision(obj->position.y, obj->position.y + obj->scale.y, selection_pos.y, selection_pos.y + selection_scale.y)) {
+                    GameObject::set_selected(obj, true);
+                    selected_objects[*selected_count] = obj;
+                    *selected_count = *selected_count + 1;
+                } else {
+                    GameObject::set_selected(obj, false);
+                }
+            }
         }
     }
 }

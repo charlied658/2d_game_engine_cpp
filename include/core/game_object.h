@@ -37,6 +37,8 @@ namespace GameObject {
 
     void set_position(GameObject::game_object *obj, glm::vec2 position);
 
+    void set_scale(GameObject::game_object *obj, glm::vec2 scale);
+
     void set_color(GameObject::game_object *obj, glm::vec4 color);
 
     void set_selected(GameObject::game_object *obj, bool selected);

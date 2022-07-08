@@ -15,4 +15,6 @@ namespace ImGuiLayer {
 
     void render();
 
+    bool want_mouse_capture();
+
 }

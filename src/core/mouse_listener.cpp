@@ -8,6 +8,7 @@
 
 #include "core/window.h"
 #include "core/camera.h"
+#include "core/imgui_layer.h"
 
 namespace Mouse {
     static double xPos, yPos;
@@ -22,7 +23,9 @@ namespace Mouse {
 
     void mouse_button_callback(GLFWwindow* window, int button, int action, int mods) {
         if (action == GLFW_PRESS) {
-            mouse_down[button] = true;
+            if (!ImGuiLayer::want_mouse_capture()) {
+                mouse_down[button] = true;
+            }
         } else if (action == GLFW_RELEASE) {
             mouse_down[button] = false;
         }

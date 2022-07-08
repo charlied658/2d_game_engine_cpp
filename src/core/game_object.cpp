@@ -4,6 +4,7 @@
  */
 
 #include <cstdio>
+#include <utility>
 #include "core/game_object.h"
 
 namespace GameObject {
@@ -17,8 +18,8 @@ namespace GameObject {
      * @param z_index Z-index
      * @param sprite Sprite reference
      */
-    void init(GameObject::game_object *obj, const char *name, glm::vec2 position, glm::vec2 scale, int z_index, Sprite::sprite *sprite) {
-        obj->name = name;
+    void init(GameObject::game_object *obj, string name, glm::vec2 position, glm::vec2 scale, int z_index, Sprite::sprite *sprite) {
+        obj->name = std::move(name);
         obj->position = position;
         obj->scale = scale;
         obj->z_index = z_index;
@@ -26,7 +27,11 @@ namespace GameObject {
         obj->is_dirty = false;
         obj->color = glm::vec4 {1.0f, 1.0f, 1.0f, 1.0f};
         obj->out_color = glm::vec4 {1.0f, 1.0f, 1.0f, 1.0f};
+        obj->pickable = true;
+        obj->visible = true;
         obj->selected = false;
+        obj->dragging = false;
+        obj->active = false;
     }
 
     /**
@@ -80,13 +85,24 @@ namespace GameObject {
      * @param obj Game object reference
      */
     void update_color(GameObject::game_object *obj) {
-        obj->out_color.x = obj->color.x;
-        obj->out_color.y = obj->color.y;
-        obj->out_color.z = obj->color.z;
-        if (obj->selected) {
-            obj->out_color.w = obj->color.w * 0.8f;
+
+        if (obj->dragging) {
+            obj->out_color.x = obj->color.x - 0.1f;
+            obj->out_color.y = obj->color.y - 0.1f;
+            obj->out_color.z = obj->color.z - 0.1f;
+        } else if (obj->selected) {
+            obj->out_color.x = obj->color.x + 0.1f;
+            obj->out_color.y = obj->color.y + 0.1f;
+            obj->out_color.z = obj->color.z + 0.1f;
         } else {
+            obj->out_color.x = obj->color.x;
+            obj->out_color.y = obj->color.y;
+            obj->out_color.z = obj->color.z;
+        }
+        if (obj->visible) {
             obj->out_color.w = obj->color.w;
+        } else {
+            obj->out_color.w = 0.0f;
         }
         obj->is_dirty = true;
     }

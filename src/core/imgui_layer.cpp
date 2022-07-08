@@ -36,4 +36,9 @@ namespace ImGuiLayer {
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
     }
+
+    bool want_mouse_capture() {
+        ImGuiIO io = ImGui::GetIO();
+        return io.WantCaptureMouse;
+    }
 }

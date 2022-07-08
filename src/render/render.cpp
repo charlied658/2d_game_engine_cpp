@@ -67,8 +67,7 @@ namespace Render {
     /**
      * Select a game object according to the mouse position.
      */
-    void select_game_object() {
-        Mouse::calculate_world_coords();
+    void select_game_object(GameObject::game_object **selected_obj) {
         double xPos = Mouse::get_worldX();
         double yPos = Mouse::get_worldY();
         bool found_selected = false;
@@ -80,13 +79,19 @@ namespace Render {
                 // Check if the mouse position is within the object's bounding box
                 GameObject::game_object *obj = sorted_batches[i]->game_object_list[j];
                 if (!found_selected && xPos > obj->position.x && xPos < obj->position.x + obj->scale.x
-                    && yPos > obj->position.y && yPos < obj->position.y + obj->scale.y) {
+                    && yPos > obj->position.y && yPos < obj->position.y + obj->scale.y
+                    && obj->pickable && obj->visible) {
                     GameObject::set_selected(obj, true);
+                    *selected_obj = obj;
                     found_selected = true;
                 } else {
                     GameObject::set_selected(obj, false);
                 }
             }
+        }
+        // If no object is found, set the selected object to null
+        if (!found_selected) {
+            *selected_obj = nullptr;
         }
     }
 }

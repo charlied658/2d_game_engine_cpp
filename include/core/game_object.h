@@ -8,11 +8,15 @@
 #include <glm/vec2.hpp> // glm::vec2
 #include <glm/vec4.hpp> // glm::vec4
 
+#include <string>
+
 #include "core/sprite.h"
+
+using namespace std;
 
 namespace GameObject {
     struct game_object {
-        const char *name;
+        string name;
         glm::vec2 position;
         glm::vec2 scale;
         int z_index;
@@ -20,10 +24,14 @@ namespace GameObject {
         bool is_dirty;
         glm::vec4 color;
         glm::vec4 out_color;
+        bool pickable;
+        bool visible;
         bool selected;
+        bool dragging;
+        bool active;
     };
 
-    void init(GameObject::game_object *obj, const char *name, glm::vec2 position, glm::vec2 scale, int z_index, Sprite::sprite *sprite);
+    void init(GameObject::game_object *obj, string name, glm::vec2 position, glm::vec2 scale, int z_index, Sprite::sprite *sprite);
 
     void set_sprite(GameObject::game_object *obj, Sprite::sprite *spr);
 

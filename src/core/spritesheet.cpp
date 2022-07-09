@@ -20,6 +20,7 @@ namespace Spritesheet {
         spr.tex_coords.y = (float) ((index / spr_sheet->width) + 1) / (float) spr_sheet->height;
         spr.tex_scale.x = 1.0f / (float) spr_sheet->width;
         spr.tex_scale.y = 1.0f / (float) spr_sheet->height;
+        spr.texture_filepath;
         spr.is_null = false;
         return spr;
     }

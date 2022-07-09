@@ -138,6 +138,10 @@ namespace Window {
         glfwTerminate();
     }
 
+    void close_window() {
+        glfwSetWindowShouldClose(window, true);
+    }
+
     int get_width() {
         return width;
     }

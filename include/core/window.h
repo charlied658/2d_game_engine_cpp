@@ -11,6 +11,8 @@ namespace Window {
 
     void loop();
 
+    void close_window();
+
     int get_width();
 
     int get_height();

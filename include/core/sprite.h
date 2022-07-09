@@ -11,6 +11,10 @@
 
 using namespace std;
 
+namespace glm {
+    template<class Archive> void serialize(Archive& archive, glm::vec2& v) { archive(v.x, v.y); }
+}
+
 namespace Sprite {
     struct sprite {
         unsigned int texture_ID;
@@ -18,5 +22,11 @@ namespace Sprite {
         glm::vec2 tex_scale;
         string texture_filepath;
         bool is_null;
+
+        template<class Archive>
+        void serialize(Archive & archive)
+        {
+            archive( texture_ID, texture_filepath, tex_coords, tex_scale, is_null);
+        }
     };
 }

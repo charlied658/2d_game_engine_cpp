@@ -17,4 +17,6 @@ namespace Render {
 
     void highlight_game_objects(GameObject::game_object **highlighted_objects, int *highlighted_count, glm::vec2 selection_pos, glm::vec2 selection_scale);
 
+    void clear_render_batches();
+
 }

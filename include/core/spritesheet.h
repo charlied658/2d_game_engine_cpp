@@ -11,6 +11,7 @@ namespace Spritesheet {
     struct spritesheet {
         int width, height;
         unsigned int texture_ID;
+        string filepath_texture;
     };
 
     Sprite::sprite get_sprite(Spritesheet::spritesheet *spr_sheet, int index);

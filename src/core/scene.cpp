@@ -4,9 +4,16 @@
  */
 
 #include <cstdio>
+#include <fstream>
+#include <vector>
+
 #include "core/scene.h"
 
 #include "imgui/imgui.h"
+#include <cereal/archives/json.hpp>
+#include <cereal/archives/binary.hpp>
+#include <cereal/types/string.hpp>
+#include <cereal/types/vector.hpp>
 
 #include "render/texture.h"
 #include "render/render.h"
@@ -16,6 +23,8 @@
 #include "core/camera.h"
 #include "core/mouse_listener.h"
 #include "core/imgui_layer.h"
+#include "core/window.h"
+#include "util/properties.h"
 
 namespace Scene {
 
@@ -93,6 +102,12 @@ namespace Scene {
         Scene::add_game_object(&obj3);
         // ===============================================
 
+        // Test serialization
+        //serialize_game_objects();
+
+        // Test deserialization
+        //deserialize_game_objects();
+
     }
 
     /**
@@ -120,6 +135,9 @@ namespace Scene {
             // Do not highlight an object if the mouse is over an ImGui window
             if (!ImGuiLayer::want_mouse_capture()) {
                 Render::highlight_game_object(&highlighted_obj);
+                if (highlighted_obj) {
+                    GameObject::set_highlighted(highlighted_obj, true);
+                }
             }
         }
 
@@ -289,9 +307,19 @@ namespace Scene {
         if (ImGui::BeginMenuBar()) {
             // File loading / saving system (prototype)
             if (ImGui::BeginMenu("File")) {
-                ImGui::MenuItem("Load", "Ctrl+L");
-                ImGui::MenuItem("Save", "Ctrl+S");
-                ImGui::MenuItem("Save & Exit");
+                if (ImGui::MenuItem("Load", "Ctrl+L")) {
+                    printf("Loading...\n");
+                    deserialize_game_objects();
+                }
+                if (ImGui::MenuItem("Save", "Ctrl+S")) {
+                    printf("Saving...\n");
+                    serialize_game_objects();
+                }
+                if (ImGui::MenuItem("Save & Exit")) {
+                    printf("Saving and exiting...\n");
+                    serialize_game_objects();
+                    Window::close_window();
+                }
                 ImGui::EndMenu();
             }
             ImGui::EndMenuBar();
@@ -312,9 +340,62 @@ namespace Scene {
      * @param obj Game object reference
      */
     void add_game_object(GameObject::game_object *obj) {
-        printf("Added object %s at index %d\n", obj->name.c_str(), game_object_count);
         game_objects[game_object_count] = *obj;
         Render::add_game_object(&game_objects[game_object_count]);
         game_object_count++;
+    }
+
+    /**
+     * Serialize the game objects and place them into an output file.
+     */
+    void serialize_game_objects() {
+
+        // Convert game objects list into a vector (readable by cereal library)
+        vector<GameObject::game_object> serialized_game_objects;
+
+        for (int i = 0; i < game_object_count; i++) {
+            serialized_game_objects.push_back(game_objects[i]);
+        }
+
+        ofstream level_file;
+        string path = "level.txt";
+        string path_absolute = PROJECT_PATH + path;
+        level_file.open (path_absolute);
+
+        {
+            cereal::JSONOutputArchive out_archive(level_file); // Create an output archive
+            out_archive(serialized_game_objects); // Write the data to the archive
+        }
+
+        level_file.close();
+    }
+
+    /**
+     * Deserialize game objects and repopulate the game objects list.
+     */
+    void deserialize_game_objects() {
+        vector<GameObject::game_object> serialized_game_objects;
+
+        ifstream level_file;
+        string path = "level.txt";
+        string path_absolute = PROJECT_PATH + path;
+        level_file.open (path_absolute);
+
+        {
+            cereal::JSONInputArchive in_archive(level_file); // Create an input archive
+            in_archive(serialized_game_objects); // Get the data from the archive
+        }
+
+        level_file.close();
+
+        game_object_count = 0;
+
+        Render::clear_render_batches();
+
+        for (int i = 0; i < serialized_game_objects.size(); i++) {
+            add_game_object(&serialized_game_objects[i]);
+            game_objects[game_object_count].visible = true;
+            game_objects[game_object_count].is_dirty = true;
+        }
     }
 }

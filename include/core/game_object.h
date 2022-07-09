@@ -12,6 +12,10 @@
 
 #include "core/sprite.h"
 
+namespace glm {
+    template<class Archive> void serialize(Archive& archive, glm::vec4& v) { archive(v.x, v.y, v.z, v.w); }
+}
+
 using namespace std;
 
 namespace GameObject {
@@ -29,6 +33,12 @@ namespace GameObject {
         bool highlighted;
         bool selected;
         bool dragging;
+
+        template<class Archive>
+        void serialize(Archive & archive)
+        {
+            archive(name, position, scale, z_index, sprite, color, pickable);
+        }
     };
 
     void init(GameObject::game_object *obj, string name, glm::vec2 position, glm::vec2 scale, int z_index, Sprite::sprite *sprite);

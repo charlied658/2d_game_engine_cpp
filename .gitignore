@@ -1,8 +1,16 @@
+# CLion
 /cmake-build-debug/
 .idea
-*.DS_STORE
-include/util/properties.h
 
+# Visual Studios
 .vs
 /out/
+
+# Misc
 /build-dir/
+*.DS_STORE
+
+# Utility
+include/util/properties.h
+level.txt
+imgui.ini

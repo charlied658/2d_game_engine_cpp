@@ -24,14 +24,14 @@ namespace GameObject {
         obj->scale = scale;
         obj->z_index = z_index;
         obj->sprite = *sprite;
-        obj->is_dirty = false;
+        obj->is_dirty = true;
         obj->color = glm::vec4 {1.0f, 1.0f, 1.0f, 1.0f};
         obj->out_color = glm::vec4 {1.0f, 1.0f, 1.0f, 1.0f};
         obj->pickable = true;
         obj->visible = true;
-        obj->selected = false;
+        obj->highlighted = false;
         obj->dragging = false;
-        obj->active = false;
+        obj->selected = false;
     }
 
     /**
@@ -74,11 +74,26 @@ namespace GameObject {
      */
     void set_color(GameObject::game_object *obj, glm::vec4 color) {
         obj->color = color;
+        obj->out_color = color;
+        obj->is_dirty = true;
         update_color(obj);
     }
 
     /**
-     * Set a game object to be selected or not
+     * Set a game object to be highlighted or not.
+     * @param obj Game object reference
+     * @param highlighted Set whether the object is highlighted
+     */
+    void set_highlighted(GameObject::game_object *obj, bool highlighted) {
+        if (obj->highlighted == highlighted) {
+            return;
+        }
+        obj->highlighted = highlighted;
+        update_color(obj);
+    }
+
+    /**
+     * Set a game object to be selected or not.
      * @param obj Game object reference
      * @param selected Set whether the object is selected
      */
@@ -87,6 +102,19 @@ namespace GameObject {
             return;
         }
         obj->selected = selected;
+        update_color(obj);
+    }
+
+    /**
+     * Set a game object to be dragging or not.
+     * @param obj Game object reference
+     * @param dragging Set whether the object is dragging
+     */
+    void set_dragging(GameObject::game_object *obj, bool dragging) {
+        if (obj->dragging == dragging) {
+            return;
+        }
+        obj->dragging = dragging;
         update_color(obj);
     }
 
@@ -100,10 +128,10 @@ namespace GameObject {
             obj->out_color.x = obj->color.x - 0.1f;
             obj->out_color.y = obj->color.y - 0.1f;
             obj->out_color.z = obj->color.z - 0.1f;
-        } else if (obj->selected) {
-            obj->out_color.x = obj->color.x + 0.1f;
-            obj->out_color.y = obj->color.y + 0.1f;
-            obj->out_color.z = obj->color.z + 0.1f;
+        } else if (obj->highlighted) {
+            obj->out_color.x = obj->color.x + 0.2f;
+            obj->out_color.y = obj->color.y + 0.2f;
+            obj->out_color.z = obj->color.z + 0.2f;
         } else {
             obj->out_color.x = obj->color.x;
             obj->out_color.y = obj->color.y;

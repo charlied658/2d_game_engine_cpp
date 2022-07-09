@@ -26,9 +26,9 @@ namespace GameObject {
         glm::vec4 out_color;
         bool pickable;
         bool visible;
+        bool highlighted;
         bool selected;
         bool dragging;
-        bool active;
     };
 
     void init(GameObject::game_object *obj, string name, glm::vec2 position, glm::vec2 scale, int z_index, Sprite::sprite *sprite);
@@ -41,7 +41,11 @@ namespace GameObject {
 
     void set_color(GameObject::game_object *obj, glm::vec4 color);
 
+    void set_highlighted(GameObject::game_object *obj, bool highlighted);
+
     void set_selected(GameObject::game_object *obj, bool selected);
+
+    void set_dragging(GameObject::game_object *obj, bool dragging);
 
     void update_color(GameObject::game_object *obj);
 

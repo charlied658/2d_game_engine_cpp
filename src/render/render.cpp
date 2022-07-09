@@ -66,12 +66,11 @@ namespace Render {
     }
 
     /**
-     * Select a game object according to the mouse position.
+     * Highlight the game object under the mouse cursor.
      */
-    void select_game_object(GameObject::game_object **selected_obj) {
+    void highlight_game_object(GameObject::game_object **highlighted_obj) {
         double xPos = Mouse::get_worldX();
         double yPos = Mouse::get_worldY();
-        bool found_selected = false;
 
         // Loop through each batch, starting at the highest z-index
         for (int i = batch_count - 1; i >= 0; i--) {
@@ -79,31 +78,28 @@ namespace Render {
             for (int j = sorted_batches[i]->game_object_count - 1; j >= 0; j--) {
                 // Check if the mouse position is within the object's bounding box
                 GameObject::game_object *obj = sorted_batches[i]->game_object_list[j];
-                if (!found_selected && xPos > obj->position.x && xPos < obj->position.x + obj->scale.x
+                if (xPos > obj->position.x && xPos < obj->position.x + obj->scale.x
                     && yPos > obj->position.y && yPos < obj->position.y + obj->scale.y
                     && obj->pickable && obj->visible) {
-                    GameObject::set_selected(obj, true);
-                    *selected_obj = obj;
-                    found_selected = true;
-                } else {
-                    GameObject::set_selected(obj, false);
+                    GameObject::set_highlighted(obj, true);
+                    *highlighted_obj = obj;
+                    return;
                 }
             }
         }
-        // If no object is found, set the selected object to null
-        if (!found_selected) {
-            *selected_obj = nullptr;
-        }
+        // If no object is found, set the highlighted object to null
+        *highlighted_obj = nullptr;
     }
 
     /**
-     * Select multiple game objects from a box selection.
-     * @param selected_objects Selected game objects list
+     * Highlight multiple game objects within a selection box.
+     * @param highlighted_objects Highlighted game objects list
+     * @param highlighted_count Number of highlighted objects
      * @param selection_pos Starting position of selection
      * @param selection_scale Size of selection
      */
-    void select_game_objects(GameObject::game_object **selected_objects, int *selected_count, glm::vec2 selection_pos, glm::vec2 selection_scale) {
-        *selected_count = 0;
+    void highlight_game_objects(GameObject::game_object **highlighted_objects, int *highlighted_count, glm::vec2 selection_pos, glm::vec2 selection_scale) {
+        *highlighted_count = 0;
         // Loop through each batch
         for (int i = batch_count - 1; i >= 0; i--) {
             // Loop through the game objects
@@ -113,11 +109,11 @@ namespace Render {
                 if (obj->pickable && obj->visible &&
                     Math::line_segment_collision(obj->position.x, obj->position.x + obj->scale.x, selection_pos.x, selection_pos.x + selection_scale.x) &&
                     Math::line_segment_collision(obj->position.y, obj->position.y + obj->scale.y, selection_pos.y, selection_pos.y + selection_scale.y)) {
-                    GameObject::set_selected(obj, true);
-                    selected_objects[*selected_count] = obj;
-                    *selected_count = *selected_count + 1;
+                    GameObject::set_highlighted(obj, true);
+                    highlighted_objects[*highlighted_count] = obj;
+                    *highlighted_count = *highlighted_count + 1;
                 } else {
-                    GameObject::set_selected(obj, false);
+                    GameObject::set_highlighted(obj, false);
                 }
             }
         }

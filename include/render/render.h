@@ -13,8 +13,8 @@ namespace Render {
 
     void add_game_object(GameObject::game_object *obj);
 
-    void select_game_object(GameObject::game_object **selected_obj);
+    void highlight_game_object(GameObject::game_object **highlighted_obj);
 
-    void select_game_objects(GameObject::game_object **selected_objects, int *selected_count, glm::vec2 selection_pos, glm::vec2 selection_scale);
+    void highlight_game_objects(GameObject::game_object **highlighted_objects, int *highlighted_count, glm::vec2 selection_pos, glm::vec2 selection_scale);
 
 }

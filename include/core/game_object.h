@@ -51,6 +51,10 @@ namespace GameObject {
 
     void set_color(GameObject::game_object *obj, glm::vec4 color);
 
+    void set_visible(GameObject::game_object *obj, bool visible);
+
+    void set_pickable(GameObject::game_object *obj, bool pickable);
+
     void set_highlighted(GameObject::game_object *obj, bool highlighted);
 
     void set_selected(GameObject::game_object *obj, bool selected);

@@ -80,6 +80,31 @@ namespace GameObject {
     }
 
     /**
+     * Set a game object to be visible or not.
+     * @param obj Game object reference
+     * @param visible Set whether the object is visible
+     */
+    void set_visible(GameObject::game_object *obj, bool visible) {
+        if (obj->visible == visible) {
+            return;
+        }
+        obj->visible = visible;
+        update_color(obj);
+    }
+
+    /**
+     * Set a game object to be pickable or not.
+     * @param obj Game object reference
+     * @param pickable Set whether the object is pickable
+     */
+    void set_pickable(GameObject::game_object *obj, bool pickable) {
+        if (obj->pickable == pickable) {
+            return;
+        }
+        obj->pickable = pickable;
+    }
+
+    /**
      * Set a game object to be highlighted or not.
      * @param obj Game object reference
      * @param highlighted Set whether the object is highlighted

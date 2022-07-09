@@ -9,7 +9,31 @@ namespace SelectObjects {
 
     void init();
 
-    void mouse_controls();
+    void update_selected_objects();
+
+    void reset_highlighted();
+
+    void reset_selected();
+
+    void unselect_object(GameObject::game_object *obj);
+
+    void highlight_objects();
+
+    void select_object();
+
+    void select_objects();
+
+    void mouse_click();
+
+    void shift_click();
+
+    void mouse_released();
+
+    void move_objects();
+
+    void start_multiselect();
+
+    void render_shadows();
 
     void imgui();
 

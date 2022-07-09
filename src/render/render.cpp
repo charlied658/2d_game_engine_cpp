@@ -82,6 +82,7 @@ namespace Render {
                 if (xPos > obj->position.x && xPos < obj->position.x + obj->scale.x
                     && yPos > obj->position.y && yPos < obj->position.y + obj->scale.y
                     && obj->pickable && obj->visible) {
+                    GameObject::set_highlighted(obj, true);
                     *highlighted_obj = obj;
                     return;
                 }
@@ -98,8 +99,10 @@ namespace Render {
      * @param selection_pos Starting position of selection
      * @param selection_scale Size of selection
      */
-    void highlight_game_objects(GameObject::game_object **highlighted_objects, int *highlighted_count, glm::vec2 selection_pos, glm::vec2 selection_scale) {
+    void highlight_game_objects(GameObject::game_object **highlighted_objects, int *highlighted_count, GameObject::game_object *selection_box) {
         *highlighted_count = 0;
+        glm::vec2 selection_pos = selection_box->position;
+        glm::vec2 selection_scale = selection_box->scale;
         // Loop through each batch
         for (int i = batch_count - 1; i >= 0; i--) {
             // Loop through the game objects

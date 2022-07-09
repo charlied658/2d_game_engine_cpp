@@ -78,8 +78,8 @@ namespace Scene {
         // Update mouse position
         Mouse::calculate_world_coords();
 
-        // Check mouse controls
-        SelectObjects::mouse_controls();
+        // Update selected objects
+        SelectObjects::update_selected_objects();
 
     }
 
@@ -95,6 +95,7 @@ namespace Scene {
                     GameObject::set_position(&game_objects[0], glm::vec2 {2.5f,1.0f});
                     GameObject::set_position(&game_objects[1], glm::vec2 {3.0f,1.0f});
                     GameObject::set_position(&game_objects[2], glm::vec2 {2.0f,1.0f});
+                    SelectObjects::reset_selected();
                     printf("Created new level\n");
                 }
                 if (ImGui::MenuItem("Load", "Ctrl+L")) {

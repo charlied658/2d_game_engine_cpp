@@ -139,6 +139,7 @@ namespace Window {
     }
 
     void close_window() {
+        printf("Exiting...\n");
         glfwSetWindowShouldClose(window, true);
     }
 

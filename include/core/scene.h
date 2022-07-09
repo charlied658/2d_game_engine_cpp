@@ -17,8 +17,8 @@ namespace Scene {
 
     void add_game_object(GameObject::game_object *obj);
 
-    void serialize_game_objects(const string& filepath);
+    void get_game_objects_list(GameObject::game_object **objects, int *object_count);
 
-    void deserialize_game_objects(const string& filepath);
+    void clear_game_objects();
 
 }

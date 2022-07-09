@@ -15,3 +15,11 @@ explains how to navigate the interface to build your own game.
 - Click and drag to move multiple selected objects
 - Escape cancels a selection
 - Shift click to add or remove an object from the selection
+
+## Saving / Loading
+In the Main Menu window, select file to bring up the save / load options
+- Press Save to save the level
+- Press Save & Exit to save and close the engine
+- Press Load to load the saved level
+- Press New to create a new level
+- Press Exit to close the engine without saving

@@ -12,9 +12,6 @@ Tools this project is built on:
 - [ ] [Box2D](https://box2d.org/) - Physics
 
 ## Running
-To clone this repository, run `git clone --recurse-submodules` to also clone
-the submodule libraries.
-
 After cloning this repository, navigate to `include/util/properties.h.example`.
 Replace the `PROJECT_PATH` identifier with the absolute path of this project on your machine,
 then remove the `.example` extension.

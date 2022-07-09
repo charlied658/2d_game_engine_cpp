@@ -4,8 +4,21 @@
  */
 
 #include "core/spritesheet.h"
+#include "render/texture.h"
 
 namespace Spritesheet {
+
+    /**
+     * Initialize a spritesheet.
+     * @param spr_sheet Spritesheet reference
+     * @param filepath Filepath of texture
+     */
+    void init(Spritesheet::spritesheet *spr_sheet, int width, int height, const string& filepath) {
+        spr_sheet->width = width;
+        spr_sheet->height = height;
+        spr_sheet->texture_ID = Texture::get_texture(filepath)->textureID;
+        spr_sheet->filepath_texture = filepath;
+    }
 
     /**
      * Get a sprite from the given spritesheet.
@@ -20,7 +33,7 @@ namespace Spritesheet {
         spr.tex_coords.y = (float) ((index / spr_sheet->width) + 1) / (float) spr_sheet->height;
         spr.tex_scale.x = 1.0f / (float) spr_sheet->width;
         spr.tex_scale.y = 1.0f / (float) spr_sheet->height;
-        spr.texture_filepath;
+        spr.texture_filepath = spr_sheet->filepath_texture;
         spr.is_null = false;
         return spr;
     }

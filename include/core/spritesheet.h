@@ -14,5 +14,7 @@ namespace Spritesheet {
         string filepath_texture;
     };
 
+    void init(Spritesheet::spritesheet *spr_sheet, int width, int height, const string& filepath);
+
     Sprite::sprite get_sprite(Spritesheet::spritesheet *spr_sheet, int index);
 }

@@ -27,6 +27,7 @@ namespace Texture {
         string absolute_filepath = PROJECT_PATH + filepath;
         for (int i = 0; i < texture_count; i++) {
             if (texture_list[i].filepath == absolute_filepath) {
+                printf("Found texture %s",absolute_filepath.c_str());
                 return &texture_list[i];
             }
         }

@@ -48,8 +48,9 @@ namespace Scene {
     static GameObject::game_object selection_box;
     static GameObject::game_object *highlighted_obj;
 
-    // Temporary test objects and textures
-    static unsigned int textureID1, textureID2;
+    static string level_filepath;
+
+    // Temporary test sprites and objects
     static Spritesheet::spritesheet spritesheet1, spritesheet2;
     static Sprite::sprite sprite1, sprite2, sprite3;
     static GameObject::game_object obj1, obj2, obj3;
@@ -58,6 +59,8 @@ namespace Scene {
      * Initialize the scene.
      */
     void init() {
+
+        level_filepath = "level.txt";
 
         // Initialize object arrays
         game_objects = new GameObject::game_object[1000];
@@ -78,13 +81,9 @@ namespace Scene {
         Render::add_game_object(&selection_box);
 
         // =================== Generate temporary test objects
-        // Generate textures
-        textureID1 = Texture::get_texture("assets/images/spritesheet.png")->textureID;
-        textureID2 = Texture::get_texture("assets/images/turtle.png")->textureID;
-
         // Create spritesheet
-        spritesheet1 = Spritesheet::spritesheet {14,2,textureID1};
-        spritesheet2 = Spritesheet::spritesheet {4,1,textureID2};
+        Spritesheet::init(&spritesheet1, 14,2,"assets/images/spritesheet.png");
+        Spritesheet::init(&spritesheet2, 4,1,"assets/images/turtle.png");
 
         // Create sprites
         sprite1 = Spritesheet::get_sprite(&spritesheet1, 0);
@@ -101,12 +100,6 @@ namespace Scene {
         Scene::add_game_object(&obj2);
         Scene::add_game_object(&obj3);
         // ===============================================
-
-        // Test serialization
-        //serialize_game_objects();
-
-        // Test deserialization
-        //deserialize_game_objects();
 
     }
 
@@ -308,16 +301,14 @@ namespace Scene {
             // File loading / saving system (prototype)
             if (ImGui::BeginMenu("File")) {
                 if (ImGui::MenuItem("Load", "Ctrl+L")) {
-                    printf("Loading...\n");
-                    deserialize_game_objects();
+                    deserialize_game_objects(level_filepath);
                 }
                 if (ImGui::MenuItem("Save", "Ctrl+S")) {
-                    printf("Saving...\n");
-                    serialize_game_objects();
+                    serialize_game_objects(level_filepath);
                 }
                 if (ImGui::MenuItem("Save & Exit")) {
-                    printf("Saving and exiting...\n");
-                    serialize_game_objects();
+                    serialize_game_objects(level_filepath);
+                    printf("Exiting...\n");
                     Window::close_window();
                 }
                 ImGui::EndMenu();
@@ -348,7 +339,7 @@ namespace Scene {
     /**
      * Serialize the game objects and place them into an output file.
      */
-    void serialize_game_objects() {
+    void serialize_game_objects(const string& filepath) {
 
         // Convert game objects list into a vector (readable by cereal library)
         vector<GameObject::game_object> serialized_game_objects;
@@ -358,8 +349,7 @@ namespace Scene {
         }
 
         ofstream level_file;
-        string path = "level.txt";
-        string path_absolute = PROJECT_PATH + path;
+        string path_absolute = PROJECT_PATH + filepath;
         level_file.open (path_absolute);
 
         {
@@ -368,18 +358,24 @@ namespace Scene {
         }
 
         level_file.close();
+
+        printf("Saved level\n");
     }
 
     /**
      * Deserialize game objects and repopulate the game objects list.
      */
-    void deserialize_game_objects() {
+    void deserialize_game_objects(const string& filepath) {
         vector<GameObject::game_object> serialized_game_objects;
 
         ifstream level_file;
-        string path = "level.txt";
-        string path_absolute = PROJECT_PATH + path;
+        string path_absolute = PROJECT_PATH + filepath;
         level_file.open (path_absolute);
+
+        if (!level_file.is_open()) {
+            printf("Error: '%s' does not exist. Please save first\n", path_absolute.c_str());
+            return;
+        }
 
         {
             cereal::JSONInputArchive in_archive(level_file); // Create an input archive
@@ -388,14 +384,25 @@ namespace Scene {
 
         level_file.close();
 
+        // Clear game object lists
         game_object_count = 0;
+        highlighted_object_count = 0;
+        selected_object_count = 0;
+        shadow_object_count = 0;
 
         Render::clear_render_batches();
 
+        Render::add_game_object(&selection_box);
+
+        // Re-add all the game objects
         for (int i = 0; i < serialized_game_objects.size(); i++) {
-            add_game_object(&serialized_game_objects[i]);
-            game_objects[game_object_count].visible = true;
-            game_objects[game_object_count].is_dirty = true;
+            GameObject::game_object obj = serialized_game_objects[i];
+            obj.visible = true;
+            obj.pickable = true;
+            GameObject::update_color(&obj);
+            add_game_object(&obj);
         }
+
+        printf("Loaded level\n");
     }
 }

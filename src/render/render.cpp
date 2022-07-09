@@ -39,13 +39,12 @@ namespace Render {
         for (int i = 0; i < batch_count; i++) {
             // If there is enough space to add the object and its texture, and the z-index matches, add it to the first available batch
             if (batches[i].has_room && (RenderBatch::contains_texture(&batches[i], obj->sprite.texture_ID) || obj->sprite.is_null) && obj->z_index == batches[i].z_index) {
-                printf("Added object %s to batch %d\n",obj->name.c_str(), i);
+                //printf("Added object %s to batch %d\n",obj->name.c_str(), i);
                 RenderBatch::add_game_object(&batches[i], obj);
                 return;
             }
         }
         // If no batch has space for the game object or if there are no available texture slots, or if there is a new z-index, create a new batch
-        printf("Added object %s to new batch %d\n",obj->name.c_str(), batch_count);
         //printf("Created new batch with z-index %d\n", obj->z_index);
         RenderBatch::render_batch batch {};
         RenderBatch::init(&batch, max_batch_size, obj->z_index);

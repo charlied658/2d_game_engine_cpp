@@ -61,7 +61,6 @@ namespace Selected {
         for (int i = 0; i < selected_object_count; i++) {
             if (selected_objects[i] == obj) {
                 GameObject::set_selected(obj, false);
-                Mouse::set_shift_click_down(true);
                 found_obj = true;
             }
             if (found_obj && i < selected_object_count - 1) {
@@ -107,5 +106,13 @@ namespace Selected {
     void get_selected_objects(GameObject::game_object ***objects, int *object_count) {
         *objects = selected_objects;
         *object_count = selected_object_count;
+    }
+
+    /**
+     * Set the selected objects count.
+     * @param Selected objects count
+     */
+    void set_selected_objects_count(int count) {
+        selected_object_count = count;
     }
 }

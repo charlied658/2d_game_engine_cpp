@@ -25,5 +25,7 @@ namespace Selected {
 
     void get_selected_objects(GameObject::game_object ***objects, int *object_count);
 
+    void set_selected_objects_count(int count);
+
 }
 

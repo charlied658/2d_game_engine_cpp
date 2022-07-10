@@ -64,18 +64,24 @@ namespace Mouse {
      * Begin a multiselect action.
      */
     void start_multiselect() {
-        // Clicking and dragging on the background starts a multiselect action
-        if (!drag_objects && !shift_click_down) {
+        if (!drag_objects) {
             if (!multiselect) {
-                multiselect = true;
-                start_x = Mouse::get_worldX();
-                start_y = Mouse::get_worldY();
-                GameObject::set_position(selection_box, glm::vec2{start_x, start_y});
-                GameObject::set_visible(selection_box, true);
-                Selected::reset_selected();
+                // Starts a multiselect action
+                if (!shift_click_down) {
+                    multiselect = true;
+                    shift_click_down = true;
+                    start_x = Mouse::get_worldX();
+                    start_y = Mouse::get_worldY();
+                    GameObject::set_position(selection_box, glm::vec2{ start_x, start_y });
+                    GameObject::set_visible(selection_box, true);
+                    Selected::reset_selected();
+                }
             }
-            glm::vec2 new_scale {Mouse::get_worldX() - start_x, Mouse::get_worldY() - start_y};
-            GameObject::set_scale(selection_box,new_scale);
+            else {
+                // Scales selection box while multiselect is active
+                glm::vec2 new_scale{ Mouse::get_worldX() - start_x, Mouse::get_worldY() - start_y };
+                GameObject::set_scale(selection_box, new_scale);
+            }
         }
     }
 

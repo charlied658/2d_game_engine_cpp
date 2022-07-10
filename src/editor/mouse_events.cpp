@@ -55,6 +55,7 @@ namespace Mouse {
             }
         } else {
             // Start a multiselect action
+            // TODO: Should the mouse drag the camera instead?
             Mouse::start_multiselect();
         }
     }
@@ -63,17 +64,26 @@ namespace Mouse {
      * Handle what happens when the mouse is shift-clicked.
      */
     static void shift_click() {
-        if (highlighted_obj && !Mouse::is_shift_click_down()) {
-            if (highlighted_obj->selected) {
-                // Shift clicking a selected object will unselect it
-                Selected::unselect_object(highlighted_obj);
-            } else {
-                // Shift clicking an unselected object will select it
-                selected_objects[selected_object_count] = highlighted_obj;
-                GameObject::set_selected(highlighted_obj, true);
-                selected_object_count++;
+        if (highlighted_obj) {
+            if (!Mouse::is_shift_click_down()) {
                 Mouse::set_shift_click_down(true);
+                if (highlighted_obj->selected) {
+                    // Shift clicking a selected object will unselect it
+                    printf("Unselected object\n");
+                    Selected::unselect_object(highlighted_obj);
+                }
+                else {
+                    // Shift clicking an unselected object will select it
+                    printf("Selected object\n");
+                    selected_objects[selected_object_count] = highlighted_obj;
+                    GameObject::set_selected(highlighted_obj, true);
+                    Selected::set_selected_objects_count(selected_object_count + 1);
+                }
             }
+        }
+        else {
+            // Start a multiselect action
+            Mouse::start_multiselect();
         }
     }
 

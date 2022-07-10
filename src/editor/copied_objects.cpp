@@ -70,8 +70,9 @@ namespace Copy {
             // Set the pasted objects to be selected
             GameObject::game_object *obj = &game_objects[game_object_count - 1];
             GameObject::set_selected(obj, true);
+            Selected::get_selected_objects(&selected_objects, &selected_object_count);
             selected_objects[selected_object_count] = obj;
-            selected_object_count++;
+            Selected::set_selected_objects_count(selected_object_count + 1);
         }
         // Offset the copy position (for cascading effect with multiple pastes)
         copy_offset += glm::vec2 {0.1f, -0.1f};
@@ -85,7 +86,7 @@ namespace Copy {
             GameObject::set_dead(selected_objects[i], true);
         }
         Scene::remove_game_objects();
-        selected_object_count = 0;
+        Selected::set_selected_objects_count(0);
         Scene::get_game_objects_list(&game_objects, &game_object_count);
 
         // Rebuffer every render batch (since pointers to game objects are now invalid)

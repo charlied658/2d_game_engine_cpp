@@ -7,23 +7,22 @@
 
 #include "core/scene.h"
 
-#include "imgui/imgui.h"
-
 #include "render/render.h"
 #include "core/game_object.h"
 #include "core/sprite.h"
 #include "core/spritesheet.h"
 #include "core/camera.h"
 #include "core/mouse_listener.h"
-#include "core/window.h"
 #include "editor/serialize.h"
 #include "editor/select_objects.h"
+#include "editor/main_menu_bar.h"
+#include "editor/info_window.h"
+#include "editor/object_picker.h"
 
 namespace Scene {
 
     static GameObject::game_object *game_objects;
     static int game_object_count = 0;
-
     static string level_filepath;
 
     // Temporary test sprites and objects
@@ -98,58 +97,14 @@ namespace Scene {
      * Update scene ImGui.
      */
     void imgui() {
-        if (ImGui::BeginMainMenuBar()) {
-            // Level loading / saving system
-            if (ImGui::BeginMenu("File")) {
-                if (ImGui::MenuItem("New", "Ctrl+N")) {
-                    Scene::new_level();
-                }
-                if (ImGui::MenuItem("Load", "Ctrl+L")) {
-                    Scene::load_level();
-                }
-                if (ImGui::MenuItem("Save", "Ctrl+S")) {
-                    Scene::save_level();
-                }
-                if (ImGui::MenuItem("Save & Exit")) {
-                    Scene::save_level();
-                    Window::close_window();
-                }
-                if (ImGui::MenuItem("Exit")) {
-                    Window::close_window();
-                }
-                ImGui::EndMenu();
-            }
-            // Copy / paste / delete objects
-            if (ImGui::BeginMenu("Edit")) {
-                if (ImGui::MenuItem("Copy", "Ctrl+C")) {
-                    SelectObjects::copy_objects();
-                }
-                if (ImGui::MenuItem("Paste", "Ctrl+V")) {
-                    SelectObjects::paste_objects();
-                }
-                if (ImGui::MenuItem("Delete")) {
-                    SelectObjects::delete_objects();
-                }
-                ImGui::EndMenu();
-            }
-            ImGui::EndMainMenuBar();
-        }
-        ImGui::Begin("Info");
-        if (ImGui::BeginTabBar("TabBar"))
-        {
-            if (ImGui::BeginTabItem("Objects"))
-            {
-                SelectObjects::imgui();
-                ImGui::EndTabItem();
-            }
-            if (ImGui::BeginTabItem("Debug"))
-            {
-                ImGui::Text("FPS: %f", Window::get_fps());
-                ImGui::EndTabItem();
-            }
-            ImGui::EndTabBar();
-        }
-        ImGui::End();
+        // Main menu bar
+        MainMenuBar::imgui();
+
+        // Info window
+        InfoWindow::imgui();
+
+        // Object picker
+        ObjectPicker::imgui();
     }
 
     /**
@@ -166,28 +121,27 @@ namespace Scene {
 
     /**
      * Removes dead game objects from the scene.
-     * TODO: Make this function more efficient by making it perform only one pass - should be possible
      */
     void remove_game_objects() {
-        bool keep_iterating = true;
-        while (keep_iterating) {
-            // Remove objects one at a time by shifting every other object over by 1
-            bool found_obj = false;
-            for (int i = 0; i < game_object_count; i++) {
-                if (game_objects[i].dead) {
-                    found_obj = true;
-                }
-                if (found_obj && i < game_object_count - 1) {
-                    game_objects[i] = game_objects[i + 1];
-                }
+        int dead_count = 0;
+        bool dead = false;
+        for (int i = 0; i < game_object_count; i++) {
+            if (i == game_object_count - dead_count) {
+                break;
             }
-            if (found_obj) {
-                keep_iterating = true;
-                game_object_count--;
-            } else {
-                keep_iterating = false;
+            if (dead_count > 0) {
+                game_objects[i] = game_objects[i + dead_count];
+            }
+            if (game_objects[i].dead) {
+                dead = true;
+                dead_count++;
+            }
+            if (dead) {
+                dead = false;
+                i--;
             }
         }
+        game_object_count -= dead_count;
     }
 
     /**

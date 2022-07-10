@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include "core/game_object.h"
+
 namespace SelectObjects {
 
     void init();

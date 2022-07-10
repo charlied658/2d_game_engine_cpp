@@ -6,6 +6,7 @@
 #include "core/imgui_layer.h"
 
 #include "core/scene.h"
+#include "editor/info_window.h"
 
 namespace ImGuiLayer {
 
@@ -29,7 +30,9 @@ namespace ImGuiLayer {
         ImGui::NewFrame();
 
         // All ImGui draw functions go here
-        ImGui::ShowDemoWindow();
+        if (InfoWindow::show_demo_window()) {
+            ImGui::ShowDemoWindow();
+        }
         Scene::imgui();
 
         // Render data

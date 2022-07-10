@@ -3,22 +3,22 @@
  * Created on 7/9/22.
  */
 
-#include "editor/serialize.h"
+#include "core/serialize.h"
 
 #include <vector>
 #include <cstdio>
 #include <fstream>
 
-#include <cereal/archives/json.hpp>
-#include <cereal/archives/binary.hpp>
-#include <cereal/types/string.hpp>
-#include <cereal/types/vector.hpp>
+#include "cereal/archives/json.hpp"
+#include "cereal/archives/binary.hpp"
+#include "cereal/types/string.hpp"
+#include "cereal/types/vector.hpp"
 
 #include "render/render.h"
 #include "render/texture.h"
 #include "core/game_object.h"
 #include "core/scene.h"
-#include "editor/select_objects.h"
+#include "editor/object_manager.h"
 #include "util/properties.h"
 
 namespace Serialize {
@@ -75,7 +75,7 @@ namespace Serialize {
         // Clear game object lists
         Scene::clear_game_objects();
         Render::clear_render_batches();
-        SelectObjects::reload();
+        ObjectManager::reload();
 
         // Re-add all the game objects
         for (auto obj : serialized_game_objects) {

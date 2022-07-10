@@ -3,13 +3,13 @@
  * Created on 7/10/22.
  */
 
-#include "editor/main_menu_bar.h"
+#include "editor/imgui/main_menu_bar.h"
 
 #include "imgui/imgui.h"
 
 #include "core/scene.h"
 #include "core/window.h"
-#include "editor/select_objects.h"
+#include "editor/copied_objects.h"
 
 namespace MainMenuBar {
 
@@ -41,13 +41,13 @@ namespace MainMenuBar {
             // Copy / paste / delete objects
             if (ImGui::BeginMenu("Edit")) {
                 if (ImGui::MenuItem("Copy", "Ctrl+C")) {
-                    SelectObjects::copy_objects();
+                    Copy::copy_objects();
                 }
                 if (ImGui::MenuItem("Paste", "Ctrl+V")) {
-                    SelectObjects::paste_objects();
+                    Copy::paste_objects();
                 }
                 if (ImGui::MenuItem("Delete")) {
-                    SelectObjects::delete_objects();
+                    Copy::delete_objects();
                 }
                 ImGui::EndMenu();
             }

@@ -13,16 +13,16 @@
 #include "core/spritesheet.h"
 #include "core/camera.h"
 #include "core/mouse_listener.h"
-#include "editor/serialize.h"
-#include "editor/select_objects.h"
-#include "editor/main_menu_bar.h"
-#include "editor/info_window.h"
-#include "editor/object_picker.h"
+#include "core/serialize.h"
+#include "editor/object_manager.h"
+#include "editor/imgui/main_menu_bar.h"
+#include "editor/imgui/info_window.h"
+#include "editor/imgui/object_picker.h"
 
 namespace Scene {
 
     static GameObject::game_object *game_objects;
-    static int game_object_count = 0;
+    static int game_object_count;
     static string level_filepath;
 
     // Temporary test sprites and objects
@@ -38,10 +38,11 @@ namespace Scene {
         level_filepath = "level.txt";
 
         // Initialize game object array
-        game_objects = new GameObject::game_object[1000];
+        game_objects = new GameObject::game_object[10000];
+        game_object_count = 0;
 
-        // Initialize selection objects
-        SelectObjects::init();
+        // Initialize objects
+        ObjectManager::init();
 
         // =================== Generate temporary test objects
         // Create spritesheet
@@ -77,8 +78,8 @@ namespace Scene {
         // Update mouse position
         Mouse::calculate_world_coords();
 
-        // Update selected objects
-        SelectObjects::update_selected_objects();
+        // Update objects in the scene
+        ObjectManager::update();
 
         // Key bindings for saving / loading
         if (Key::get_key_pressed(GLFW_KEY_LEFT_CONTROL) || Key::get_key_pressed(GLFW_KEY_LEFT_SUPER)) {
@@ -90,7 +91,6 @@ namespace Scene {
                 Scene::new_level();
             }
         }
-
     }
 
     /**
@@ -112,7 +112,7 @@ namespace Scene {
      * @param obj Game object reference
      */
     void add_game_object(GameObject::game_object *obj) {
-        if (game_object_count < 1000) {
+        if (game_object_count < 10000) {
             game_objects[game_object_count] = *obj;
             Render::add_game_object(&game_objects[game_object_count]);
             game_object_count++;
@@ -163,7 +163,7 @@ namespace Scene {
      */
     void new_level() {
         Render::clear_render_batches();
-        SelectObjects::reload();
+        ObjectManager::reload();
         Scene::add_game_object(&obj1);
         Scene::add_game_object(&obj2);
         Scene::add_game_object(&obj3);
@@ -171,7 +171,7 @@ namespace Scene {
     }
 
     /**
-     * Get the game objects list
+     * Get the game objects list.
      * @param game_objs Game objects reference
      * @param game_obj_count Count of game objects
      */
@@ -181,7 +181,7 @@ namespace Scene {
     }
 
     /**
-     * Clear the list of game objects
+     * Clear the list of game objects.
      */
     void clear_game_objects() {
         game_object_count = 0;

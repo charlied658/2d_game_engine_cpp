@@ -6,7 +6,7 @@
 #include "core/imgui_layer.h"
 
 #include "core/scene.h"
-#include "editor/info_window.h"
+#include "editor/imgui/info_window.h"
 
 namespace ImGuiLayer {
 

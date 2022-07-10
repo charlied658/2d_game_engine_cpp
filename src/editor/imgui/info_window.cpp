@@ -3,12 +3,12 @@
  * Created on 7/10/22.
  */
 
-#include "editor/info_window.h"
+#include "editor/imgui/info_window.h"
 
 #include "imgui/imgui.h"
 
 #include "core/window.h"
-#include "editor/select_objects.h"
+#include "editor/object_manager.h"
 
 namespace InfoWindow {
 
@@ -23,7 +23,7 @@ namespace InfoWindow {
         {
             if (ImGui::BeginTabItem("Selected"))
             {
-                SelectObjects::imgui();
+                ObjectManager::imgui();
                 ImGui::EndTabItem();
             }
             if (ImGui::BeginTabItem("Debug"))

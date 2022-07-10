@@ -17,4 +17,6 @@ namespace Window {
 
     int get_height();
 
+    double get_fps();
+
 }

@@ -81,31 +81,37 @@ namespace Scene {
         // Update selected objects
         SelectObjects::update_selected_objects();
 
+        // Key bindings for saving / loading
+        if (Key::get_key_pressed(GLFW_KEY_LEFT_CONTROL) || Key::get_key_pressed(GLFW_KEY_LEFT_SUPER)) {
+            if (Key::get_key_begin_press(GLFW_KEY_S)) {
+                Scene::save_level();
+            } else if (Key::get_key_begin_press(GLFW_KEY_L)) {
+                Scene::load_level();
+            } else if (Key::get_key_begin_press(GLFW_KEY_N)) {
+                Scene::new_level();
+            }
+        }
+
     }
 
     /**
      * Update scene ImGui.
      */
     void imgui() {
-        ImGui::Begin("Main Menu", nullptr, ImGuiWindowFlags_MenuBar);
-        if (ImGui::BeginMenuBar()) {
-            // File loading / saving system (prototype)
+        if (ImGui::BeginMainMenuBar()) {
+            // Level loading / saving system
             if (ImGui::BeginMenu("File")) {
                 if (ImGui::MenuItem("New", "Ctrl+N")) {
-                    GameObject::set_position(&game_objects[0], glm::vec2 {2.5f,1.0f});
-                    GameObject::set_position(&game_objects[1], glm::vec2 {3.0f,1.0f});
-                    GameObject::set_position(&game_objects[2], glm::vec2 {2.0f,1.0f});
-                    SelectObjects::reset_selected();
-                    printf("Created new level\n");
+                    Scene::new_level();
                 }
                 if (ImGui::MenuItem("Load", "Ctrl+L")) {
-                    Serialize::deserialize_game_objects(level_filepath);
+                    Scene::load_level();
                 }
                 if (ImGui::MenuItem("Save", "Ctrl+S")) {
-                    Serialize::serialize_game_objects(level_filepath);
+                    Scene::save_level();
                 }
                 if (ImGui::MenuItem("Save & Exit")) {
-                    Serialize::serialize_game_objects(level_filepath);
+                    Scene::save_level();
                     Window::close_window();
                 }
                 if (ImGui::MenuItem("Exit")) {
@@ -113,9 +119,36 @@ namespace Scene {
                 }
                 ImGui::EndMenu();
             }
-            ImGui::EndMenuBar();
+            // Copy / paste / delete objects
+            if (ImGui::BeginMenu("Edit")) {
+                if (ImGui::MenuItem("Copy", "Ctrl+C")) {
+                    SelectObjects::copy_objects();
+                }
+                if (ImGui::MenuItem("Paste", "Ctrl+V")) {
+                    SelectObjects::paste_objects();
+                }
+                if (ImGui::MenuItem("Delete")) {
+                    SelectObjects::delete_objects();
+                }
+                ImGui::EndMenu();
+            }
+            ImGui::EndMainMenuBar();
         }
-        SelectObjects::imgui();
+        ImGui::Begin("Info");
+        if (ImGui::BeginTabBar("TabBar"))
+        {
+            if (ImGui::BeginTabItem("Objects"))
+            {
+                SelectObjects::imgui();
+                ImGui::EndTabItem();
+            }
+            if (ImGui::BeginTabItem("Debug"))
+            {
+                ImGui::Text("FPS: %f", Window::get_fps());
+                ImGui::EndTabItem();
+            }
+            ImGui::EndTabBar();
+        }
         ImGui::End();
     }
 
@@ -124,9 +157,63 @@ namespace Scene {
      * @param obj Game object reference
      */
     void add_game_object(GameObject::game_object *obj) {
-        game_objects[game_object_count] = *obj;
-        Render::add_game_object(&game_objects[game_object_count]);
-        game_object_count++;
+        if (game_object_count < 1000) {
+            game_objects[game_object_count] = *obj;
+            Render::add_game_object(&game_objects[game_object_count]);
+            game_object_count++;
+        }
+    }
+
+    /**
+     * Removes dead game objects from the scene.
+     * TODO: Make this function more efficient by making it perform only one pass - should be possible
+     */
+    void remove_game_objects() {
+        bool keep_iterating = true;
+        while (keep_iterating) {
+            // Remove objects one at a time by shifting every other object over by 1
+            bool found_obj = false;
+            for (int i = 0; i < game_object_count; i++) {
+                if (game_objects[i].dead) {
+                    found_obj = true;
+                }
+                if (found_obj && i < game_object_count - 1) {
+                    game_objects[i] = game_objects[i + 1];
+                }
+            }
+            if (found_obj) {
+                keep_iterating = true;
+                game_object_count--;
+            } else {
+                keep_iterating = false;
+            }
+        }
+    }
+
+    /**
+     * Save the state of the level to a file.
+     */
+    void save_level() {
+        Serialize::serialize_game_objects(level_filepath);
+    }
+
+    /**
+     * Load a level from an existing file.
+     */
+    void load_level() {
+        Serialize::deserialize_game_objects(level_filepath);
+    }
+
+    /**
+     * Create a new level.
+     */
+    void new_level() {
+        Render::clear_render_batches();
+        SelectObjects::reload();
+        Scene::add_game_object(&obj1);
+        Scene::add_game_object(&obj2);
+        Scene::add_game_object(&obj3);
+        printf("Created new level\n");
     }
 
     /**

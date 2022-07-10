@@ -13,6 +13,8 @@ namespace Render {
 
     void add_game_object(GameObject::game_object *obj);
 
+    void remove_game_object(GameObject::game_object *obj);
+
     void highlight_game_object(GameObject::game_object **highlighted_obj);
 
     void highlight_game_objects(GameObject::game_object **highlighted_objects, int *highlighted_count, GameObject::game_object *selection_box);

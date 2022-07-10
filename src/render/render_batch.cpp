@@ -154,6 +154,28 @@ namespace RenderBatch {
     }
 
     /**
+     * Remove a game object from a batch.
+     * @param batch Render batch reference
+     * @param obj Game object to be removed
+     * @return True if object was removed
+     */
+    void remove_game_object(render_batch *batch, GameObject::game_object *obj) {
+        bool found_obj = false;
+        for (int i = 0; i < batch->game_object_count; i++) {
+            if (batch->game_object_list[i] == obj) {
+                found_obj = true;
+            }
+            if (found_obj && i < batch->game_object_count - 1) {
+                batch->game_object_list[i] = batch->game_object_list[i + 1];
+                batch->game_object_list[i]->is_dirty = true;
+            }
+        }
+        if (found_obj) {
+            batch->game_object_count--;
+        }
+    }
+
+    /**
      * Generate vertex data for the given game object.
      * @param batch Render batch reference
      * @param index Index to begin adding vertex data
@@ -194,7 +216,7 @@ namespace RenderBatch {
                 batch->vertex_data[offset + 8] = (float) get_texture_slot(batch,batch->game_object_list[index]->sprite.texture_ID);
             }
 
-            offset += 9;
+            offset += vertex_size;
         }
     }
 

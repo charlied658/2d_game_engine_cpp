@@ -16,8 +16,14 @@ explains how to navigate the interface to build your own game.
 - Escape cancels a selection
 - Shift click to add or remove an object from the selection
 
+## Copy / Paste / Delete
+- Press Ctrl + C to copy the selected game objects
+- Press Ctrl + V to paste the copied objects
+- Press Delete to delete the selected objects
+- These options are also available under "Edit" in the Main Menu
+
 ## Saving / Loading
-In the Main Menu window, select file to bring up the save / load options
+In the Main Menu, select file to bring up the save / load options
 - Press Save to save the level
 - Press Save & Exit to save and close the engine
 - Press Load to load the saved level

@@ -45,7 +45,7 @@ namespace Render {
             }
         }
         // If no batch has space for the game object or if there are no available texture slots, or if there is a new z-index, create a new batch
-        //printf("Created new batch with z-index %d\n", obj->z_index);
+        //printf("Added object %s to new batch %d \n", obj->name.c_str(), batch_count);
         RenderBatch::render_batch batch {};
         RenderBatch::init(&batch, max_batch_size, obj->z_index);
         batches[batch_count] = batch;
@@ -62,6 +62,18 @@ namespace Render {
                     sorted_batches[j] = sorted_batches[j + 1];
                     sorted_batches[j + 1] = temp;
                 }
+            }
+        }
+    }
+
+    /**
+     * Remove a game object from its render batch
+     * @param obj Game object to be removed
+     */
+    void remove_game_object(GameObject::game_object *obj) {
+        for (int i = 0; i < batch_count; i++) {
+            if (obj->z_index == batches[i].z_index) {
+                RenderBatch::remove_game_object(&batches[i], obj);
             }
         }
     }

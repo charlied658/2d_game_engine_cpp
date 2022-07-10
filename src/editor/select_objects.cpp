@@ -17,17 +17,20 @@ namespace SelectObjects {
     static GameObject::game_object **highlighted_objects;
     static GameObject::game_object **selected_objects;
     static GameObject::game_object *shadow_objects;
+    static GameObject::game_object **copied_objects;
 
     static int highlighted_object_count = 0;
     static int selected_object_count = 0;
     static int shadow_object_count = 0;
+    static int copied_objects_count = 0;
     static int game_object_count;
 
-    bool drag_objects;
-    bool multiselect;
-    bool shift_select;
+    static bool drag_objects;
+    static bool multiselect;
+    static bool shift_select;
     static double start_x, start_y;
     static glm::vec2 *obj_start_pos;
+    static glm::vec2 copy_offset;
 
     static Sprite::sprite sprite_null;
     static GameObject::game_object selection_box;
@@ -40,20 +43,36 @@ namespace SelectObjects {
         highlighted_objects = new GameObject::game_object *[1000];
         selected_objects = new GameObject::game_object *[1000];
         shadow_objects = new GameObject::game_object[1000];
-        obj_start_pos = new glm::vec2[1000];
+        copied_objects = new GameObject::game_object *[1000];
+
         highlighted_object_count = 0;
         selected_object_count = 0;
         shadow_object_count = 0;
+        copied_objects_count = 0;
+
+        obj_start_pos = new glm::vec2[1000];
+        copy_offset = glm::vec2 {0.0f, 0.0f};
 
         // Generate null sprite (Renders as a solid color)
-        sprite_null = Sprite::sprite {0, glm::vec2{0.0f, 0.0f}, glm::vec2{1.0f, 1.0f}};
-        sprite_null.is_null = true;
+        Sprite::get_null_sprite(&sprite_null);
 
         // Generate selection box (Appears when you click and drag to multiselect)
         GameObject::init(&selection_box, "selection_box", glm::vec2 {1.0f, 1.5f}, glm::vec2 {1.0f, 1.0f}, 2, &sprite_null);
         GameObject::set_color(&selection_box, glm::vec4 {1.0f, 1.0f, 0.0f, 0.2f});
-        selection_box.pickable = false;
-        selection_box.visible = true;
+        GameObject::set_pickable(&selection_box, false);
+        GameObject::set_visible(&selection_box, false);
+        Render::add_game_object(&selection_box);
+    }
+
+    /**
+     * Reset variables when the scene is reloaded.
+     */
+    void reload() {
+        highlighted_object_count = 0;
+        selected_object_count = 0;
+        shadow_object_count = 0;
+        copied_objects_count = 0;
+        GameObject::set_visible(&selection_box, false);
         Render::add_game_object(&selection_box);
     }
 
@@ -92,12 +111,18 @@ namespace SelectObjects {
             SelectObjects::reset_selected();
         }
 
-        // Space resets positions of game objects (temporary)
-        if (Key::get_key_pressed(GLFW_KEY_SPACE) && !drag_objects) {
-            GameObject::set_position(&game_objects[0], glm::vec2 {2.5f,1.0f});
-            GameObject::set_position(&game_objects[1], glm::vec2 {3.0f,1.0f});
-            GameObject::set_position(&game_objects[2], glm::vec2 {2.0f,1.0f});
-            SelectObjects::reset_selected();
+        // Key bindings for copy / paste
+        if (Key::get_key_pressed(GLFW_KEY_LEFT_CONTROL) || Key::get_key_pressed(GLFW_KEY_LEFT_SUPER)) {
+            if (Key::get_key_begin_press(GLFW_KEY_C)) {
+                SelectObjects::copy_objects();
+            } else if (Key::get_key_begin_press(GLFW_KEY_V)) {
+                SelectObjects::paste_objects();
+            }
+        }
+
+        // Delete selected objects
+        if (Key::get_key_begin_press(GLFW_KEY_DELETE) || Key::get_key_begin_press(GLFW_KEY_BACKSPACE)) {
+            SelectObjects::delete_objects();
         }
     }
 
@@ -312,6 +337,57 @@ namespace SelectObjects {
                 GameObject::set_visible(&shadow_objects[i], false);
             }
         }
+    }
+
+    /**
+     * Copy selected objects to the clipboard.
+     */
+    void copy_objects() {
+        copied_objects_count = 0;
+        for (int i = 0; i < selected_object_count; i++) {
+            copied_objects[copied_objects_count] = selected_objects[i];
+            copied_objects_count++;
+        }
+        copy_offset = glm::vec2 {0.1f, -0.1f};
+    }
+
+    /**
+     * Paste copied objects.
+     */
+    void paste_objects() {
+        SelectObjects::reset_selected();
+        for (int i = 0; i < copied_objects_count; i++) {
+            GameObject::game_object copy = *copied_objects[i];
+            GameObject::set_position(&copy,copy.position + copy_offset);
+            Scene::add_game_object(&copy);
+            Scene::get_game_objects_list(&game_objects, &game_object_count);
+            // Set the pasted objects to be selected
+            GameObject::game_object *obj = &game_objects[game_object_count - 1];
+            GameObject::set_selected(obj, true);
+            selected_objects[selected_object_count] = obj;
+            selected_object_count++;
+        }
+        // Offset the copy position (for cascading effect with multiple pastes)
+        copy_offset += glm::vec2 {0.1f, -0.1f};
+    }
+
+    /**
+     * Delete selected objects.
+     */
+    void delete_objects() {
+        for (int i = 0; i < selected_object_count; i++) {
+            GameObject::set_dead(selected_objects[i], true);
+        }
+        Scene::remove_game_objects();
+        selected_object_count = 0;
+        Scene::get_game_objects_list(&game_objects, &game_object_count);
+
+        // Rebuffer every render batch (since pointers to game objects are now invalid)
+        Render::clear_render_batches();
+        for (int i = 0; i < game_object_count; i++) {
+            Render::add_game_object(&game_objects[i]);
+        }
+        SelectObjects::reload();
     }
 
     /**

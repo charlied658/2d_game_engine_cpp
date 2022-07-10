@@ -30,6 +30,8 @@ namespace RenderBatch {
 
     void add_game_object(render_batch *batch, GameObject::game_object *obj);
 
+    void remove_game_object(render_batch *batch, GameObject::game_object *obj);
+
     static void generate_vertex_data(render_batch *batch, int index);
 
     static void generate_element_indices(render_batch *batch);

@@ -1,4 +1,6 @@
 #pragma once
 
 // Replace with absolute filepath of this project directory on your machine, then remove the .example extension
+// On Windows, you should still use forward slashes. Example: "C:/Users/..."
+// Make sure to include the final slash: "...2d_game_engine_cpp/" or else it will not work
 #define PROJECT_PATH "/Users/projects/.../2d_game_engine_cpp/"

@@ -28,6 +28,7 @@ namespace Window {
     static const int default_height = 720;
     static const char *title = "Game Engine";
     static int width, height;
+    static double fps;
 
     void window_size_callback(GLFWwindow* window_ptr, int w, int h)
     {
@@ -113,8 +114,8 @@ namespace Window {
             dt = currentTime - startTime;
             startTime = currentTime;
 
-            // Print the FPS (Frames per second)
-            //printf("FPS: %f\n", 1/dt);
+            // Update the FPS (Frames per second)
+            fps = 1.0f/dt;
 
             // Update the scene
             Scene::update(dt);
@@ -149,5 +150,9 @@ namespace Window {
 
     int get_height() {
         return height;
+    }
+
+    double get_fps() {
+        return fps;
     }
 }

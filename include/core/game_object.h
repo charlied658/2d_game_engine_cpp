@@ -33,6 +33,7 @@ namespace GameObject {
         bool highlighted;
         bool selected;
         bool dragging;
+        bool dead;
 
         template<class Archive>
         void serialize(Archive & archive)
@@ -60,6 +61,8 @@ namespace GameObject {
     void set_selected(GameObject::game_object *obj, bool selected);
 
     void set_dragging(GameObject::game_object *obj, bool dragging);
+
+    void set_dead(GameObject::game_object *obj, bool dead);
 
     void update_color(GameObject::game_object *obj);
 

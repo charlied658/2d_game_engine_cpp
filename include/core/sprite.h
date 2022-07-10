@@ -29,4 +29,6 @@ namespace Sprite {
             archive( texture_ID, texture_filepath, tex_coords, tex_scale, is_null);
         }
     };
+
+    void get_null_sprite(Sprite::sprite *spr);
 }

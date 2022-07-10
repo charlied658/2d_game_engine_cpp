@@ -32,6 +32,7 @@ namespace GameObject {
         obj->highlighted = false;
         obj->dragging = false;
         obj->selected = false;
+        obj->dead = false;
     }
 
     /**
@@ -141,6 +142,18 @@ namespace GameObject {
         }
         obj->dragging = dragging;
         update_color(obj);
+    }
+
+    /**
+     * Set a game object to be dead. It will be deleted shortly.
+     * @param obj Game object reference
+     * @param dead Set the object to be dead
+     */
+    void set_dead(GameObject::game_object *obj, bool dead) {
+        if (obj->dead == dead) {
+            return;
+        }
+        obj->dead = dead;
     }
 
     /**

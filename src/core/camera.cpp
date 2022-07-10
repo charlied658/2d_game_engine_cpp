@@ -26,24 +26,26 @@ namespace Camera {
     void update(double dt) {
         // Move camera
         if (Key::get_key_pressed(GLFW_KEY_LEFT) && !Key::get_key_pressed(GLFW_KEY_RIGHT)) {
-            Camera::move_camera(glm::vec2 (dt * 1.5, 0));
+            Camera::move_camera(glm::vec2(dt * 1.5, 0));
         }
         if (Key::get_key_pressed(GLFW_KEY_RIGHT) && !Key::get_key_pressed(GLFW_KEY_LEFT)) {
-            Camera::move_camera(glm::vec2 (-dt * 1.5, 0));
+            Camera::move_camera(glm::vec2(-dt * 1.5, 0));
         }
         if (Key::get_key_pressed(GLFW_KEY_UP) && !Key::get_key_pressed(GLFW_KEY_DOWN)) {
-            Camera::move_camera(glm::vec2 (0, -dt * 1.5));
+            Camera::move_camera(glm::vec2(0, -dt * 1.5));
         }
         if (Key::get_key_pressed(GLFW_KEY_DOWN) && !Key::get_key_pressed(GLFW_KEY_UP)) {
-            Camera::move_camera(glm::vec2 (0, dt * 1.5));
+            Camera::move_camera(glm::vec2(0, dt * 1.5));
         }
 
         // Zoom in/out
-        if (Key::get_key_pressed(GLFW_KEY_W) && !Key::get_key_pressed(GLFW_KEY_S)) {
-            Camera::scale_camera(1.01f);
-        }
-        if (Key::get_key_pressed(GLFW_KEY_S) && !Key::get_key_pressed(GLFW_KEY_W)) {
-            Camera::scale_camera(1/1.01f);
+        if (!Key::get_key_pressed(GLFW_KEY_LEFT_CONTROL) && !Key::get_key_pressed(GLFW_KEY_LEFT_SUPER)) {
+            if (Key::get_key_pressed(GLFW_KEY_W) && !Key::get_key_pressed(GLFW_KEY_S)) {
+                Camera::scale_camera(1.01f);
+            }
+            if (Key::get_key_pressed(GLFW_KEY_S) && !Key::get_key_pressed(GLFW_KEY_W)) {
+                Camera::scale_camera(1 / 1.01f);
+            }
         }
 
         // Reset camera

@@ -9,6 +9,8 @@ namespace SelectObjects {
 
     void init();
 
+    void reload();
+
     void update_selected_objects();
 
     void reset_highlighted();
@@ -34,6 +36,12 @@ namespace SelectObjects {
     void start_multiselect();
 
     void render_shadows();
+
+    void copy_objects();
+
+    void paste_objects();
+
+    void delete_objects();
 
     void imgui();
 

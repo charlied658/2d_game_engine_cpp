@@ -26,8 +26,8 @@ namespace Texture {
     texture *get_texture(const string& filepath) {
         string absolute_filepath = PROJECT_PATH + filepath;
         for (int i = 0; i < texture_count; i++) {
-            if (texture_list[i].filepath == absolute_filepath) {
-                printf("Found texture %s",absolute_filepath.c_str());
+            if (texture_list[i].filepath == filepath) {
+                //printf("Found texture %s\n",absolute_filepath.c_str());
                 return &texture_list[i];
             }
         }
@@ -35,7 +35,7 @@ namespace Texture {
         texture_list[texture_count] = texture {};
         texture_list[texture_count].filepath = filepath;
         texture_list[texture_count].textureID = create_texture(absolute_filepath);
-        printf("Created texture '%s'\n", absolute_filepath.c_str());
+        printf("Created texture '%s' with ID %d\n", absolute_filepath.c_str(), texture_list[texture_count].textureID);
         texture *to_return = &texture_list[texture_count];
         texture_count++;
         return to_return;

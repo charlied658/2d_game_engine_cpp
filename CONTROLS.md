@@ -2,7 +2,7 @@
 Once you have the project compiling and running, this document
 explains how to navigate the interface to build your own game.
 
-<img width="1440" alt="gameEngine5" src="https://user-images.githubusercontent.com/80932655/178087657-a7798a4a-c915-4287-9c6f-f4ceeaa5147d.png">
+<img width="1440" alt="gameEngine7" src="https://user-images.githubusercontent.com/80932655/178284323-1671a4b8-a4cd-4360-8128-974a8be8d0cb.png">
 
 ## Camera Controls
 - Arrow keys to move

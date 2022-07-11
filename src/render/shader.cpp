@@ -7,6 +7,7 @@
 
 #include <glm/gtc/type_ptr.hpp>
 #include <cstdio>
+#include <sstream>
 
 #include "util/properties.h"
 
@@ -16,39 +17,44 @@ using std::ifstream; using std::ostringstream;
 
 namespace Shader {
 
-    static GLuint program_ID;
+    static shader shader_list[100];
+    static int shader_count;
+    static GLuint current_program_ID;
+
+    /**
+     * Get a shader from the shader list. If it is not in the list, add it to the list.
+     * @param shader Shader object
+     * @param filepath Filepath of shader
+     */
+    void get_shader(unsigned int *shader, const string& vertex_filepath, const string& fragment_filepath) {
+        for (int i = 0; i < shader_count; i++) {
+            if (shader_list[i].vertex_filepath == vertex_filepath && shader_list[i].fragment_filepath == fragment_filepath) {
+                *shader = shader_list[i].program_ID;
+                return;
+            }
+        }
+        // If no match is found, create a shader and add it to the shader list.
+        shader_list[shader_count] = Shader::shader {};
+        shader_list[shader_count].vertex_filepath = vertex_filepath;
+        shader_list[shader_count].fragment_filepath = fragment_filepath;
+        shader_list[shader_count].program_ID = create_program(vertex_filepath, fragment_filepath);
+        *shader = shader_list[shader_count].program_ID;
+        shader_count++;
+    }
 
     /**
      * Create and compile the shader program
      */
-    void create_program() {
-
+    static unsigned int create_program(const string& vertex_filepath, const string& fragment_filepath) {
         string vertex_shader_source, fragment_shader_source;
-        GLuint vertex_shader, fragment_shader;
+        GLuint vertex_shader, fragment_shader, program_ID;
         GLint success, len;
         GLsizei length;
         GLchar description[1000];
 
-        // Read shader source file
-        string path = "assets/shaders/default.glsl";
-        string absolute_path = PROJECT_PATH + path;
-        ifstream input_file;
-        input_file.open(absolute_path);
-        if (!input_file.is_open()) {
-            cerr << "Could not open the file - '"
-                 << absolute_path << "'" << endl;
-            exit(EXIT_FAILURE);
-        }
-        string shader_source = string((std::istreambuf_iterator<char>(input_file)), std::istreambuf_iterator<char>());
-
-        // Use regex to split the shader into vertex and fragment
-        std::regex rgx("#type( )+([a-zA-Z])+");
-        std::sregex_token_iterator iter(shader_source.begin(),shader_source.end(),rgx,-1);
-        iter++;
-        vertex_shader_source = string(*iter);
-        iter++;
-        fragment_shader_source = string(*iter);
-
+        // Read shader source files
+        Shader::read_source(&vertex_shader_source, vertex_filepath);
+        Shader::read_source(&fragment_shader_source, fragment_filepath);
         const char *vertex_shader_text = vertex_shader_source.c_str();
         const char *fragment_shader_text = fragment_shader_source.c_str();
 
@@ -91,28 +97,39 @@ namespace Shader {
             printf("%s", description);
             exit(EXIT_FAILURE);
         }
+        return program_ID;
     }
 
-    void use_program() {
+    void use_program(unsigned int program_ID) {
         glUseProgram(program_ID);
+        current_program_ID = program_ID;
     }
 
-    void detach() {
-        glUseProgram(0);
+    /**
+     * Read the source of a shader file.
+     * @param source Source text
+     * @param filepath Filepath of shader
+     */
+    void read_source(string *source, const string& filepath) {
+        string absolute_filepath = PROJECT_PATH + filepath;
+        ifstream input_file;
+        input_file.open(absolute_filepath);
+        if (!input_file.is_open()) {
+            printf("Could not open file '%s'\n", absolute_filepath.c_str());
+            exit(EXIT_FAILURE);
+        }
+        stringstream buffer;
+        buffer << input_file.rdbuf();
+        *source = buffer.str();
     }
 
     void upload_mat4(const char *varName, glm::mat4 matrix) {
-        GLint var_location = glGetUniformLocation(program_ID, varName);
+        GLint var_location = glGetUniformLocation(current_program_ID, varName);
         glUniformMatrix4fv(var_location, 1, false, glm::value_ptr(matrix));
     }
 
-    void upload_texture(const char *varName, int slot) {
-        GLint var_location = glGetUniformLocation(program_ID, varName);
-        glUniform1i(var_location, slot);
-    }
-
     void upload_textures(const char *varName, int *slots) {
-        GLint var_location = glGetUniformLocation(program_ID, varName);
+        GLint var_location = glGetUniformLocation(current_program_ID, varName);
         glUniform1iv(var_location, 8, slots);
     }
 }

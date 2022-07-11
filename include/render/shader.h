@@ -13,17 +13,27 @@
 #include <filesystem>
 #include <iostream>
 #include <fstream>
+#include <string>
+
+using namespace std;
 
 namespace Shader {
-    void create_program();
 
-    void use_program();
+    struct shader {
+        unsigned int program_ID;
+        string vertex_filepath;
+        string fragment_filepath;
+    };
 
-    void detach();
+    void get_shader(unsigned int *shader, const string& vertex_filepath, const string& fragment_filepath);
+
+    static unsigned int create_program(const string& vertex_filepath, const string& fragment_filepath);
+
+    void use_program(unsigned int program_ID);
+
+    void read_source(string *source, const string& filepath);
 
     void upload_mat4(const char *varName, glm::mat4);
-
-    void upload_texture(const char *varName, int slot);
 
     void upload_textures(const char *varName, int *slots);
 }

@@ -29,6 +29,9 @@ namespace Window {
     static const char *title = "Game Engine";
     static int width, height;
     static double fps;
+    static unsigned int default_shader;
+    static string default_vertex_filepath;
+    static string default_fragment_filepath;
 
     void window_size_callback(GLFWwindow* window_ptr, int w, int h)
     {
@@ -87,10 +90,14 @@ namespace Window {
         // Maximize the window;
         glfwMaximizeWindow(window);
 
+        // Create shader
+        default_vertex_filepath = "assets/shaders/default/vertex.glsl";
+        default_fragment_filepath = "assets/shaders/default/fragment.glsl";
+        Shader::get_shader(&default_shader, default_vertex_filepath, default_fragment_filepath);
+
         // Initialize scene
         Scene::init();
         Camera::init();
-        Shader::create_program();
         ImGuiLayer::init(window);
 
         return 0;
@@ -124,7 +131,7 @@ namespace Window {
             glClear(GL_COLOR_BUFFER_BIT);
 
             // Draw sprites to the screen
-            Shader::use_program();
+            Shader::use_program(default_shader);
             Render::render();
 
             // Render ImGui elements

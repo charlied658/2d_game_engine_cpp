@@ -78,6 +78,7 @@ namespace ObjectManager {
             ImGui::Text("Highlighted object: %s", highlighted_obj->name.c_str());
         }
         // Display highlighted game objects
+        Selected::get_selected_objects(&selected_objects,&selected_object_count);
         for (int i = 0; i < selected_object_count; i++) {
             ImGui::Text("Selected: %s", selected_objects[i]->name.c_str());
         }

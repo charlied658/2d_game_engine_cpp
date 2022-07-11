@@ -8,7 +8,7 @@
 #include "core/scene.h"
 #include "core/imgui_layer.h"
 #include "render/render.h"
-#include "editor/object_manager.h"
+#include "editor/selected_objects.h"
 #include "editor/mouse_drag_events.h"
 #include "editor/selection_box.h"
 
@@ -20,6 +20,8 @@ namespace Highlight {
 
     static GameObject::game_object *game_objects;
     static int game_object_count;
+    static GameObject::game_object **selected_objects;
+    static int selected_object_count;
     static GameObject::game_object *selection_box;
 
     /**
@@ -75,6 +77,13 @@ namespace Highlight {
             // Highlight the object that the mouse cursor is over
             if (!ImGuiLayer::want_mouse_capture() && !Mouse::is_dragging_objects()) {
                 Render::highlight_game_object(&highlighted_obj);
+            }
+            // Highlight the other selected objects
+            if (highlighted_obj && highlighted_obj->selected) {
+                Selected::get_selected_objects(&selected_objects, &selected_object_count);
+                for (int i = 0; i < selected_object_count; i++) {
+                    GameObject::set_highlighted(selected_objects[i], true);
+                }
             }
         }
     }

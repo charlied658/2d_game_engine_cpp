@@ -65,6 +65,8 @@ namespace Scene {
         Scene::add_game_object(&obj3);
         // ===============================================
 
+        ObjectPicker::init();
+
     }
 
     /**

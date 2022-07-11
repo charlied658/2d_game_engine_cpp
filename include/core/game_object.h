@@ -29,13 +29,13 @@ namespace GameObject {
         bool is_dirty;
         glm::vec4 color;
         glm::vec4 out_color;
+        float saturation;
         bool pickable;
         bool visible;
         bool highlighted;
         bool selected;
         bool dragging;
         bool dead;
-        bool holding;
 
         template<class Archive>
         void serialize(Archive & archive)
@@ -54,6 +54,8 @@ namespace GameObject {
 
     void set_color(GameObject::game_object *obj, glm::vec4 color);
 
+    void set_saturation(GameObject::game_object *obj, float saturation);
+
     void set_visible(GameObject::game_object *obj, bool visible);
 
     void set_pickable(GameObject::game_object *obj, bool pickable);
@@ -65,8 +67,6 @@ namespace GameObject {
     void set_dragging(GameObject::game_object *obj, bool dragging);
 
     void set_dead(GameObject::game_object *obj, bool dead);
-
-    void set_holding(GameObject::game_object *obj, bool holding);
 
     void update_color(GameObject::game_object *obj);
 

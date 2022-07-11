@@ -41,6 +41,8 @@ namespace Scene {
         MainMenuBar::init();
         ObjectPicker::init();
 
+        Scene::load_level();
+
     }
 
     /**

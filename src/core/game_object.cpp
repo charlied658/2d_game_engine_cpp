@@ -27,13 +27,13 @@ namespace GameObject {
         obj->is_dirty = true;
         obj->color = glm::vec4 {1.0f, 1.0f, 1.0f, 1.0f};
         obj->out_color = glm::vec4 {1.0f, 1.0f, 1.0f, 1.0f};
+        obj->saturation = 0.0f;
         obj->pickable = true;
         obj->visible = true;
         obj->highlighted = false;
         obj->dragging = false;
         obj->selected = false;
         obj->dead = false;
-        obj->holding = false;
     }
 
     /**
@@ -69,16 +69,22 @@ namespace GameObject {
     /**
      * Set color of a game object
      * @param obj Game object reference
-     * @param r Red value
-     * @param g Green value
-     * @param b Blue value
-     * @param a Alpha value
+     * @param color Color of object
      */
     void set_color(GameObject::game_object *obj, glm::vec4 color) {
         obj->color = color;
         obj->out_color = color;
         obj->is_dirty = true;
         update_color(obj);
+    }
+
+    /**
+     * Set the saturation of a game object
+     * @param saturation
+     */
+    void set_saturation(GameObject::game_object *obj, float saturation) {
+        obj->saturation = saturation;
+        obj->is_dirty = true;
     }
 
     /**
@@ -158,37 +164,43 @@ namespace GameObject {
     }
 
     /**
-     * Set a game object to be a holding object.
-     * @param obj Game object reference
-     * @param holding Set the object to be a holding object
-     */
-    void set_holding(GameObject::game_object *obj, bool holding) {
-        if (obj->holding == holding) {
-            return;
-        }
-        obj->holding = holding;
-    }
-
-    /**
      * Update the output color of a game object
      * @param obj Game object reference
      */
     void update_color(GameObject::game_object *obj) {
         glm::vec3 color_offset {};
+        obj->saturation = 0.2f;
         if (obj->dragging) {
             color_offset = glm::vec3 {-0.1f,-0.1f,-0.1f};
-        } else if (obj->highlighted) {
-            color_offset = glm::vec3 {0.2f,0.2f,0.2f};
+        } else if (obj->selected) {
+            if (obj->highlighted) {
+                color_offset = glm::vec3 {0.3f,0.3f,1.0f};
+                obj->out_color.x = color_offset.x;
+                obj->out_color.y = color_offset.y;
+                obj->out_color.z = color_offset.z;
+            } else {
+                color_offset = glm::vec3 {0.0f,0.0f,1.0f};
+                obj->out_color.x = color_offset.x;
+                obj->out_color.y = color_offset.y;
+                obj->out_color.z = color_offset.z;
+            }
         } else {
-            color_offset = glm::vec3 {0.0f,0.0f,0.0f};
+            if (obj->highlighted) {
+                obj->out_color.x = obj->color.x + 0.2f;
+                obj->out_color.y = obj->color.y + 0.2f;
+                obj->out_color.z = obj->color.z + 0.2f;
+            } else {
+                obj->saturation = 0.0f;
+                obj->out_color.x = obj->color.x;
+                obj->out_color.y = obj->color.y;
+                obj->out_color.z = obj->color.z;
+            }
         }
-        obj->out_color.x = obj->color.x + color_offset.x;
-        obj->out_color.y = obj->color.y + color_offset.y;
-        obj->out_color.z = obj->color.z + color_offset.z;
 
         if (obj->visible) {
             obj->out_color.w = obj->color.w;
         } else {
+            obj->saturation = 1.0f;
             obj->out_color.w = 0.0f;
         }
         obj->is_dirty = true;

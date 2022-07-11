@@ -47,13 +47,11 @@ namespace Holding {
             printf("Generated holding\n");
             holding_object.name = name;
             GameObject::set_visible(&holding_object, true);
-            GameObject::set_holding(&holding_object, true);
             GameObject::set_sprite(&holding_object, spr);
             return;
         }
         printf("Created holding\n");
-        GameObject::init(&holding_object, name, glm::vec2{}, glm::vec2{0.5f,0.5f}, 5, spr);
-        GameObject::set_holding(&holding_object, true);
+        GameObject::init(&holding_object, name, glm::vec2{}, glm::vec2{0.25f,0.25f}, 5, spr);
         GameObject::set_pickable(&holding_object, false);
         Render::add_game_object(&holding_object);
         generated_holding = true;
@@ -78,7 +76,6 @@ namespace Holding {
         GameObject::game_object generated = holding_object;
         generated.z_index = 0;
         GameObject::set_pickable(&generated, true);
-        GameObject::set_holding(&generated, false);
         if (destroy) {
             GameObject::set_selected(&generated, true);
         }
@@ -95,7 +92,6 @@ namespace Holding {
      */
     void destroy_holding_object() {
         GameObject::set_visible(&holding_object, false);
-        GameObject::set_holding(&holding_object, false);
         Holding::set_holding(false);
         ObjectPicker::reset();
     }

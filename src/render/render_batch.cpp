@@ -12,6 +12,7 @@
 struct vertex {
     float x, y;       // Position
     float r, g, b, a; // Color
+    float s;          // Saturation
     float u, v;       // Texture coordinates
     float t;          // Texture ID
 };
@@ -41,14 +42,17 @@ namespace RenderBatch {
     // Vertex information
     static const int position_size = 2;
     static const int color_size = 4;
+    static const int saturation_size = 1;
     static const int tex_coords_size = 2;
     static const int tex_id_size = 1;
 
-    static const int color_offset = position_size;
-    static const int tex_coords_offset = color_offset + color_size;
+    static const int position_offset = 0;
+    static const int color_offset = position_size + position_offset;
+    static const int saturation_offset = color_offset + color_size;
+    static const int tex_coords_offset = saturation_offset + saturation_size;
     static const int tex_id_offset = tex_coords_offset + tex_coords_size;
 
-    static const int vertex_size = position_size + color_size + tex_coords_size + tex_id_size;
+    static const int vertex_size = position_size + color_size + saturation_size + tex_coords_size + tex_id_size;
 
     /**
      * Create and initialize a render batch.
@@ -84,14 +88,16 @@ namespace RenderBatch {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, (long) sizeof(float) * batch->max_batch_size * 6, batch->element_data, GL_STATIC_DRAW);
 
         // Enable vertex attributes
-        glVertexAttribPointer(0, position_size, GL_FLOAT, GL_FALSE, sizeof(vertex),nullptr);
+        glVertexAttribPointer(0, position_size, GL_FLOAT, GL_FALSE, sizeof(vertex),(void*)(sizeof(float) * position_offset));
         glEnableVertexAttribArray(0);
         glVertexAttribPointer(1, color_size, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * color_offset));
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(2, tex_coords_size, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * tex_coords_offset));
+        glVertexAttribPointer(2, saturation_size, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * saturation_offset));
         glEnableVertexAttribArray(2);
-        glVertexAttribPointer(3, tex_id_size, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * tex_id_offset));
+        glVertexAttribPointer(3, tex_coords_size, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * tex_coords_offset));
         glEnableVertexAttribArray(3);
+        glVertexAttribPointer(4, tex_id_size, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * tex_id_offset));
+        glEnableVertexAttribArray(4);
 
         // Enable alpha blending
         glEnable(GL_BLEND);
@@ -205,15 +211,18 @@ namespace RenderBatch {
             batch->vertex_data[offset + 4] = batch->game_object_list[index]->out_color.z;
             batch->vertex_data[offset + 5] = batch->game_object_list[index]->out_color.w;
 
+            // Saturation
+            batch->vertex_data[offset + 6] = batch->game_object_list[index]->saturation;
+
             // Texture Coordinates
-            batch->vertex_data[offset + 6] = (xAdd * batch->game_object_list[index]->sprite.tex_scale.x) + batch->game_object_list[index]->sprite.tex_coords.x;
-            batch->vertex_data[offset + 7] = (yAdd * batch->game_object_list[index]->sprite.tex_scale.y) + batch->game_object_list[index]->sprite.tex_coords.y;
+            batch->vertex_data[offset + 7] = (xAdd * batch->game_object_list[index]->sprite.tex_scale.x) + batch->game_object_list[index]->sprite.tex_coords.x;
+            batch->vertex_data[offset + 8] = (yAdd * batch->game_object_list[index]->sprite.tex_scale.y) + batch->game_object_list[index]->sprite.tex_coords.y;
 
             // Texture ID
             if (batch->game_object_list[index]->sprite.is_null) {
-                batch->vertex_data[offset + 8] = 0.0f;
+                batch->vertex_data[offset + 9] = 0.0f;
             } else {
-                batch->vertex_data[offset + 8] = (float) get_texture_slot(batch,batch->game_object_list[index]->sprite.texture_ID);
+                batch->vertex_data[offset + 9] = (float) get_texture_slot(batch,batch->game_object_list[index]->sprite.texture_ID);
             }
 
             offset += vertex_size;

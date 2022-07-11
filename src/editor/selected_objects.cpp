@@ -46,7 +46,7 @@ namespace Selected {
     void reset_selected() {
         if (selected_object_count > 0) {
             for (int i = 0; i < selected_object_count; i++) {
-                selected_objects[i]->selected = false;
+                GameObject::set_selected(selected_objects[i], false);
             }
             selected_object_count = 0;
         }

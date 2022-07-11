@@ -77,11 +77,9 @@ namespace Mouse {
                     Selected::reset_selected();
                 }
             }
-            else {
-                // Scales selection box while multiselect is active
-                glm::vec2 new_scale{ Mouse::get_worldX() - start_x, Mouse::get_worldY() - start_y };
-                GameObject::set_scale(selection_box, new_scale);
-            }
+            // Scales selection box while multiselect is active
+            glm::vec2 new_scale{ Mouse::get_worldX() - start_x, Mouse::get_worldY() - start_y };
+            GameObject::set_scale(selection_box, new_scale);
         }
     }
 

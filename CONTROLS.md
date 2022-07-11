@@ -4,10 +4,22 @@ explains how to navigate the interface to build your own game.
 
 <img width="1440" alt="gameEngine7" src="https://user-images.githubusercontent.com/80932655/178284323-1671a4b8-a4cd-4360-8128-974a8be8d0cb.png">
 
+
+## First Time Startup
+Upon starting the engine for the first time you may need to resize
+ImGui windows. ImGui will save the window positions when you exit, so
+you only need to do this once.
+
 ## Camera Controls
 - Arrow keys to move
 - W and S to zoom in and out
 - Space to reset camera
+
+## Placing Objects
+- Select an object from the object picker by clicking
+- Click anywhere in the scene to place it
+- Shift click to place multiple objects
+- Escape or delete will cancel placing an object
 
 ## Selecting / Moving Objects
 - Click and drag to move an object

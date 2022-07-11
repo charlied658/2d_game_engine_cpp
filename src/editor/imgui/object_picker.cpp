@@ -7,6 +7,7 @@
 
 #include "imgui/imgui.h"
 #include "core/spritesheet.h"
+#include "editor/holding_object.h"
 
 namespace ObjectPicker {
 
@@ -41,6 +42,13 @@ namespace ObjectPicker {
         for (int i = 0; i < 34; i++) {
             sprite_list3[i] = Spritesheet::get_sprite(&spritesheet3, i);
         }
+    }
+
+    /**
+     * Reset the selected block.
+     */
+    void reset() {
+        selected_block = -1;
     }
 
     /**
@@ -94,6 +102,7 @@ namespace ObjectPicker {
                     selected_block = -1;
                 } else {
                     selected_block = n;
+                    Holding::generateHoldingObject(&spr, "obj" + to_string(n));
                 }
             }
             if (block_selected) {

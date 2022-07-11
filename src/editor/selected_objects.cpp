@@ -99,6 +99,15 @@ namespace Selected {
     }
 
     /**
+     * Select the holding object when it is placed.
+     */
+    void select_holding_object(GameObject::game_object *obj) {
+        reset_selected();
+        selected_objects[0] = obj;
+        selected_object_count = 1;
+    }
+
+    /**
      * Get the selected objects.
      * @param objects Selected objects
      * @param object_count Selected object count

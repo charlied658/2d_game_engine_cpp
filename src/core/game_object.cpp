@@ -33,6 +33,7 @@ namespace GameObject {
         obj->dragging = false;
         obj->selected = false;
         obj->dead = false;
+        obj->holding = false;
     }
 
     /**
@@ -157,24 +158,34 @@ namespace GameObject {
     }
 
     /**
+     * Set a game object to be a holding object.
+     * @param obj Game object reference
+     * @param holding Set the object to be a holding object
+     */
+    void set_holding(GameObject::game_object *obj, bool holding) {
+        if (obj->holding == holding) {
+            return;
+        }
+        obj->holding = holding;
+    }
+
+    /**
      * Update the output color of a game object
      * @param obj Game object reference
      */
     void update_color(GameObject::game_object *obj) {
-
+        glm::vec3 color_offset {};
         if (obj->dragging) {
-            obj->out_color.x = obj->color.x - 0.1f;
-            obj->out_color.y = obj->color.y - 0.1f;
-            obj->out_color.z = obj->color.z - 0.1f;
+            color_offset = glm::vec3 {-0.1f,-0.1f,-0.1f};
         } else if (obj->highlighted) {
-            obj->out_color.x = obj->color.x + 0.2f;
-            obj->out_color.y = obj->color.y + 0.2f;
-            obj->out_color.z = obj->color.z + 0.2f;
+            color_offset = glm::vec3 {0.2f,0.2f,0.2f};
         } else {
-            obj->out_color.x = obj->color.x;
-            obj->out_color.y = obj->color.y;
-            obj->out_color.z = obj->color.z;
+            color_offset = glm::vec3 {0.0f,0.0f,0.0f};
         }
+        obj->out_color.x = obj->color.x + color_offset.x;
+        obj->out_color.y = obj->color.y + color_offset.y;
+        obj->out_color.z = obj->color.z + color_offset.z;
+
         if (obj->visible) {
             obj->out_color.w = obj->color.w;
         } else {

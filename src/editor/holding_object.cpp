@@ -1,0 +1,121 @@
+/**
+ * @author Charlie Davidson 
+ * Created on 7/11/22.
+ */
+
+#include "editor/holding_object.h"
+
+#include "core/scene.h"
+#include "core/mouse_listener.h"
+#include "editor/selected_objects.h"
+#include "editor/imgui/object_picker.h"
+
+namespace Holding {
+
+    static GameObject::game_object *holding_object;
+    static bool holding;
+
+    static GameObject::game_object *game_object_list;
+    static int game_object_count;
+
+    /**
+     * Initialize holding object.
+     */
+    void init() {
+        Holding::set_holding(false);
+    }
+
+    /**
+     * Generate a holding object.
+     * @param spr Sprite reference
+     */
+    void generateHoldingObject(Sprite::sprite *spr, const string& name) {
+        Selected::reset_selected();
+        Holding::set_holding(true);
+        // Get the holding object
+        Scene::get_game_objects_list(&game_object_list, &game_object_count);
+        holding_object = nullptr;
+        for (int i = 0; i < game_object_count; i++) {
+            if (game_object_list[i].holding) {
+                holding_object = &game_object_list[i];
+            }
+        }
+        if (holding_object) {
+            holding_object->name = name;
+            GameObject::set_visible(holding_object, true);
+            GameObject::set_holding(holding_object, true);
+            GameObject::set_sprite(holding_object, spr);
+            return;
+        }
+
+        // If none exits, generate one.
+        GameObject::game_object generated;
+        GameObject::init(&generated, name, glm::vec2{}, glm::vec2{0.5f,0.5f}, 5, spr);
+        GameObject::set_holding(&generated, true);
+        GameObject::set_pickable(&generated, false);
+        Scene::add_game_object(&generated);
+        Scene::get_game_objects_list(&game_object_list, &game_object_count);
+        holding_object = &game_object_list[game_object_count - 1];
+    }
+
+    /**
+     * Update the position of the holding object.
+     */
+    void update() {
+        if (holding_object) {
+            GameObject::set_position(holding_object, glm::vec2{
+                Mouse::get_worldX() - holding_object->scale.x / 2,
+                Mouse::get_worldY() - holding_object->scale.y / 2});
+        }
+    }
+
+    /**
+     * Place the holding object.
+     * @param destroy Destroy holding object upon placing.
+     */
+    void place_holding_object(bool destroy) {
+        GameObject::game_object generated = *holding_object;
+        generated.z_index = 0;
+        GameObject::set_pickable(&generated, true);
+        GameObject::set_holding(&generated, false);
+        if (destroy) {
+            GameObject::set_selected(&generated, true);
+        }
+        Scene::add_game_object(&generated);
+        if (destroy) {
+            Scene::get_game_objects_list(&game_object_list, &game_object_count);
+            Selected::select_holding_object(&game_object_list[game_object_count - 1]);
+            Holding::destroy_holding_object();
+        }
+    }
+
+    /**
+     * Destroy the holding object.
+     */
+    void destroy_holding_object() {
+        GameObject::set_visible(holding_object, false);
+        GameObject::set_holding(holding_object, false);
+        Holding::set_holding(false);
+        ObjectPicker::reset();
+    }
+
+    void get_holding_object(GameObject::game_object **obj) {
+        *obj = holding_object;
+    }
+
+    /**
+     * Get if the mouse is holding an object.
+     * @return True if holding
+     */
+    bool is_holding() {
+        return holding;
+    }
+
+    /**
+     * Set if the mouse is holding an object.
+     * @param state Whether the mouse is holding
+     */
+    void set_holding(bool state) {
+        holding = state;
+    }
+}

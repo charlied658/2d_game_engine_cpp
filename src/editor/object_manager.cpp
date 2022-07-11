@@ -15,6 +15,7 @@
 #include "editor/copied_objects.h"
 #include "editor/selection_box.h"
 #include "editor/mouse_drag_events.h"
+#include "editor/holding_object.h"
 
 namespace ObjectManager {
 
@@ -32,6 +33,7 @@ namespace ObjectManager {
         Copy::init();
         SelectionBox::init();
         Mouse::init();
+        Holding::init();
     }
 
     /**
@@ -60,6 +62,7 @@ namespace ObjectManager {
         // Update objects
         Mouse::update();
         Key::update();
+        Holding::update();
 
         // Render shadows
         Shadows::render();
@@ -73,6 +76,9 @@ namespace ObjectManager {
         Highlight::get_highlighted_object(&highlighted_obj);
 
         ImGui::Text("Shift click down: %d", Mouse::is_shift_click_down());
+        ImGui::Text("Dragging objects: %d", Mouse::is_dragging_objects());
+        ImGui::Text("Multiselect: %d", Mouse::is_multiselect());
+        ImGui::Text("Holding object: %d", Holding::is_holding());
         // Debug
         if (highlighted_obj) {
             ImGui::Text("Highlighted object: %s", highlighted_obj->name.c_str());

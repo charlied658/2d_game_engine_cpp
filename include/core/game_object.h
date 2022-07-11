@@ -6,6 +6,7 @@
 #pragma once
 
 #include <glm/vec2.hpp> // glm::vec2
+#include <glm/vec3.hpp> // glm::vec3
 #include <glm/vec4.hpp> // glm::vec4
 
 #include <string>
@@ -34,6 +35,7 @@ namespace GameObject {
         bool selected;
         bool dragging;
         bool dead;
+        bool holding;
 
         template<class Archive>
         void serialize(Archive & archive)
@@ -63,6 +65,8 @@ namespace GameObject {
     void set_dragging(GameObject::game_object *obj, bool dragging);
 
     void set_dead(GameObject::game_object *obj, bool dead);
+
+    void set_holding(GameObject::game_object *obj, bool holding);
 
     void update_color(GameObject::game_object *obj);
 

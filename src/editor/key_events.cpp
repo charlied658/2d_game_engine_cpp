@@ -9,6 +9,7 @@
 #include "editor/selected_objects.h"
 #include "editor/copied_objects.h"
 #include "editor/mouse_drag_events.h"
+#include "editor/holding_object.h"
 
 namespace Key {
 
@@ -33,6 +34,13 @@ namespace Key {
         // Delete selected objects
         if (Key::get_key_begin_press(GLFW_KEY_DELETE) || Key::get_key_begin_press(GLFW_KEY_BACKSPACE)) {
             Copy::delete_objects();
+        }
+
+        // Delete holding object
+        if (Holding::is_holding()) {
+            if (Key::get_key_begin_press(GLFW_KEY_DELETE) || Key::get_key_begin_press(GLFW_KEY_BACKSPACE) || Key::get_key_pressed(GLFW_KEY_ESCAPE)) {
+                Holding::destroy_holding_object();
+            }
         }
     }
 }

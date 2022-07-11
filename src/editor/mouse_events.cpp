@@ -10,6 +10,7 @@
 #include "editor/selected_objects.h"
 #include "editor/highlighted_objects.h"
 #include "editor/selection_box.h"
+#include "editor/holding_object.h"
 
 namespace Mouse {
 
@@ -45,6 +46,11 @@ namespace Mouse {
      * Handle what happens when the mouse is clicked (not shift-clicked).
      */
     static void mouse_click() {
+        if (Holding::is_holding() && !Mouse::is_shift_click_down()) {
+            Mouse::set_shift_click_down(true);
+            Holding::place_holding_object(true);
+            return;
+        }
         if (highlighted_obj) {
             if (highlighted_obj->selected) {
                 // Start dragging selected object(s)
@@ -55,7 +61,6 @@ namespace Mouse {
             }
         } else {
             // Start a multiselect action
-            // TODO: Should the mouse drag the camera instead?
             Mouse::start_multiselect();
         }
     }
@@ -64,6 +69,11 @@ namespace Mouse {
      * Handle what happens when the mouse is shift-clicked.
      */
     static void shift_click() {
+        if (Holding::is_holding() && !Mouse::is_shift_click_down()) {
+            Mouse::set_shift_click_down(true);
+            Holding::place_holding_object(false);
+            return;
+        }
         if (highlighted_obj) {
             if (!Mouse::is_shift_click_down()) {
                 Mouse::set_shift_click_down(true);

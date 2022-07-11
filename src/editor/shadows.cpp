@@ -7,14 +7,18 @@
 
 #include "render/render.h"
 #include "editor/selected_objects.h"
+#include "editor/holding_object.h"
 
 namespace Shadows {
 
     static GameObject::game_object *shadow_objects;
     static int shadow_object_count;
+    static GameObject::game_object holding_obj_shadow;
 
     static GameObject::game_object **selected_objects;
     static int selected_object_count;
+    static GameObject::game_object *holding_object;
+    bool holding_shadow_added;
 
     /**
      * Initialize shadow objects.
@@ -22,6 +26,7 @@ namespace Shadows {
     void init() {
         shadow_objects = new GameObject::game_object[1000];
         shadow_object_count = 0;
+        holding_shadow_added = false;
     }
 
     /**
@@ -60,6 +65,21 @@ namespace Shadows {
             for (int i = selected_object_count; i < shadow_object_count; i++) {
                 GameObject::set_visible(&shadow_objects[i], false);
             }
+        }
+
+        // Put shadow under holding object
+        Holding::get_holding_object(&holding_object);
+        if (holding_object && holding_object->holding) {
+            GameObject::set_visible(&holding_obj_shadow, true);
+            GameObject::init(&holding_obj_shadow, "shadow", holding_object->position + glm::vec2 {0.02f, -0.02f}, holding_object->scale, -5, &holding_object->sprite);
+            GameObject::set_color(&holding_obj_shadow, glm::vec4(0.0f, 0.0f, 0.0f, 0.7f));
+            GameObject::set_pickable(&holding_obj_shadow, false);
+            if (!holding_shadow_added) {
+                holding_shadow_added = true;
+                Render::add_game_object(&holding_obj_shadow);
+            }
+        } else {
+            GameObject::set_visible(&holding_obj_shadow, false);
         }
     }
 }

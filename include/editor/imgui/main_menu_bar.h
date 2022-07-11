@@ -7,6 +7,14 @@
 
 namespace MainMenuBar {
 
+    void init();
+
     void imgui();
+
+    bool show_info_window();
+
+    bool show_object_picker();
+
+    bool show_imgui_demo_window();
 
 }

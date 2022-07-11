@@ -6,7 +6,7 @@
 #include "core/imgui_layer.h"
 
 #include "core/scene.h"
-#include "editor/imgui/info_window.h"
+#include "editor/imgui/main_menu_bar.h"
 
 namespace ImGuiLayer {
 
@@ -18,6 +18,9 @@ namespace ImGuiLayer {
         ImGui::CreateContext();
         ImGui_ImplGlfw_InitForOpenGL(window, true);
         ImGui_ImplOpenGL3_Init(nullptr);
+
+        ImGui::GetIO().ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
     }
 
     /**
@@ -30,7 +33,7 @@ namespace ImGuiLayer {
         ImGui::NewFrame();
 
         // All ImGui draw functions go here
-        if (InfoWindow::show_demo_window()) {
+        if (MainMenuBar::show_imgui_demo_window()) {
             ImGui::ShowDemoWindow();
         }
         Scene::imgui();

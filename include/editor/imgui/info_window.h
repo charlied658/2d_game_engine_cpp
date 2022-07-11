@@ -9,6 +9,4 @@ namespace InfoWindow {
 
     void imgui();
 
-    bool show_demo_window();
-
 }

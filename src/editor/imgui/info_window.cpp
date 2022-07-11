@@ -12,8 +12,6 @@
 
 namespace InfoWindow {
 
-    static bool show_demo = false;
-
     /**
      * Render the info window.
      */
@@ -29,19 +27,10 @@ namespace InfoWindow {
             if (ImGui::BeginTabItem("Debug"))
             {
                 ImGui::Text("FPS: %f", Window::get_fps());
-                ImGui::Checkbox("Show ImGui Demo Window", &show_demo);
                 ImGui::EndTabItem();
             }
             ImGui::EndTabBar();
         }
         ImGui::End();
-    }
-
-    /**
-     * Get whether the ImGui Demo Window should show
-     * @return ImGui Window showing or not
-     */
-    bool show_demo_window() {
-        return show_demo;
     }
 }

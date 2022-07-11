@@ -9,8 +9,6 @@
 
 #include "render/render.h"
 #include "core/game_object.h"
-#include "core/sprite.h"
-#include "core/spritesheet.h"
 #include "core/camera.h"
 #include "core/mouse_listener.h"
 #include "core/serialize.h"
@@ -24,11 +22,6 @@ namespace Scene {
     static GameObject::game_object *game_objects;
     static int game_object_count;
     static string level_filepath;
-
-    // Temporary test sprites and objects
-    static Spritesheet::spritesheet spritesheet1, spritesheet2;
-    static Sprite::sprite sprite1, sprite2, sprite3;
-    static GameObject::game_object obj1, obj2, obj3;
 
     /**
      * Initialize the scene.
@@ -44,27 +37,8 @@ namespace Scene {
         // Initialize objects
         ObjectManager::init();
 
-        // =================== Generate temporary test objects
-        // Create spritesheet
-        Spritesheet::init(&spritesheet1, 14,2,"assets/images/spritesheet.png");
-        Spritesheet::init(&spritesheet2, 4,1,"assets/images/turtle.png");
-
-        // Create sprites
-        sprite1 = Spritesheet::get_sprite(&spritesheet1, 0);
-        sprite2 = Spritesheet::get_sprite(&spritesheet1, 14);
-        sprite3 = Spritesheet::get_sprite(&spritesheet2, 0);
-
-        // Generate game objects
-        GameObject::init(&obj1, "obj1", glm::vec2 {2.5f, 1.0f}, glm::vec2 {0.5f, 0.5f}, 1, &sprite1);
-        GameObject::init (&obj2, "obj2", glm::vec2 {3.0f, 1.0f}, glm::vec2 {0.5f, 0.5f}, 0, &sprite2);
-        GameObject::init (&obj3, "obj3", glm::vec2 {2.0f, 1.0f}, glm::vec2 {0.5f, 0.75f}, 0, &sprite3);
-
-        // Add game objects to the scene
-        Scene::add_game_object(&obj1);
-        Scene::add_game_object(&obj2);
-        Scene::add_game_object(&obj3);
-        // ===============================================
-
+        // Initialize ImGui elements
+        MainMenuBar::init();
         ObjectPicker::init();
 
     }
@@ -103,10 +77,14 @@ namespace Scene {
         MainMenuBar::imgui();
 
         // Info window
-        InfoWindow::imgui();
+        if (MainMenuBar::show_info_window()) {
+            InfoWindow::imgui();
+        }
 
         // Object picker
-        ObjectPicker::imgui();
+        if (MainMenuBar::show_object_picker()) {
+            ObjectPicker::imgui();
+        }
     }
 
     /**
@@ -166,9 +144,6 @@ namespace Scene {
     void new_level() {
         Render::clear_render_batches();
         ObjectManager::reload();
-        Scene::add_game_object(&obj1);
-        Scene::add_game_object(&obj2);
-        Scene::add_game_object(&obj3);
         printf("Created new level\n");
     }
 

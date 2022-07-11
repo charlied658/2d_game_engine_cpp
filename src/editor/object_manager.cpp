@@ -45,6 +45,7 @@ namespace ObjectManager {
         Shadows::reload();
         Copy::reload();
         SelectionBox::reload();
+        Holding::reload();
     }
 
     /**

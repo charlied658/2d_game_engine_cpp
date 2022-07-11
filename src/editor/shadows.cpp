@@ -34,6 +34,7 @@ namespace Shadows {
      */
     void reload() {
         shadow_object_count = 0;
+        holding_shadow_added = false;
     }
 
     /**

@@ -17,6 +17,15 @@ namespace Key {
      * Handle key events.
      */
     void update() {
+
+        // Delete holding object
+        if (Holding::is_holding()) {
+            if (Key::get_key_begin_press(GLFW_KEY_DELETE) || Key::get_key_begin_press(GLFW_KEY_BACKSPACE) || Key::get_key_pressed(GLFW_KEY_ESCAPE)) {
+                Holding::destroy_holding_object();
+                return;
+            }
+        }
+
         // Escape will deselect all game objects
         if (Key::get_key_pressed(GLFW_KEY_ESCAPE) && !Mouse::is_dragging_objects()) {
             Selected::reset_selected();
@@ -34,13 +43,6 @@ namespace Key {
         // Delete selected objects
         if (Key::get_key_begin_press(GLFW_KEY_DELETE) || Key::get_key_begin_press(GLFW_KEY_BACKSPACE)) {
             Copy::delete_objects();
-        }
-
-        // Delete holding object
-        if (Holding::is_holding()) {
-            if (Key::get_key_begin_press(GLFW_KEY_DELETE) || Key::get_key_begin_press(GLFW_KEY_BACKSPACE) || Key::get_key_pressed(GLFW_KEY_ESCAPE)) {
-                Holding::destroy_holding_object();
-            }
         }
     }
 }

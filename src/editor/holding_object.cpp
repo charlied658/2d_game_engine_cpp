@@ -9,10 +9,12 @@
 #include "core/mouse_listener.h"
 #include "editor/selected_objects.h"
 #include "editor/imgui/object_picker.h"
+#include "render/render.h"
 
 namespace Holding {
 
-    static GameObject::game_object *holding_object;
+    static GameObject::game_object holding_object;
+    static bool generated_holding;
     static bool holding;
 
     static GameObject::game_object *game_object_list;
@@ -23,6 +25,14 @@ namespace Holding {
      */
     void init() {
         Holding::set_holding(false);
+        generated_holding = false;
+    }
+
+    /**
+     * Reload the holding object.
+     */ 
+    void reload() {
+        generated_holding = false;
     }
 
     /**
@@ -33,39 +43,30 @@ namespace Holding {
         Selected::reset_selected();
         Holding::set_holding(true);
         // Get the holding object
-        Scene::get_game_objects_list(&game_object_list, &game_object_count);
-        holding_object = nullptr;
-        for (int i = 0; i < game_object_count; i++) {
-            if (game_object_list[i].holding) {
-                holding_object = &game_object_list[i];
-            }
-        }
-        if (holding_object) {
-            holding_object->name = name;
-            GameObject::set_visible(holding_object, true);
-            GameObject::set_holding(holding_object, true);
-            GameObject::set_sprite(holding_object, spr);
+        if (generated_holding) {
+            printf("Generated holding\n");
+            holding_object.name = name;
+            GameObject::set_visible(&holding_object, true);
+            GameObject::set_holding(&holding_object, true);
+            GameObject::set_sprite(&holding_object, spr);
             return;
         }
-
-        // If none exits, generate one.
-        GameObject::game_object generated;
-        GameObject::init(&generated, name, glm::vec2{}, glm::vec2{0.5f,0.5f}, 5, spr);
-        GameObject::set_holding(&generated, true);
-        GameObject::set_pickable(&generated, false);
-        Scene::add_game_object(&generated);
-        Scene::get_game_objects_list(&game_object_list, &game_object_count);
-        holding_object = &game_object_list[game_object_count - 1];
+        printf("Created holding\n");
+        GameObject::init(&holding_object, name, glm::vec2{}, glm::vec2{0.5f,0.5f}, 5, spr);
+        GameObject::set_holding(&holding_object, true);
+        GameObject::set_pickable(&holding_object, false);
+        Render::add_game_object(&holding_object);
+        generated_holding = true;
     }
 
     /**
      * Update the position of the holding object.
      */
     void update() {
-        if (holding_object) {
-            GameObject::set_position(holding_object, glm::vec2{
-                Mouse::get_worldX() - holding_object->scale.x / 2,
-                Mouse::get_worldY() - holding_object->scale.y / 2});
+        if (Holding::is_holding()) {
+            GameObject::set_position(&holding_object, glm::vec2{
+                Mouse::get_worldX() - holding_object.scale.x / 2,
+                Mouse::get_worldY() - holding_object.scale.y / 2});
         }
     }
 
@@ -74,7 +75,7 @@ namespace Holding {
      * @param destroy Destroy holding object upon placing.
      */
     void place_holding_object(bool destroy) {
-        GameObject::game_object generated = *holding_object;
+        GameObject::game_object generated = holding_object;
         generated.z_index = 0;
         GameObject::set_pickable(&generated, true);
         GameObject::set_holding(&generated, false);
@@ -93,14 +94,14 @@ namespace Holding {
      * Destroy the holding object.
      */
     void destroy_holding_object() {
-        GameObject::set_visible(holding_object, false);
-        GameObject::set_holding(holding_object, false);
+        GameObject::set_visible(&holding_object, false);
+        GameObject::set_holding(&holding_object, false);
         Holding::set_holding(false);
         ObjectPicker::reset();
     }
 
     void get_holding_object(GameObject::game_object **obj) {
-        *obj = holding_object;
+        *obj = &holding_object;
     }
 
     /**

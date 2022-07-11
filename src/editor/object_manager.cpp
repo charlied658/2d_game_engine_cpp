@@ -14,7 +14,6 @@
 #include "editor/shadows.h"
 #include "editor/copied_objects.h"
 #include "editor/selection_box.h"
-#include "editor/mouse_drag_events.h"
 #include "editor/holding_object.h"
 
 namespace ObjectManager {

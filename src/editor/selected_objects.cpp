@@ -6,7 +6,7 @@
 #include "editor/selected_objects.h"
 
 #include "editor/highlighted_objects.h"
-#include "editor/mouse_drag_events.h"
+#include "editor/mouse_events.h"
 
 namespace Selected {
 

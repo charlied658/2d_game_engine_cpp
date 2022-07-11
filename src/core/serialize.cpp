@@ -63,7 +63,7 @@ namespace Serialize {
         string path_absolute = PROJECT_PATH + filepath;
         level_file.open (path_absolute);
         if (!level_file.is_open()) {
-            printf("Error: '%s' does not exist. Please save first\n", path_absolute.c_str());
+            Scene::save_level();
             return;
         }
         {

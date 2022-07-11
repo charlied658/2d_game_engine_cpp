@@ -8,7 +8,7 @@
 #include "core/key_listener.h"
 #include "editor/selected_objects.h"
 #include "editor/copied_objects.h"
-#include "editor/mouse_drag_events.h"
+#include "editor/mouse_events.h"
 #include "editor/holding_object.h"
 
 namespace Key {

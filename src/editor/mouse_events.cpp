@@ -6,7 +6,6 @@
 #include "editor/mouse_events.h"
 
 #include "editor/object_manager.h"
-#include "editor/mouse_drag_events.h"
 #include "editor/selected_objects.h"
 #include "editor/highlighted_objects.h"
 #include "editor/selection_box.h"
@@ -18,6 +17,27 @@ namespace Mouse {
     static GameObject::game_object **selected_objects;
     static int selected_object_count;
     static GameObject::game_object *selection_box;
+
+    static bool drag_objects;
+    static bool multiselect;
+    static bool shift_click_down;
+    static double start_x, start_y;
+    static glm::vec2 *obj_start_pos;
+
+    /**
+     * Initialize mouse objects.
+     */
+    void init() {
+        obj_start_pos = new glm::vec2[1000];
+    }
+
+    /**
+     * Get object information before updating.
+     */
+    void start_frame() {
+        Selected::get_selected_objects(&selected_objects, &selected_object_count);
+        SelectionBox::get_selection_box(&selection_box);
+    }
 
     /**
      * Handle mouse events.
@@ -79,12 +99,10 @@ namespace Mouse {
                 Mouse::set_shift_click_down(true);
                 if (highlighted_obj->selected) {
                     // Shift clicking a selected object will unselect it
-                    printf("Unselected object\n");
                     Selected::unselect_object(highlighted_obj);
                 }
                 else {
                     // Shift clicking an unselected object will select it
-                    printf("Selected object\n");
                     selected_objects[selected_object_count] = highlighted_obj;
                     GameObject::set_selected(highlighted_obj, true);
                     Selected::set_selected_objects_count(selected_object_count + 1);
@@ -111,5 +129,99 @@ namespace Mouse {
         Mouse::set_dragging_objects(false);
         Mouse::set_shift_click_down(false);
         GameObject::set_visible(selection_box, false);
+    }
+
+    /**
+     * Move selected objects.
+     */
+    void move_objects() {
+        // If not dragging, initiate a drag action
+        if (!drag_objects) {
+            drag_objects = true;
+            start_x = Mouse::get_worldX();
+            start_y = Mouse::get_worldY();
+            for (int i = 0; i < selected_object_count; i++) {
+                obj_start_pos[i] = selected_objects[i]->position;
+            }
+        } else {
+            // If there are multiple selected objects, dragging one will move all of them
+            for (int i = 0; i < selected_object_count; i++) {
+                GameObject::set_dragging(selected_objects[i], true);
+                GameObject::set_position(selected_objects[i], glm::vec2{
+                        Mouse::get_worldX() - start_x + obj_start_pos[i].x,
+                        Mouse::get_worldY() - start_y + +obj_start_pos[i].y});
+            }
+        }
+    }
+
+    /**
+     * Begin a multiselect action.
+     */
+    void start_multiselect() {
+        if (!drag_objects) {
+            if (!multiselect) {
+                // Starts a multiselect action
+                if (!shift_click_down) {
+                    multiselect = true;
+                    shift_click_down = true;
+                    start_x = Mouse::get_worldX();
+                    start_y = Mouse::get_worldY();
+                    GameObject::set_position(selection_box, glm::vec2{ start_x, start_y });
+                    GameObject::set_visible(selection_box, true);
+                    Selected::reset_selected();
+                }
+            }
+            // Scales selection box while multiselect is active
+            glm::vec2 new_scale{ Mouse::get_worldX() - start_x, Mouse::get_worldY() - start_y };
+            GameObject::set_scale(selection_box, new_scale);
+        }
+    }
+
+    /**
+     * Check if the mouse is performing a multiselect action.
+     * @return True if multiselect is active
+     */
+    bool is_multiselect() {
+        return multiselect;
+    }
+
+    /**
+     * Check if the mouse is dragging objects.
+     * @return True if mouse is dragging
+     */
+    bool is_dragging_objects() {
+        return drag_objects;
+    }
+
+    /**
+     * Check if the mouse is currently shift-clicking
+     * @return True if shift clicking
+     */
+    bool is_shift_click_down() {
+        return shift_click_down;
+    }
+
+    /**
+     * Set whether the mouse is performing a multiselect action.
+     * @param state Set multiselect
+     */
+    void set_multiselect(bool state) {
+        multiselect = state;
+    }
+
+    /**
+     * Set whether the mouse is dragging objects.
+     * @param state Set dragging
+     */
+    void set_dragging_objects(bool state) {
+        drag_objects = state;
+    }
+
+    /**
+     * Set whether the mouse is shift-clicking.
+     * @param state Set shift-clicking
+     */
+    void set_shift_click_down(bool state) {
+        shift_click_down = state;
     }
 }

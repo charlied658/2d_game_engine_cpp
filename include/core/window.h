@@ -19,4 +19,6 @@ namespace Window {
 
     double get_fps();
 
+    float get_aspect_ratio();
+
 }

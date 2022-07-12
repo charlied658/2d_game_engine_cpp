@@ -29,6 +29,7 @@ namespace Window {
     static const int default_height = 720;
     static const char *title = "Game Engine";
     static int width, height;
+    static float aspect_ratio;
     static double fps;
 
     static unsigned int sprite_shader;
@@ -47,6 +48,7 @@ namespace Window {
         // Adjust viewport
         int frame_width, frame_height;
         glfwGetFramebufferSize(window_ptr, &frame_width, &frame_height);
+        aspect_ratio = (float) frame_width / (float) frame_height;
         glViewport(0, 0, frame_width, frame_height);
     }
 
@@ -177,5 +179,9 @@ namespace Window {
 
     double get_fps() {
         return fps;
+    }
+
+    float get_aspect_ratio() {
+        return aspect_ratio;
     }
 }

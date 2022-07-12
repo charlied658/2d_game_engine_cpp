@@ -199,50 +199,26 @@ namespace Mouse {
         }
     }
 
-    /**
-     * Check if the mouse is performing a multiselect action.
-     * @return True if multiselect is active
-     */
     bool is_multiselect() {
         return multiselect;
     }
 
-    /**
-     * Check if the mouse is dragging objects.
-     * @return True if mouse is dragging
-     */
     bool is_dragging_objects() {
         return drag_objects;
     }
 
-    /**
-     * Check if the mouse is currently shift-clicking
-     * @return True if shift clicking
-     */
     bool is_shift_click_down() {
         return shift_click_down;
     }
 
-    /**
-     * Set whether the mouse is performing a multiselect action.
-     * @param state Set multiselect
-     */
     void set_multiselect(bool state) {
         multiselect = state;
     }
 
-    /**
-     * Set whether the mouse is dragging objects.
-     * @param state Set dragging
-     */
     void set_dragging_objects(bool state) {
         drag_objects = state;
     }
 
-    /**
-     * Set whether the mouse is shift-clicking.
-     * @param state Set shift-clicking
-     */
     void set_shift_click_down(bool state) {
         shift_click_down = state;
     }

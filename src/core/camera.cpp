@@ -7,6 +7,8 @@
 
 #include <glm/gtc/matrix_transform.hpp> // glm::transform, glm::ortho
 
+#include "core/window.h"
+
 namespace Camera {
     static glm::vec2 position;
     static float zoom = 1.0f;
@@ -86,12 +88,42 @@ namespace Camera {
     glm::mat4 get_projection() {
         glm::mat4 projection;
 
-        float xOffset = screen_width * (1.0f - 1.0f / zoom) / 2;
-        float yOffset = screen_height * (1.0f - 1.0f / zoom) / 2;
+        float aspect_ratio = Window::get_aspect_ratio();
+        if (aspect_ratio < 2.0f) {
+            // Correct for aspect ratio
+            float frameXOffset = (screen_width - (aspect_ratio * screen_height)) / 2;
+            float frameYOffset = 0;
+            float frame_width = (aspect_ratio * screen_height);
+            float frame_height = screen_height;
 
-        projection = glm::ortho(xOffset, screen_width / zoom + xOffset, yOffset, screen_height / zoom + yOffset);
-        inverseProjection = glm::inverse(projection);
-        return projection;
+            // Correct for zoom
+            float zoomXOffset = frameXOffset + frame_width * (1.0f - 1.0f / zoom) / 2;
+            float zoomYOffset = frameYOffset + frame_height * (1.0f - 1.0f / zoom) / 2;
+            float zoom_width = frame_width / zoom;
+            float zoom_height = frame_height / zoom;
+
+            projection = glm::ortho(zoomXOffset, zoom_width + zoomXOffset, zoomYOffset,
+                                    zoom_height + zoomYOffset);
+            inverseProjection = glm::inverse(projection);
+            return projection;
+        } else {
+            // Correct for aspect ratio
+            float frameXOffset = 0;
+            float frameYOffset = (screen_height - (screen_width / aspect_ratio)) / 2;
+            float frame_width = screen_width;
+            float frame_height = (screen_width / aspect_ratio);
+
+            // Correct for zoom
+            float zoomXOffset = frameXOffset + frame_width * (1.0f - 1.0f / zoom) / 2;
+            float zoomYOffset = frameYOffset + frame_height * (1.0f - 1.0f / zoom) / 2;
+            float zoom_width = frame_width / zoom;
+            float zoom_height = frame_height / zoom;
+
+            projection = glm::ortho(zoomXOffset, zoom_width + zoomXOffset, zoomYOffset,
+                                    zoom_height + zoomYOffset);
+            inverseProjection = glm::inverse(projection);
+            return projection;
+        }
     }
 
     /**

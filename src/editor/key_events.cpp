@@ -28,6 +28,9 @@ namespace Key {
 
         // Escape will deselect all game objects
         if (Key::get_key_pressed(GLFW_KEY_ESCAPE) && !Mouse::is_dragging_objects()) {
+            if (Copy::get_copied()) {
+                Copy::delete_objects();
+            }
             Selected::reset_selected();
         }
 

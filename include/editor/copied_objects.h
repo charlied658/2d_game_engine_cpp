@@ -21,4 +21,10 @@ namespace Copy {
 
     void delete_objects();
 
+    void get_copied_objects(GameObject::game_object ***objects, int *object_count);
+
+    bool get_copied();
+
+    void set_copied(bool state);
+
 }

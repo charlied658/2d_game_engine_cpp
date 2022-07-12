@@ -10,6 +10,7 @@
 #include "editor/highlighted_objects.h"
 #include "editor/selection_box.h"
 #include "editor/holding_object.h"
+#include "editor/copied_objects.h"
 #include "util/collision_math.h"
 
 namespace Mouse {
@@ -149,6 +150,10 @@ namespace Mouse {
      * Move selected objects.
      */
     void move_objects() {
+        if (Copy::get_copied()) {
+            Copy::set_copied(false);
+        }
+
         // If not dragging, initiate a drag action
         if (!drag_objects) {
             drag_objects = true;
@@ -172,6 +177,9 @@ namespace Mouse {
      * Begin a multiselect action.
      */
     void start_multiselect() {
+        if (Copy::get_copied()) {
+            Copy::delete_objects();
+        }
         if (!drag_objects) {
             if (!multiselect) {
                 // Starts a multiselect action

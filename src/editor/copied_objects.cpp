@@ -15,6 +15,7 @@ namespace Copy {
     static GameObject::game_object **copied_objects;
     static int copied_objects_count;
     static glm::vec2 copy_offset;
+    static bool copied;
 
     static GameObject::game_object *game_objects;
     static int game_object_count;
@@ -27,7 +28,8 @@ namespace Copy {
     void init() {
         copied_objects = new GameObject::game_object *[1000];
         copied_objects_count = 0;
-        copy_offset = glm::vec2 {0.0f, 0.0f};
+        copy_offset = glm::vec2 {0.1f, -0.1f};
+        copied = false;
     }
 
     /**
@@ -35,6 +37,7 @@ namespace Copy {
      */
     void reload() {
         copied_objects_count = 0;
+        copied = false;
     }
 
     /**
@@ -54,13 +57,16 @@ namespace Copy {
             copied_objects[copied_objects_count] = selected_objects[i];
             copied_objects_count++;
         }
-        copy_offset = glm::vec2 {0.1f, -0.1f};
     }
 
     /**
      * Paste copied objects.
      */
     void paste_objects() {
+        if (copied) {
+            return;
+        }
+        copied = true;
         Selected::reset_selected();
         for (int i = 0; i < copied_objects_count; i++) {
             GameObject::game_object copy = *copied_objects[i];
@@ -74,8 +80,6 @@ namespace Copy {
             selected_objects[selected_object_count] = obj;
             Selected::set_selected_objects_count(selected_object_count + 1);
         }
-        // Offset the copy position (for cascading effect with multiple pastes)
-        copy_offset += glm::vec2 {0.1f, -0.1f};
     }
 
     /**
@@ -95,5 +99,31 @@ namespace Copy {
             SpriteRenderer::add_game_object(&game_objects[i]);
         }
         ObjectManager::reload();
+    }
+
+    /**
+     * Get the copied objects.
+     * @param objects Copied objects
+     * @param object_count Copied object count
+     */
+    void get_copied_objects(GameObject::game_object ***objects, int *object_count) {
+        *objects = copied_objects;
+        *object_count = copied_objects_count;
+    }
+
+    /**
+     * Get if the objets have been copied already.
+     * @return True if already been copied
+     */
+    bool get_copied() {
+        return copied;
+    }
+
+    /**
+     * Set whether the objects can be copied again.
+     * @param state False to reset
+     */
+    void set_copied(bool state) {
+        copied = state;
     }
 }

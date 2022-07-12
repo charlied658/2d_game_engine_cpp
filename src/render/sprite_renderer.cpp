@@ -103,7 +103,7 @@ namespace SpriteRenderer {
             for (int j = sorted_batches[i]->game_object_count - 1; j >= 0; j--) {
                 // Check if the object's bounding box intersects with the selection box
                 GameObject::game_object *obj = sorted_batches[i]->game_object_list[j];
-                if (obj->pickable && obj->visible &&
+                if (*highlighted_count < 1000 && obj->pickable && obj->visible &&
                     Math::line_segment_collision(obj->position.x, obj->position.x + obj->scale.x, selection_pos.x, selection_pos.x + selection_scale.x) &&
                     Math::line_segment_collision(obj->position.y, obj->position.y + obj->scale.y, selection_pos.y, selection_pos.y + selection_scale.y)) {
                     GameObject::set_highlighted(obj, true);

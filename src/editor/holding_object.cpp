@@ -10,6 +10,7 @@
 #include "editor/selected_objects.h"
 #include "editor/imgui/object_picker.h"
 #include "render/sprite_renderer.h"
+#include "util/collision_math.h"
 
 namespace Holding {
 
@@ -74,6 +75,11 @@ namespace Holding {
         GameObject::game_object generated = holding_object;
         generated.z_index = 0;
         GameObject::set_pickable(&generated, true);
+        glm::vec2 centered_position = {holding_object.position.x + 0.25f / 2,
+                                       holding_object.position.y + 0.25f / 2};
+        glm::vec2 position = {centered_position.x - Math::f_mod(centered_position.x, 0.25f),
+                              centered_position.y - Math::f_mod(centered_position.y, 0.25f)};
+        GameObject::set_position(&generated, position);
         if (destroy) {
             GameObject::set_selected(&generated, true);
         }

@@ -10,6 +10,7 @@
 #include "editor/highlighted_objects.h"
 #include "editor/selection_box.h"
 #include "editor/holding_object.h"
+#include "util/collision_math.h"
 
 namespace Mouse {
 
@@ -124,6 +125,19 @@ namespace Mouse {
             Mouse::set_multiselect(false);
             Selected::select_objects();
         }
+
+        // If the mouse was dragging, snap objects to grid
+        if (Mouse::is_dragging_objects()) {
+            for (int i = 0; i < selected_object_count; i++) {
+                glm::vec2 centered_position = {selected_objects[i]->position.x + 0.25f / 2,
+                                               selected_objects[i]->position.y + 0.25f / 2};
+                glm::vec2 position = {centered_position.x - Math::f_mod(centered_position.x, 0.25f),
+                                      centered_position.y - Math::f_mod(centered_position.y, 0.25f)};
+                GameObject::set_position(selected_objects[i], position);
+            }
+            Mouse::set_dragging_objects(false);
+        }
+
         // Reset variables
         Mouse::set_multiselect(false);
         Mouse::set_dragging_objects(false);

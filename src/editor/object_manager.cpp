@@ -16,6 +16,7 @@
 #include "editor/selection_box.h"
 #include "editor/holding_object.h"
 #include "editor/grid_lines.h"
+#include "editor/preview_objects.h"
 
 namespace ObjectManager {
 
@@ -30,6 +31,7 @@ namespace ObjectManager {
         Highlight::init();
         Selected::init();
         Shadows::init();
+        Preview::init();
         Copy::init();
         SelectionBox::init();
         Mouse::init();
@@ -44,6 +46,7 @@ namespace ObjectManager {
         Highlight::reload();
         Selected::reload();
         Shadows::reload();
+        Preview::reload();
         Copy::reload();
         SelectionBox::reload();
         Holding::reload();
@@ -66,10 +69,9 @@ namespace ObjectManager {
         Key::update();
         Holding::update();
 
-        // Render shadows
+        // Render visual elements
         Shadows::render();
-
-        // Update grid lines
+        Preview::render();
         GridLines::update();
     }
 

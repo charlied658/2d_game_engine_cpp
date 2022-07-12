@@ -61,6 +61,10 @@ namespace LineBatch {
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 
+    /**
+     * Render the lines in a line batch.
+     * @param batch Line batch reference
+     */
     void render(LineBatch::line_batch *batch) {
 
         // Update line vertex information

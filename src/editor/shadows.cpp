@@ -18,7 +18,7 @@ namespace Shadows {
     static GameObject::game_object **selected_objects;
     static int selected_object_count;
     static GameObject::game_object *holding_object;
-    bool holding_shadow_added;
+    static bool holding_shadow_added;
 
     /**
      * Initialize shadow objects.
@@ -54,13 +54,17 @@ namespace Shadows {
                 GameObject::set_pickable(&shadow_objects[i], false);
             } else {
                 // Add new shadows if necessary
-                shadow_objects[i] = GameObject::game_object {};
-                GameObject::init(&shadow_objects[i], "shadow", selected_objects[i]->position + glm::vec2 {0.02f, -0.02f}, selected_objects[i]->scale, -5, &selected_objects[i]->sprite);
-                GameObject::set_color(&shadow_objects[i], glm::vec4(0.0f, 0.0f, 0.0f, 0.7f));
-                GameObject::set_saturation(&shadow_objects[i], 1.0f);
-                GameObject::set_pickable(&shadow_objects[i], false);
-                SpriteRenderer::add_game_object(&shadow_objects[i]);
-                shadow_object_count++;
+                if (shadow_object_count < 1000) {
+                    shadow_objects[i] = GameObject::game_object{};
+                    GameObject::init(&shadow_objects[i], "shadow",
+                                     selected_objects[i]->position + glm::vec2{0.02f, -0.02f},
+                                     selected_objects[i]->scale, -5, &selected_objects[i]->sprite);
+                    GameObject::set_color(&shadow_objects[i], glm::vec4(0.0f, 0.0f, 0.0f, 0.7f));
+                    GameObject::set_saturation(&shadow_objects[i], 1.0f);
+                    GameObject::set_pickable(&shadow_objects[i], false);
+                    SpriteRenderer::add_game_object(&shadow_objects[i]);
+                    shadow_object_count++;
+                }
             }
         }
         // Set the remaining shadows to be invisible

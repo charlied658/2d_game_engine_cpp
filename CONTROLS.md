@@ -1,9 +1,8 @@
 # Controls
 Once you have the project compiling and running, this document
-explains how to navigate the interface to build your own game.
+explains how to navigate the game engine interface.
 
-<img width="1440" alt="gameEngine7" src="https://user-images.githubusercontent.com/80932655/178284323-1671a4b8-a4cd-4360-8128-974a8be8d0cb.png">
-
+<img width="1440" alt="gameEngine8" src="https://user-images.githubusercontent.com/80932655/178528574-6adf2057-21ba-4308-8437-802547aa21b1.png">
 
 ## First Time Startup
 Upon starting the engine for the first time you may need to resize

@@ -9,4 +9,8 @@ namespace GridLines {
 
     void init();
 
+    void reset();
+
+    void update();
+
 }

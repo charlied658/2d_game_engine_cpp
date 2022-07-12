@@ -44,13 +44,11 @@ namespace Holding {
         Holding::set_holding(true);
         // Get the holding object
         if (generated_holding) {
-            printf("Generated holding\n");
             holding_object.name = name;
             GameObject::set_visible(&holding_object, true);
             GameObject::set_sprite(&holding_object, spr);
             return;
         }
-        printf("Created holding\n");
         GameObject::init(&holding_object, name, glm::vec2{}, glm::vec2{0.25f,0.25f}, 5, spr);
         GameObject::set_pickable(&holding_object, false);
         SpriteRenderer::add_game_object(&holding_object);

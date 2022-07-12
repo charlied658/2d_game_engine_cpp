@@ -30,4 +30,8 @@ namespace Camera {
 
     glm::mat4 get_inverseProjection();
 
+    float getZoom();
+
+    glm::vec2 get_position();
+
 }

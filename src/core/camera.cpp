@@ -60,6 +60,12 @@ namespace Camera {
 
     void scale_camera(float scale) {
         zoom *= scale;
+        if (zoom < 0.25f) {
+            zoom = 0.25f;
+        }
+        if (zoom > 2.0f) {
+            zoom = 2.0f;
+        }
     }
 
     /**
@@ -102,5 +108,21 @@ namespace Camera {
      */
     glm::mat4 get_inverseProjection() {
         return inverseProjection;
+    }
+
+    /**
+     * Get the zoom level of the camera.
+     * @return Zoom level
+     */
+    float getZoom() {
+        return zoom;
+    }
+
+    /**
+     * Get the position of the camera.
+     * @return Camera position
+     */
+    glm::vec2 get_position() {
+        return position;
     }
 }

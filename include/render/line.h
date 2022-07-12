@@ -20,6 +20,8 @@ namespace Line {
 
     void init(Line::line *line, glm::vec2 start_point, glm::vec2 end_point, float width, glm::vec4 color);
 
+    void set_width(Line::line *line, float width);
+
     void calculate_coordinates(Line::line *line);
 
 }

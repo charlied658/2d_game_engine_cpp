@@ -26,24 +26,31 @@ namespace Line {
     }
 
     /**
+     * Set the width of a line.
+     * @param line Line reference
+     * @param width Line width
+     */
+    void set_width(Line::line *line, float width) {
+        line->width = width;
+        calculate_coordinates(line);
+    }
+
+    /**
      * Calculate the coordinates of the quad representing a line with given width.
      * @param line Line reference
-     * TODO: This breaks with lines with semi-flat slopes. Use a different method
      */
     void calculate_coordinates(Line::line *line) {
-        float slope = (line->end_point.y - line->start_point.y) / (line->end_point.x - line->start_point.x);
         float dx, dy;
-        if (slope == 0) {
-            dx = 0;
-            dy = line->width / 2.0f;
-        } else {
-            float perpendicular_slope = -1.0f / slope;
-            dx = line->width / (2.0f * sqrt(1 + perpendicular_slope));
-            dy = dx * perpendicular_slope;
-        }
-        line->coordinates[0] = glm::vec2 {line->end_point.x - dx, line->end_point.y - dy};
-        line->coordinates[1] = glm::vec2 {line->end_point.x + dx, line->end_point.y + dy};
-        line->coordinates[2] = glm::vec2 {line->start_point.x + dx, line->start_point.y + dy};
-        line->coordinates[3] = glm::vec2 {line->start_point.x - dx, line->start_point.y - dy};
+        float dx_p, dy_p;
+        float h;
+        dx = line->end_point.x - line->start_point.x;
+        dy = line->end_point.y - line->start_point.y;
+        h = hypotf(dx, dy);
+        dx_p = (dy * line->width) / (2.0f * h);
+        dy_p = (dx * line->width) / (2.0f * h);
+        line->coordinates[0] = glm::vec2 {line->end_point.x + dx_p, line->end_point.y - dy_p};
+        line->coordinates[1] = glm::vec2 {line->end_point.x - dx_p, line->end_point.y + dy_p};
+        line->coordinates[2] = glm::vec2 {line->start_point.x - dx_p, line->start_point.y + dy_p};
+        line->coordinates[3] = glm::vec2 {line->start_point.x + dx_p, line->start_point.y - dy_p};
     }
 }

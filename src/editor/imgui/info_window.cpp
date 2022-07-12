@@ -8,6 +8,7 @@
 #include "imgui/imgui.h"
 
 #include "core/window.h"
+#include "core/camera.h"
 #include "editor/object_manager.h"
 
 namespace InfoWindow {
@@ -27,6 +28,8 @@ namespace InfoWindow {
             if (ImGui::BeginTabItem("Debug"))
             {
                 ImGui::Text("FPS: %f", Window::get_fps());
+                ImGui::Text("Zoom: %f", Camera::getZoom());
+                ImGui::Text("Camera position: %f, %f", Camera::get_position().x, Camera::get_position().y);
                 ImGui::EndTabItem();
             }
             ImGui::EndTabBar();

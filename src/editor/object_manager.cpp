@@ -68,6 +68,9 @@ namespace ObjectManager {
 
         // Render shadows
         Shadows::render();
+
+        // Update grid lines
+        GridLines::update();
     }
 
     /**

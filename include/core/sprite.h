@@ -9,8 +9,6 @@
 
 #include <string>
 
-using namespace std;
-
 namespace glm {
     template<class Archive> void serialize(Archive& archive, glm::vec2& v) { archive(v.x, v.y); }
 }
@@ -20,7 +18,7 @@ namespace Sprite {
         unsigned int texture_ID;
         glm::vec2 tex_coords;
         glm::vec2 tex_scale;
-        string texture_filepath;
+        std::string texture_filepath;
         bool is_null;
 
         template<class Archive>

@@ -15,7 +15,7 @@ namespace Spritesheet {
      * @param height Number of sprites along y-axis
      * @param filepath Filepath of texture
      */
-    void init(Spritesheet::spritesheet *spr_sheet, int width, int height, const string& filepath) {
+    void init(Spritesheet::spritesheet *spr_sheet, int width, int height, const std::string& filepath) {
         spr_sheet->width = width;
         spr_sheet->height = height;
         spr_sheet->texture_ID = Texture::get_texture(filepath)->textureID;

@@ -17,11 +17,9 @@ namespace glm {
     template<class Archive> void serialize(Archive& archive, glm::vec4& v) { archive(v.x, v.y, v.z, v.w); }
 }
 
-using namespace std;
-
 namespace GameObject {
     struct game_object {
-        string name;
+        std::string name;
         glm::vec2 position;
         glm::vec2 scale;
         int z_index;
@@ -44,7 +42,7 @@ namespace GameObject {
         }
     };
 
-    void init(GameObject::game_object *obj, string name, glm::vec2 position, glm::vec2 scale, int z_index, Sprite::sprite *sprite);
+    void init(GameObject::game_object *obj, std::string name, glm::vec2 position, glm::vec2 scale, int z_index, Sprite::sprite *sprite);
 
     void set_sprite(GameObject::game_object *obj, Sprite::sprite *spr);
 

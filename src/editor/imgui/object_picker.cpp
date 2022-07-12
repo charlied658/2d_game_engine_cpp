@@ -92,7 +92,7 @@ namespace ObjectPicker {
      * @param sprite_list List of sprites
      * @param sprite_count Number of sprites
      */
-    void dynamic_button_grid(Sprite::sprite **sprite_list, int sprite_count, const string& list_name, int *selected_block) {
+    void dynamic_button_grid(Sprite::sprite **sprite_list, int sprite_count, const std::string& list_name, int *selected_block) {
         Sprite::sprite *list = *sprite_list;
         ImGuiStyle &style = ImGui::GetStyle();
         ImVec2 button_sz(40, 40);
@@ -117,7 +117,7 @@ namespace ObjectPicker {
                 } else {
                     ObjectPicker::reset();
                     *selected_block = n;
-                    Holding::generateHoldingObject(&spr, list_name + to_string(n));
+                    Holding::generateHoldingObject(&spr, list_name + std::to_string(n));
                 }
             }
             if (block_selected) {

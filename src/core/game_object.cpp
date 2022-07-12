@@ -3,7 +3,6 @@
  * Created on 7/3/22.
  */
 
-#include <cstdio>
 #include <utility>
 #include "core/game_object.h"
 
@@ -18,7 +17,7 @@ namespace GameObject {
      * @param z_index Z-index
      * @param sprite Sprite reference
      */
-    void init(GameObject::game_object *obj, string name, glm::vec2 position, glm::vec2 scale, int z_index, Sprite::sprite *sprite) {
+    void init(GameObject::game_object *obj, std::string name, glm::vec2 position, glm::vec2 scale, int z_index, Sprite::sprite *sprite) {
         obj->name = std::move(name);
         obj->position = position;
         obj->scale = scale;

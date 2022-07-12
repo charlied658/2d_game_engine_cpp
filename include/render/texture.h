@@ -7,16 +7,14 @@
 
 #include <string>
 
-using namespace std;
-
 namespace Texture {
 
     struct texture {
         unsigned int textureID;
-        string filepath;
+        std::string filepath;
     };
 
-    texture *get_texture(const string& filepath);
+    texture *get_texture(const std::string& filepath);
 
-    static unsigned int create_texture(const string& filepath);
+    static unsigned int create_texture(const std::string& filepath);
 }

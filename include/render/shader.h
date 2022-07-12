@@ -15,23 +15,21 @@
 #include <fstream>
 #include <string>
 
-using namespace std;
-
 namespace Shader {
 
     struct shader {
         unsigned int program_ID;
-        string vertex_filepath;
-        string fragment_filepath;
+        std::string vertex_filepath;
+        std::string fragment_filepath;
     };
 
-    void get_shader(unsigned int *shader, const string& vertex_filepath, const string& fragment_filepath);
+    void get_shader(unsigned int *shader, const std::string& vertex_filepath, const std::string& fragment_filepath);
 
-    static unsigned int create_program(const string& vertex_filepath, const string& fragment_filepath);
+    static unsigned int create_program(const std::string& vertex_filepath, const std::string& fragment_filepath);
 
     void use_program(unsigned int program_ID);
 
-    void read_source(string *source, const string& filepath);
+    void read_source(std::string *source, const std::string& filepath);
 
     void upload_mat4(const char *varName, glm::mat4);
 

@@ -10,8 +10,6 @@
 #include "core/mouse_listener.h"
 #include "util/collision_math.h"
 
-using namespace std;
-
 namespace SpriteRenderer {
 
     static SpriteBatch::sprite_batch batches[100];

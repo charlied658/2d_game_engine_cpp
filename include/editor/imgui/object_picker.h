@@ -15,6 +15,6 @@ namespace ObjectPicker {
 
     void imgui();
 
-    void dynamic_button_grid(Sprite::sprite **sprite_list, int sprite_count, const string& list_name, int *selected_block);
+    void dynamic_button_grid(Sprite::sprite **sprite_list, int sprite_count, const std::string& list_name, int *selected_block);
 
 }

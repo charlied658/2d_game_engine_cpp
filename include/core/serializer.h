@@ -7,12 +7,10 @@
 
 #include <string>
 
-using namespace std;
-
 namespace Serializer {
 
-    void serialize_game_objects(const string& filepath);
+    void serialize_game_objects(const std::string& filepath);
 
-    void deserialize_game_objects(const string& filepath);
+    void deserialize_game_objects(const std::string& filepath);
 
 }

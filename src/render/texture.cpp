@@ -11,8 +11,6 @@
 
 #include <string>
 
-using namespace std;
-
 namespace Texture {
 
     static texture texture_list[100];
@@ -23,8 +21,8 @@ namespace Texture {
      * @param filepath Filepath of texture
      * @return Texture
      */
-    texture *get_texture(const string& filepath) {
-        string absolute_filepath = PROJECT_PATH + filepath;
+    texture *get_texture(const std::string& filepath) {
+        std::string absolute_filepath = PROJECT_PATH + filepath;
         for (int i = 0; i < texture_count; i++) {
             if (texture_list[i].filepath == filepath) {
                 return &texture_list[i];
@@ -44,7 +42,7 @@ namespace Texture {
      * @param filepath Filepath of texture
      * @return Texture ID
      */
-    static unsigned int create_texture(const string& filepath) {
+    static unsigned int create_texture(const std::string& filepath) {
 
         // Load image data
         int width, height, channels;

@@ -32,12 +32,12 @@ namespace Window {
     static double fps;
 
     static unsigned int sprite_shader;
-    static string sprite_vertex_filepath;
-    static string sprite_fragment_filepath;
+    static std::string sprite_vertex_filepath;
+    static std::string sprite_fragment_filepath;
 
     static unsigned int line_shader;
-    static string line_vertex_filepath;
-    static string line_fragment_filepath;
+    static std::string line_vertex_filepath;
+    static std::string line_fragment_filepath;
 
     void window_size_callback(GLFWwindow* window_ptr, int w, int h)
     {

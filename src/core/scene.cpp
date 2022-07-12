@@ -21,7 +21,7 @@ namespace Scene {
 
     static GameObject::game_object *game_objects;
     static int game_object_count;
-    static string level_filepath;
+    static std::string level_filepath;
 
     /**
      * Initialize the scene.

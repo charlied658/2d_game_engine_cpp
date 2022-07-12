@@ -11,10 +11,10 @@ namespace Spritesheet {
     struct spritesheet {
         int width, height;
         unsigned int texture_ID;
-        string filepath_texture;
+        std::string filepath_texture;
     };
 
-    void init(Spritesheet::spritesheet *spr_sheet, int width, int height, const string& filepath);
+    void init(Spritesheet::spritesheet *spr_sheet, int width, int height, const std::string& filepath);
 
     Sprite::sprite get_sprite(Spritesheet::spritesheet *spr_sheet, int index);
 }

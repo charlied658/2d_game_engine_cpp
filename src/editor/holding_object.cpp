@@ -39,7 +39,7 @@ namespace Holding {
      * Generate a holding object.
      * @param spr Sprite reference
      */
-    void generateHoldingObject(Sprite::sprite *spr, const string& name) {
+    void generateHoldingObject(Sprite::sprite *spr, const std::string& name) {
         Selected::reset_selected();
         Holding::set_holding(true);
         // Get the holding object

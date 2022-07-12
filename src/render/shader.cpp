@@ -11,10 +11,6 @@
 
 #include "util/properties.h"
 
-using std::cout; using std::cerr;
-using std::endl; using std::string;
-using std::ifstream; using std::ostringstream;
-
 namespace Shader {
 
     static shader shader_list[100];
@@ -26,7 +22,7 @@ namespace Shader {
      * @param shader Shader object
      * @param filepath Filepath of shader
      */
-    void get_shader(unsigned int *shader, const string& vertex_filepath, const string& fragment_filepath) {
+    void get_shader(unsigned int *shader, const std::string& vertex_filepath, const std::string& fragment_filepath) {
         for (int i = 0; i < shader_count; i++) {
             if (shader_list[i].vertex_filepath == vertex_filepath && shader_list[i].fragment_filepath == fragment_filepath) {
                 *shader = shader_list[i].program_ID;
@@ -43,10 +39,10 @@ namespace Shader {
     }
 
     /**
-     * Create and compile the shader program
+     * Create and compile the shader program.
      */
-    static unsigned int create_program(const string& vertex_filepath, const string& fragment_filepath) {
-        string vertex_shader_source, fragment_shader_source;
+    static unsigned int create_program(const std::string& vertex_filepath, const std::string& fragment_filepath) {
+        std::string vertex_shader_source, fragment_shader_source;
         GLuint vertex_shader, fragment_shader, program_ID;
         GLint success, len;
         GLsizei length;
@@ -100,6 +96,10 @@ namespace Shader {
         return program_ID;
     }
 
+    /**
+     * Set the given shader program to be in use.
+     * @param program_ID Program ID
+     */
     void use_program(unsigned int program_ID) {
         glUseProgram(program_ID);
         current_program_ID = program_ID;
@@ -110,15 +110,15 @@ namespace Shader {
      * @param source Source text
      * @param filepath Filepath of shader
      */
-    void read_source(string *source, const string& filepath) {
-        string absolute_filepath = PROJECT_PATH + filepath;
-        ifstream input_file;
+    void read_source(std::string *source, const std::string& filepath) {
+        std::string absolute_filepath = PROJECT_PATH + filepath;
+        std::ifstream input_file;
         input_file.open(absolute_filepath);
         if (!input_file.is_open()) {
             printf("Could not open file '%s'\n", absolute_filepath.c_str());
             exit(EXIT_FAILURE);
         }
-        stringstream buffer;
+        std::stringstream buffer;
         buffer << input_file.rdbuf();
         *source = buffer.str();
     }

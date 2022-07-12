@@ -29,19 +29,19 @@ namespace Serializer {
     /**
      * Serialize the game objects and place them into an output file.
      */
-    void serialize_game_objects(const string& filepath) {
+    void serialize_game_objects(const std::string& filepath) {
         // Get the game objects list
         Scene::get_game_objects_list(&game_objects, &game_object_count);
 
         // Convert game objects list into a vector (which is readable by cereal library)
-        vector<GameObject::game_object> serialized_game_objects;
+        std::vector<GameObject::game_object> serialized_game_objects;
         for (int i = 0; i < game_object_count; i++) {
             serialized_game_objects.push_back(game_objects[i]);
         }
 
         // Open a file and write to it
-        ofstream level_file;
-        string path_absolute = PROJECT_PATH + filepath;
+        std::ofstream level_file;
+        std::string path_absolute = PROJECT_PATH + filepath;
         level_file.open (path_absolute);
         {
             cereal::JSONOutputArchive out_archive(level_file); // Create an output archive
@@ -54,13 +54,13 @@ namespace Serializer {
     /**
      * Deserialize game objects and repopulate the game objects list.
      */
-    void deserialize_game_objects(const string& filepath) {
+    void deserialize_game_objects(const std::string& filepath) {
         // Create a vector to receive game object data from the file
-        vector<GameObject::game_object> serialized_game_objects;
+        std::vector<GameObject::game_object> serialized_game_objects;
 
         // Open a file a read from it
-        ifstream level_file;
-        string path_absolute = PROJECT_PATH + filepath;
+        std::ifstream level_file;
+        std::string path_absolute = PROJECT_PATH + filepath;
         level_file.open (path_absolute);
         if (!level_file.is_open()) {
             Scene::save_level();

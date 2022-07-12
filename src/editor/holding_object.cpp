@@ -9,7 +9,7 @@
 #include "core/mouse_listener.h"
 #include "editor/selected_objects.h"
 #include "editor/imgui/object_picker.h"
-#include "render/render.h"
+#include "render/sprite_renderer.h"
 
 namespace Holding {
 
@@ -53,7 +53,7 @@ namespace Holding {
         printf("Created holding\n");
         GameObject::init(&holding_object, name, glm::vec2{}, glm::vec2{0.25f,0.25f}, 5, spr);
         GameObject::set_pickable(&holding_object, false);
-        Render::add_game_object(&holding_object);
+        SpriteRenderer::add_game_object(&holding_object);
         generated_holding = true;
     }
 

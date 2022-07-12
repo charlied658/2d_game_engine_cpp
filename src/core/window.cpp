@@ -14,7 +14,8 @@
 #include "core/scene.h"
 #include "core/imgui_layer.h"
 #include "render/shader.h"
-#include "render/render.h"
+#include "render/sprite_renderer.h"
+#include "render/line_renderer.h"
 #include <cstdio>
 
 static void error_callback(int error, const char* description) {
@@ -29,9 +30,14 @@ namespace Window {
     static const char *title = "Game Engine";
     static int width, height;
     static double fps;
-    static unsigned int default_shader;
-    static string default_vertex_filepath;
-    static string default_fragment_filepath;
+
+    static unsigned int sprite_shader;
+    static string sprite_vertex_filepath;
+    static string sprite_fragment_filepath;
+
+    static unsigned int line_shader;
+    static string line_vertex_filepath;
+    static string line_fragment_filepath;
 
     void window_size_callback(GLFWwindow* window_ptr, int w, int h)
     {
@@ -90,10 +96,16 @@ namespace Window {
         // Maximize the window;
         glfwMaximizeWindow(window);
 
-        // Create shader
-        default_vertex_filepath = "assets/shaders/default/vertex.glsl";
-        default_fragment_filepath = "assets/shaders/default/fragment.glsl";
-        Shader::get_shader(&default_shader, default_vertex_filepath, default_fragment_filepath);
+        // Sprite shader
+        sprite_vertex_filepath = "assets/shaders/sprite/vertex.glsl";
+        sprite_fragment_filepath = "assets/shaders/sprite/fragment.glsl";
+        Shader::get_shader(&sprite_shader, sprite_vertex_filepath, sprite_fragment_filepath);
+
+        // Line shader
+        line_vertex_filepath = "assets/shaders/line/vertex.glsl";
+        line_fragment_filepath = "assets/shaders/line/fragment.glsl";
+        Shader::get_shader(&line_shader, line_vertex_filepath, line_fragment_filepath);
+
 
         // Initialize scene
         Scene::init();
@@ -130,9 +142,13 @@ namespace Window {
             // Clear the screen
             glClear(GL_COLOR_BUFFER_BIT);
 
+            // Render lines
+            Shader::use_program(line_shader);
+            LineRenderer::render();
+
             // Draw sprites to the screen
-            Shader::use_program(default_shader);
-            Render::render();
+            Shader::use_program(sprite_shader);
+            SpriteRenderer::render();
 
             // Render ImGui elements
             ImGuiLayer::render();

@@ -5,7 +5,7 @@
 
 #include "editor/shadows.h"
 
-#include "render/render.h"
+#include "render/sprite_renderer.h"
 #include "editor/selected_objects.h"
 #include "editor/holding_object.h"
 
@@ -59,7 +59,7 @@ namespace Shadows {
                 GameObject::set_color(&shadow_objects[i], glm::vec4(0.0f, 0.0f, 0.0f, 0.7f));
                 GameObject::set_saturation(&shadow_objects[i], 1.0f);
                 GameObject::set_pickable(&shadow_objects[i], false);
-                Render::add_game_object(&shadow_objects[i]);
+                SpriteRenderer::add_game_object(&shadow_objects[i]);
                 shadow_object_count++;
             }
         }
@@ -80,7 +80,7 @@ namespace Shadows {
             GameObject::set_pickable(&holding_obj_shadow, false);
             if (!holding_shadow_added) {
                 holding_shadow_added = true;
-                Render::add_game_object(&holding_obj_shadow);
+                SpriteRenderer::add_game_object(&holding_obj_shadow);
             }
         } else {
             GameObject::set_visible(&holding_obj_shadow, false);

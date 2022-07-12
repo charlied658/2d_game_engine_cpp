@@ -3,7 +3,7 @@
  * Created on 7/9/22.
  */
 
-#include "core/serialize.h"
+#include "core/serializer.h"
 
 #include <vector>
 #include <cstdio>
@@ -14,14 +14,14 @@
 #include "cereal/types/string.hpp"
 #include "cereal/types/vector.hpp"
 
-#include "render/render.h"
+#include "render/sprite_renderer.h"
 #include "render/texture.h"
 #include "core/game_object.h"
 #include "core/scene.h"
 #include "editor/object_manager.h"
 #include "util/properties.h"
 
-namespace Serialize {
+namespace Serializer {
 
     static GameObject::game_object *game_objects;
     static int game_object_count;
@@ -74,7 +74,7 @@ namespace Serialize {
 
         // Clear game object lists
         Scene::clear_game_objects();
-        Render::clear_render_batches();
+        SpriteRenderer::clear_render_batches();
         ObjectManager::reload();
 
         // Re-add all the game objects

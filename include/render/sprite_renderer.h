@@ -7,13 +7,11 @@
 
 #include "core/game_object.h"
 
-namespace Render {
+namespace SpriteRenderer {
 
     void render();
 
     void add_game_object(GameObject::game_object *obj);
-
-    void remove_game_object(GameObject::game_object *obj);
 
     void highlight_game_object(GameObject::game_object **highlighted_obj);
 

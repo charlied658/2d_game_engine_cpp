@@ -15,6 +15,7 @@
 #include "editor/copied_objects.h"
 #include "editor/selection_box.h"
 #include "editor/holding_object.h"
+#include "editor/grid_lines.h"
 
 namespace ObjectManager {
 
@@ -33,6 +34,7 @@ namespace ObjectManager {
         SelectionBox::init();
         Mouse::init();
         Holding::init();
+        GridLines::init();
     }
 
     /**

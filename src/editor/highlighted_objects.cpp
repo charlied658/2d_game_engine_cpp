@@ -7,7 +7,7 @@
 
 #include "core/scene.h"
 #include "core/imgui_layer.h"
-#include "render/render.h"
+#include "render/sprite_renderer.h"
 #include "editor/selected_objects.h"
 #include "editor/mouse_events.h"
 #include "editor/selection_box.h"
@@ -72,11 +72,11 @@ namespace Highlight {
         // Check if the mouse is being dragged or not
         if (Mouse::is_multiselect()) {
             // Highlight game objects intersecting with the selection box
-            Render::highlight_game_objects(highlighted_objects,&highlighted_object_count, selection_box);
+            SpriteRenderer::highlight_game_objects(highlighted_objects, &highlighted_object_count, selection_box);
         } else {
             // Highlight the object that the mouse cursor is over
             if (!ImGuiLayer::want_mouse_capture() && !Mouse::is_dragging_objects()) {
-                Render::highlight_game_object(&highlighted_obj);
+                SpriteRenderer::highlight_game_object(&highlighted_obj);
             }
             // Highlight the other selected objects
             if (highlighted_obj && highlighted_obj->selected) {

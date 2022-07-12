@@ -5,7 +5,7 @@
 
 #include "editor/selection_box.h"
 
-#include "render/render.h"
+#include "render/sprite_renderer.h"
 
 namespace SelectionBox {
 
@@ -24,7 +24,7 @@ namespace SelectionBox {
         GameObject::set_color(&selection_box, glm::vec4 {1.0f, 1.0f, 0.0f, 0.2f});
         GameObject::set_pickable(&selection_box, false);
         GameObject::set_visible(&selection_box, false);
-        Render::add_game_object(&selection_box);
+        SpriteRenderer::add_game_object(&selection_box);
     }
 
     /**
@@ -32,7 +32,7 @@ namespace SelectionBox {
      */
     void reload() {
         GameObject::set_visible(&selection_box, false);
-        Render::add_game_object(&selection_box);
+        SpriteRenderer::add_game_object(&selection_box);
     }
 
     /**

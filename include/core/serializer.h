@@ -9,7 +9,7 @@
 
 using namespace std;
 
-namespace Serialize {
+namespace Serializer {
 
     void serialize_game_objects(const string& filepath);
 

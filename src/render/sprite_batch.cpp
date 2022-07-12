@@ -3,19 +3,11 @@
  * Created on 7/4/22.
  */
 
-#include "render/render_batch.h"
+#include "render/sprite_batch.h"
 
 #include "core/game_object.h"
 #include "render/shader.h"
 #include "core/camera.h"
-
-struct vertex {
-    float x, y;       // Position
-    float r, g, b, a; // Color
-    float s;          // Saturation
-    float u, v;       // Texture coordinates
-    float t;          // Texture ID
-};
 
 /*
  * ========= Diagram of one Quad: ==========
@@ -35,7 +27,7 @@ struct vertex {
  *
  */
 
-namespace RenderBatch {
+namespace SpriteBatch {
 
     static int tex_slots[] = {0,1,2,3,4,5,6,7};
 
@@ -53,13 +45,15 @@ namespace RenderBatch {
     static const int tex_id_offset = tex_coords_offset + tex_coords_size;
 
     static const int vertex_size = position_size + color_size + saturation_size + tex_coords_size + tex_id_size;
+    static const int vertex_size_bytes = sizeof(float) * vertex_size;
 
     /**
      * Create and initialize a render batch.
-     * @param batch Render batch reference
+     * @param batch Sprite batch reference
      * @param max_batch_size Maximum number of allowed game objects
+     * @param z_index Z-index of batch
      */
-    void init(render_batch *batch, int max_batch_size, int z_index) {
+    void init(sprite_batch *batch, int max_batch_size, int z_index) {
         batch->max_batch_size = max_batch_size;
         batch->game_object_list = new GameObject::game_object *[max_batch_size];
         batch->game_object_count = 0;
@@ -88,15 +82,15 @@ namespace RenderBatch {
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, (long) sizeof(float) * batch->max_batch_size * 6, batch->element_data, GL_STATIC_DRAW);
 
         // Enable vertex attributes
-        glVertexAttribPointer(0, position_size, GL_FLOAT, GL_FALSE, sizeof(vertex),(void*)(sizeof(float) * position_offset));
+        glVertexAttribPointer(0, position_size, GL_FLOAT, GL_FALSE, vertex_size_bytes,(void*)(sizeof(float) * position_offset));
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(1, color_size, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * color_offset));
+        glVertexAttribPointer(1, color_size, GL_FLOAT, GL_FALSE, vertex_size_bytes, (void*)(sizeof(float) * color_offset));
         glEnableVertexAttribArray(1);
-        glVertexAttribPointer(2, saturation_size, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * saturation_offset));
+        glVertexAttribPointer(2, saturation_size, GL_FLOAT, GL_FALSE, vertex_size_bytes, (void*)(sizeof(float) * saturation_offset));
         glEnableVertexAttribArray(2);
-        glVertexAttribPointer(3, tex_coords_size, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * tex_coords_offset));
+        glVertexAttribPointer(3, tex_coords_size, GL_FLOAT, GL_FALSE, vertex_size_bytes, (void*)(sizeof(float) * tex_coords_offset));
         glEnableVertexAttribArray(3);
-        glVertexAttribPointer(4, tex_id_size, GL_FLOAT, GL_FALSE, sizeof(vertex), (void*)(sizeof(float) * tex_id_offset));
+        glVertexAttribPointer(4, tex_id_size, GL_FLOAT, GL_FALSE, vertex_size_bytes, (void*)(sizeof(float) * tex_id_offset));
         glEnableVertexAttribArray(4);
 
         // Enable alpha blending
@@ -107,9 +101,9 @@ namespace RenderBatch {
 
     /**
      * Render vertex data for the given batch.
-     * @param batch Render batch reference
+     * @param batch Sprite batch reference
      */
-    void render(render_batch *batch) {
+    void render(sprite_batch *batch) {
 
         // Check if vertex data needs to be updated
         for (int i = 0; i < batch->game_object_count; i++) {
@@ -143,10 +137,10 @@ namespace RenderBatch {
 
     /**
      * Add a game object to the batch.
-     * @param batch Render batch reference
+     * @param batch Sprite batch reference
      * @param obj Game object to be added
      */
-    void add_game_object(render_batch *batch, GameObject::game_object *obj) {
+    void add_game_object(sprite_batch *batch, GameObject::game_object *obj) {
         batch->game_object_list[batch->game_object_count] = obj;
 
         // Generate vertex data for the newly added game object
@@ -160,33 +154,11 @@ namespace RenderBatch {
     }
 
     /**
-     * Remove a game object from a batch.
-     * @param batch Render batch reference
-     * @param obj Game object to be removed
-     * @return True if object was removed
-     */
-    void remove_game_object(render_batch *batch, GameObject::game_object *obj) {
-        bool found_obj = false;
-        for (int i = 0; i < batch->game_object_count; i++) {
-            if (batch->game_object_list[i] == obj) {
-                found_obj = true;
-            }
-            if (found_obj && i < batch->game_object_count - 1) {
-                batch->game_object_list[i] = batch->game_object_list[i + 1];
-                batch->game_object_list[i]->is_dirty = true;
-            }
-        }
-        if (found_obj) {
-            batch->game_object_count--;
-        }
-    }
-
-    /**
      * Generate vertex data for the given game object.
      * @param batch Render batch reference
      * @param index Index to begin adding vertex data
      */
-    static void generate_vertex_data(render_batch *batch, int index) {
+    static void generate_vertex_data(sprite_batch *batch, int index) {
         int offset = index * vertex_size * 4;
         float xAdd, yAdd;
         xAdd = 0.0f;
@@ -231,9 +203,9 @@ namespace RenderBatch {
 
     /**
      * Generate element indices.
-     * @param batch Render batch reference
+     * @param batch Sprite batch reference
      */
-    static void generate_element_indices(render_batch *batch) {
+    static void generate_element_indices(sprite_batch *batch) {
         int element_offset = 0;
         for (int i = 0; i < batch->max_batch_size; i++) {
             batch->element_data[i * 6 + 0] = element_offset + 0;
@@ -249,11 +221,11 @@ namespace RenderBatch {
 
     /**
      * Get the texture slot for the specified texture.
-     * @param batch Render batch reference
+     * @param batch Sprite batch reference
      * @param texture_ID Texture ID
      * @return Texture slot
      */
-    static int get_texture_slot(render_batch *batch, unsigned int texture_ID) {
+    static int get_texture_slot(sprite_batch *batch, unsigned int texture_ID) {
         for (int i = 0; i < batch->texture_count; i++) {
             if (texture_ID == batch->texture_list[i]) {
                 return i;
@@ -272,11 +244,11 @@ namespace RenderBatch {
 
     /**
      * Check if a batch contains a texture or if it has texture room.
-     * @param batch Render batch reference
+     * @param batch Sprite batch reference
      * @param texture_ID Texture ID
      * @return True if the batch contains a texture or if it has space to add a new texture
      */
-    bool contains_texture(render_batch *batch, unsigned int texture_ID) {
+    bool contains_texture(sprite_batch *batch, unsigned int texture_ID) {
         if (batch->texture_count < 7) {
             return true;
         }

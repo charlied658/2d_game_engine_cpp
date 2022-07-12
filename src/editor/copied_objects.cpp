@@ -6,7 +6,7 @@
 #include "editor/copied_objects.h"
 
 #include "core/scene.h"
-#include "render/render.h"
+#include "render/sprite_renderer.h"
 #include "editor/selected_objects.h"
 #include "editor/object_manager.h"
 
@@ -90,9 +90,9 @@ namespace Copy {
         Scene::get_game_objects_list(&game_objects, &game_object_count);
 
         // Rebuffer every render batch (since pointers to game objects are now invalid)
-        Render::clear_render_batches();
+        SpriteRenderer::clear_render_batches();
         for (int i = 0; i < game_object_count; i++) {
-            Render::add_game_object(&game_objects[i]);
+            SpriteRenderer::add_game_object(&game_objects[i]);
         }
         ObjectManager::reload();
     }

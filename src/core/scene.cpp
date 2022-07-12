@@ -7,11 +7,11 @@
 
 #include "core/scene.h"
 
-#include "render/render.h"
+#include "render/sprite_renderer.h"
 #include "core/game_object.h"
 #include "core/camera.h"
 #include "core/mouse_listener.h"
-#include "core/serialize.h"
+#include "core/serializer.h"
 #include "editor/object_manager.h"
 #include "editor/imgui/main_menu_bar.h"
 #include "editor/imgui/info_window.h"
@@ -96,7 +96,7 @@ namespace Scene {
     void add_game_object(GameObject::game_object *obj) {
         if (game_object_count < 10000) {
             game_objects[game_object_count] = *obj;
-            Render::add_game_object(&game_objects[game_object_count]);
+            SpriteRenderer::add_game_object(&game_objects[game_object_count]);
             game_object_count++;
         }
     }
@@ -130,21 +130,21 @@ namespace Scene {
      * Save the state of the level to a file.
      */
     void save_level() {
-        Serialize::serialize_game_objects(level_filepath);
+        Serializer::serialize_game_objects(level_filepath);
     }
 
     /**
      * Load a level from an existing file.
      */
     void load_level() {
-        Serialize::deserialize_game_objects(level_filepath);
+        Serializer::deserialize_game_objects(level_filepath);
     }
 
     /**
      * Create a new level.
      */
     void new_level() {
-        Render::clear_render_batches();
+        SpriteRenderer::clear_render_batches();
         ObjectManager::reload();
         printf("Created new level\n");
     }

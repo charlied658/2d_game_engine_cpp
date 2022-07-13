@@ -15,6 +15,10 @@ namespace ObjectManager {
 
     void update();
 
+    void reset_z_index();
+
+    void update_z_index();
+
     void imgui();
 
 }

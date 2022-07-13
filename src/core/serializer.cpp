@@ -16,6 +16,7 @@
 
 #include "render/sprite_renderer.h"
 #include "render/texture.h"
+#include "render/chunk_manager.h"
 #include "core/game_object.h"
 #include "core/scene.h"
 #include "editor/object_manager.h"
@@ -80,7 +81,8 @@ namespace Serializer {
         // Re-add all the game objects
         for (auto obj : serialized_game_objects) {
             GameObject::set_visible(&obj, true);
-            GameObject::set_pickable(&obj, true);
+            ChunkManager::set_solid_block(obj.grid_x, obj.grid_y, true);
+            obj.last_position = obj.position;
             obj.sprite.texture_ID = Texture::get_texture(obj.sprite.texture_filepath)->textureID;
             Scene::add_game_object(&obj);
         }

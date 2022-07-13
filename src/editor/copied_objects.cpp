@@ -7,6 +7,7 @@
 
 #include "core/scene.h"
 #include "render/sprite_renderer.h"
+#include "render/chunk_manager.h"
 #include "editor/selected_objects.h"
 #include "editor/object_manager.h"
 
@@ -87,7 +88,8 @@ namespace Copy {
      */
     void delete_objects() {
         for (int i = 0; i < selected_object_count; i++) {
-            GameObject::set_dead(selected_objects[i], true);
+            selected_objects[i]->dead = true;
+            ChunkManager::set_solid_block(selected_objects[i]->grid_x, selected_objects[i]->grid_y, false);
         }
         Scene::remove_game_objects();
         Selected::set_selected_objects_count(0);

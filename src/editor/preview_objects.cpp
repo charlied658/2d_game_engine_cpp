@@ -64,7 +64,7 @@ namespace Preview {
                                      &selected_objects[i]->sprite);
                     GameObject::set_color(&preview_objects[i], glm::vec4(1.0f, 1.0f, 1.0f, 0.0f));
                     GameObject::set_saturation(&preview_objects[i], 0.3f);
-                    GameObject::set_pickable(&preview_objects[i], false);
+                    preview_objects[i].pickable = false;
                 } else {
                     // Add new shadows if necessary
                     if (preview_object_count < 1000) {
@@ -77,7 +77,7 @@ namespace Preview {
                                          &selected_objects[i]->sprite);
                         GameObject::set_color(&preview_objects[i], glm::vec4(1.0f, 1.0f, 1.0f, 0.0f));
                         GameObject::set_saturation(&preview_objects[i], 0.3f);
-                        GameObject::set_pickable(&preview_objects[i], false);
+                        preview_objects[i].pickable = false;
                         SpriteRenderer::add_game_object(&preview_objects[i]);
                         preview_object_count++;
                     }
@@ -104,7 +104,7 @@ namespace Preview {
             GameObject::init(&holding_object_preview, "preview", position, holding_object->scale, -5, &holding_object->sprite);
             GameObject::set_color(&holding_object_preview, glm::vec4(1.0f, 1.0f, 1.0f, 0.0f));
             GameObject::set_saturation(&holding_object_preview, 0.3f);
-            GameObject::set_pickable(&holding_object_preview, false);
+            holding_object_preview.pickable = false;
             if (!holding_preview_added) {
                 holding_preview_added = true;
                 SpriteRenderer::add_game_object(&holding_object_preview);

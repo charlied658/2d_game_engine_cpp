@@ -61,6 +61,30 @@ namespace SpriteRenderer {
     }
 
     /**
+     * Remove a game object from its render batch.
+     * @param obj Game object reference
+     */
+    void remove_game_object(GameObject::game_object *obj) {
+        for (int i = 0; i < batch_count; i++) {
+            if (batches[i].z_index == obj->z_index) {
+                if (SpriteBatch::remove_game_object(&batches[i], obj)) {
+                    return;
+                }
+            }
+        }
+    }
+
+    /**
+     * Removes a game object from its batch and re-adds it to a new one. Useful for resetting z-index.
+     * @param obj Game object
+     */
+    void re_add_game_object(GameObject::game_object *obj) {
+        remove_game_object(obj);
+        obj->z_index = obj->new_z_index;
+        add_game_object(obj);
+    }
+
+    /**
      * Highlight the game object under the mouse cursor.
      */
     void highlight_game_object(GameObject::game_object **highlighted_obj) {
@@ -120,6 +144,10 @@ namespace SpriteRenderer {
      * Clear the render batches (used when deserializing)
      */
     void clear_render_batches() {
+        // Free memory
+        for (int i = 0; i < batch_count; i++) {
+            delete batches[i].game_object_list;
+        }
         batch_count = 0;
     }
 }

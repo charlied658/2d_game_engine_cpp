@@ -11,6 +11,7 @@
 #include "editor/selection_box.h"
 #include "editor/holding_object.h"
 #include "editor/copied_objects.h"
+#include "render/chunk_manager.h"
 #include "util/collision_math.h"
 
 namespace Mouse {
@@ -23,6 +24,7 @@ namespace Mouse {
     static bool drag_objects;
     static bool multiselect;
     static bool shift_click_down;
+    static bool invalid_placement;
     static double start_x, start_y;
     static glm::vec2 *obj_start_pos;
 
@@ -91,7 +93,7 @@ namespace Mouse {
      * Handle what happens when the mouse is shift-clicked.
      */
     static void shift_click() {
-        if (Holding::is_holding() && !Mouse::is_shift_click_down()) {
+        if (Holding::is_holding()) {
             Mouse::set_shift_click_down(true);
             Holding::place_holding_object(false);
             return;
@@ -129,12 +131,31 @@ namespace Mouse {
 
         // If the mouse was dragging, snap objects to grid
         if (Mouse::is_dragging_objects()) {
-            for (int i = 0; i < selected_object_count; i++) {
-                glm::vec2 centered_position = {selected_objects[i]->position.x + 0.25f / 2,
-                                               selected_objects[i]->position.y + 0.25f / 2};
-                glm::vec2 position = {centered_position.x - Math::f_mod(centered_position.x, 0.25f),
-                                      centered_position.y - Math::f_mod(centered_position.y, 0.25f)};
-                GameObject::set_position(selected_objects[i], position);
+            if (!invalid_placement) {
+                for (int i = 0; i < selected_object_count; i++) {
+                    glm::vec2 centered_position = {selected_objects[i]->position.x + 0.25f / 2,
+                                                   selected_objects[i]->position.y + 0.25f / 2};
+                    glm::vec2 position = {centered_position.x - Math::f_mod(centered_position.x, 0.25f),
+                                          centered_position.y - Math::f_mod(centered_position.y, 0.25f)};
+                    int grid_x = (int) (position.x / 0.25f);
+                    int grid_y = (int) (position.y / 0.25f);
+                    GameObject::set_position(selected_objects[i], position);
+                    selected_objects[i]->last_position = position;
+                    selected_objects[i]->grid_y = grid_y;
+                    selected_objects[i]->grid_x = grid_x;
+                    selected_objects[i]->grid_y = grid_y;
+                    selected_objects[i]->last_grid_x = grid_x;
+                    selected_objects[i]->last_grid_y = grid_y;
+                    ChunkManager::set_solid_block(grid_x, grid_y, true);
+                }
+            } else {
+                for (int i = 0; i < selected_object_count; i++) {
+                    GameObject::set_position(selected_objects[i], selected_objects[i]->last_position);
+                    selected_objects[i]->grid_x = selected_objects[i]->last_grid_x;
+                    selected_objects[i]->grid_y = selected_objects[i]->last_grid_y;
+                    ChunkManager::set_solid_block(selected_objects[i]->grid_x, selected_objects[i]->grid_y, true);
+                }
+                invalid_placement = false;
             }
             Mouse::set_dragging_objects(false);
         }
@@ -160,15 +181,33 @@ namespace Mouse {
             start_x = Mouse::get_worldX();
             start_y = Mouse::get_worldY();
             for (int i = 0; i < selected_object_count; i++) {
+                ChunkManager::set_solid_block(selected_objects[i]->grid_x, selected_objects[i]->grid_y, false);
                 obj_start_pos[i] = selected_objects[i]->position;
             }
         } else {
             // If there are multiple selected objects, dragging one will move all of them
+            invalid_placement = false;
             for (int i = 0; i < selected_object_count; i++) {
+                glm::vec2 centered_position = {selected_objects[i]->position.x + 0.25f / 2,
+                                               selected_objects[i]->position.y + 0.25f / 2};
+                glm::vec2 position = {centered_position.x - Math::f_mod(centered_position.x, 0.25f),
+                                      centered_position.y - Math::f_mod(centered_position.y, 0.25f)};
+                int grid_x = (int) (position.x / 0.25f);
+                int grid_y = (int) (position.y / 0.25f);
+                selected_objects[i]->grid_x = grid_x;
+                selected_objects[i]->grid_y = grid_y;
+                if (ChunkManager::is_solid_block(grid_x, grid_y)) {
+                    invalid_placement = true;
+                }
                 GameObject::set_dragging(selected_objects[i], true);
                 GameObject::set_position(selected_objects[i], glm::vec2{
                         Mouse::get_worldX() - start_x + obj_start_pos[i].x,
                         Mouse::get_worldY() - start_y + +obj_start_pos[i].y});
+            }
+            if (invalid_placement) {
+                for (int i = 0; i < selected_object_count; i++) {
+                    GameObject::update_color(selected_objects[i]);
+                }
             }
         }
     }
@@ -211,6 +250,10 @@ namespace Mouse {
         return shift_click_down;
     }
 
+    bool is_invalid_placement() {
+        return invalid_placement;
+    }
+
     void set_multiselect(bool state) {
         multiselect = state;
     }
@@ -221,5 +264,9 @@ namespace Mouse {
 
     void set_shift_click_down(bool state) {
         shift_click_down = state;
+    }
+
+    void set_invalid_placement(bool state) {
+        invalid_placement = state;
     }
 }

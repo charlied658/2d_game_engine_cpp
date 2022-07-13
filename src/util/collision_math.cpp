@@ -43,10 +43,24 @@ namespace Math {
      * @return Modulus result
      */
     float f_mod(float a, float b) {
-        if (a > 0) {
+        if (a >= 0) {
             return fmod(a,b);
         } else {
             return fmod(a,b) + b;
+        }
+    }
+
+    /**
+     * Modulo operator that works correctly with negative numbers.
+     * @param a Value
+     * @param b Divisor
+     * @return Modulus result
+     */
+    int i_mod(int a, int b) {
+        if (a >= 0) {
+            return a % b;
+        } else {
+            return a % b + b;
         }
     }
 }

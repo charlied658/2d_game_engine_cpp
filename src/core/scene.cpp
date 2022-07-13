@@ -8,6 +8,7 @@
 #include "core/scene.h"
 
 #include "render/sprite_renderer.h"
+#include "render/chunk_manager.h"
 #include "core/game_object.h"
 #include "core/camera.h"
 #include "core/mouse_listener.h"
@@ -146,6 +147,8 @@ namespace Scene {
     void new_level() {
         SpriteRenderer::clear_render_batches();
         ObjectManager::reload();
+        ChunkManager::reload();
+
         printf("Created new level\n");
     }
 

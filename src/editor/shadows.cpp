@@ -48,20 +48,20 @@ namespace Shadows {
         for (int i = 0; i < selected_object_count; i++) {
             if (i < shadow_object_count) {
                 GameObject::set_visible(&shadow_objects[i], true);
-                GameObject::init(&shadow_objects[i], "shadow", selected_objects[i]->position + glm::vec2 {0.02f, -0.02f}, selected_objects[i]->scale, -5, &selected_objects[i]->sprite);
+                GameObject::init(&shadow_objects[i], "shadow", selected_objects[i]->position + glm::vec2 {0.02f, -0.02f}, selected_objects[i]->scale, 4, &selected_objects[i]->sprite);
                 GameObject::set_color(&shadow_objects[i], glm::vec4(0.0f, 0.0f, 0.0f, 0.7f));
                 GameObject::set_saturation(&shadow_objects[i], 1.0f);
-                GameObject::set_pickable(&shadow_objects[i], false);
+                shadow_objects[i].pickable = false;
             } else {
                 // Add new shadows if necessary
                 if (shadow_object_count < 1000) {
                     shadow_objects[i] = GameObject::game_object{};
                     GameObject::init(&shadow_objects[i], "shadow",
                                      selected_objects[i]->position + glm::vec2{0.02f, -0.02f},
-                                     selected_objects[i]->scale, -5, &selected_objects[i]->sprite);
+                                     selected_objects[i]->scale, 4, &selected_objects[i]->sprite);
                     GameObject::set_color(&shadow_objects[i], glm::vec4(0.0f, 0.0f, 0.0f, 0.7f));
                     GameObject::set_saturation(&shadow_objects[i], 1.0f);
-                    GameObject::set_pickable(&shadow_objects[i], false);
+                    shadow_objects[i].pickable = false;
                     SpriteRenderer::add_game_object(&shadow_objects[i]);
                     shadow_object_count++;
                 }
@@ -78,10 +78,10 @@ namespace Shadows {
         Holding::get_holding_object(&holding_object);
         if (holding_object && Holding::is_holding()) {
             GameObject::set_visible(&holding_obj_shadow, true);
-            GameObject::init(&holding_obj_shadow, "shadow", holding_object->position + glm::vec2 {0.02f, -0.02f}, holding_object->scale, -5, &holding_object->sprite);
+            GameObject::init(&holding_obj_shadow, "shadow", holding_object->position + glm::vec2 {0.02f, -0.02f}, holding_object->scale, 4, &holding_object->sprite);
             GameObject::set_color(&holding_obj_shadow, glm::vec4(0.0f, 0.0f, 0.0f, 0.7f));
             GameObject::set_saturation(&holding_obj_shadow, 1.0f);
-            GameObject::set_pickable(&holding_obj_shadow, false);
+            holding_obj_shadow.pickable = false;
             if (!holding_shadow_added) {
                 holding_shadow_added = true;
                 SpriteRenderer::add_game_object(&holding_obj_shadow);

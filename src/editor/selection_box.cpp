@@ -22,7 +22,7 @@ namespace SelectionBox {
         // Generate selection box (Appears when you click and drag to multiselect)
         GameObject::init(&selection_box, "selection_box", glm::vec2 {1.0f, 1.5f}, glm::vec2 {1.0f, 1.0f}, 2, &sprite_null);
         GameObject::set_color(&selection_box, glm::vec4 {1.0f, 1.0f, 0.0f, 0.2f});
-        GameObject::set_pickable(&selection_box, false);
+        selection_box.pickable = false;
         GameObject::set_visible(&selection_box, false);
         SpriteRenderer::add_game_object(&selection_box);
     }

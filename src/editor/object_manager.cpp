@@ -18,6 +18,8 @@
 #include "editor/holding_object.h"
 #include "editor/grid_lines.h"
 #include "editor/preview_objects.h"
+#include "render/chunk_manager.h"
+#include "render/sprite_renderer.h"
 
 namespace ObjectManager {
 
@@ -44,6 +46,7 @@ namespace ObjectManager {
         Mouse::init();
         Holding::init();
         GridLines::init();
+        ChunkManager::init();
     }
 
     /**
@@ -63,6 +66,10 @@ namespace ObjectManager {
      * Update objects in the scene.
      */
     void update() {
+
+        Scene::get_game_objects_list(&game_objects, &game_object_count);
+        reset_z_index();
+
         // Update highlighted objects
         Highlight::update();
 
@@ -80,6 +87,28 @@ namespace ObjectManager {
         Shadows::render();
         Preview::render();
         GridLines::update();
+
+        update_z_index();
+    }
+
+    /**
+     * Reset z-index of all game objects.
+     */
+    void reset_z_index() {
+        for (int i = 0; i < game_object_count; i++) {
+            game_objects[i].new_z_index = 0;
+        }
+    }
+
+    /**
+     * Update the z-index of any game object that needs to be updated.
+     */
+    void update_z_index() {
+        for (int i = 0; i < game_object_count; i++) {
+            if (game_objects[i].new_z_index != game_objects[i].z_index) {
+                SpriteRenderer::re_add_game_object(&game_objects[i]);
+            }
+        }
     }
 
     /**

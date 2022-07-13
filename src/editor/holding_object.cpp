@@ -10,6 +10,7 @@
 #include "editor/selected_objects.h"
 #include "editor/imgui/object_picker.h"
 #include "render/sprite_renderer.h"
+#include "render/chunk_manager.h"
 #include "util/collision_math.h"
 
 namespace Holding {
@@ -50,8 +51,8 @@ namespace Holding {
             GameObject::set_sprite(&holding_object, spr);
             return;
         }
-        GameObject::init(&holding_object, name, glm::vec2{}, glm::vec2{0.25f,0.25f}, 5, spr);
-        GameObject::set_pickable(&holding_object, false);
+        GameObject::init(&holding_object, name, glm::vec2{}, glm::vec2{0.25f,0.25f}, 10, spr);
+        holding_object.pickable = false;
         SpriteRenderer::add_game_object(&holding_object);
         generated_holding = true;
     }
@@ -72,14 +73,32 @@ namespace Holding {
      * @param destroy Destroy holding object upon placing.
      */
     void place_holding_object(bool destroy) {
-        GameObject::game_object generated = holding_object;
-        generated.z_index = 0;
-        GameObject::set_pickable(&generated, true);
+
+        // Check grid coordinates.
         glm::vec2 centered_position = {holding_object.position.x + 0.25f / 2,
                                        holding_object.position.y + 0.25f / 2};
         glm::vec2 position = {centered_position.x - Math::f_mod(centered_position.x, 0.25f),
                               centered_position.y - Math::f_mod(centered_position.y, 0.25f)};
+        int grid_x = (int) (position.x / 0.25f);
+        int grid_y = (int) (position.y / 0.25f);
+
+        if (ChunkManager::is_solid_block(grid_x,grid_y)) {
+            //printf("Cannot place block %d,%d\n", grid_x, grid_y);
+            return;
+        } else {
+            //printf("Placed block %d,%d\n", grid_x, grid_y);
+            ChunkManager::set_solid_block(grid_x, grid_y, true);
+        }
+
+        GameObject::game_object generated = holding_object;
+        generated.z_index = 0;
+        generated.pickable = true;
+        generated.grid_x = grid_x;
+        generated.grid_y = grid_y;
+        generated.last_grid_x = grid_x;
+        generated.last_grid_y = grid_y;
         GameObject::set_position(&generated, position);
+        generated.last_position = position;
         if (destroy) {
             GameObject::set_selected(&generated, true);
         }

@@ -154,8 +154,31 @@ namespace SpriteBatch {
     }
 
     /**
+     * Remove a game object from the batch.
+     * @param batch Sprite batch
+     * @param obj Game object
+     * @return Removed object successfully
+     */
+    bool remove_game_object(sprite_batch *batch, GameObject::game_object *obj) {
+        bool found_object = false;
+        for (int i = 0; i < batch->game_object_count; i++) {
+            if (batch->game_object_list[i] == obj) {
+                found_object = true;
+            }
+            if (found_object && i < batch->game_object_count - 1) {
+                batch->game_object_list[i] = batch->game_object_list[i + 1];
+            }
+        }
+        if (found_object) {
+            batch->game_object_count--;
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Generate vertex data for the given game object.
-     * @param batch Render batch reference
+     * @param batch Sprite batch
      * @param index Index to begin adding vertex data
      */
     static void generate_vertex_data(sprite_batch *batch, int index) {
@@ -203,7 +226,7 @@ namespace SpriteBatch {
 
     /**
      * Generate element indices.
-     * @param batch Sprite batch reference
+     * @param batch Sprite batch
      */
     static void generate_element_indices(sprite_batch *batch) {
         int element_offset = 0;
@@ -221,7 +244,7 @@ namespace SpriteBatch {
 
     /**
      * Get the texture slot for the specified texture.
-     * @param batch Sprite batch reference
+     * @param batch Sprite batch
      * @param texture_ID Texture ID
      * @return Texture slot
      */
@@ -244,9 +267,9 @@ namespace SpriteBatch {
 
     /**
      * Check if a batch contains a texture or if it has texture room.
-     * @param batch Sprite batch reference
+     * @param batch Sprite batch
      * @param texture_ID Texture ID
-     * @return True if the batch contains a texture or if it has space to add a new texture
+     * @return Contains texture or has room
      */
     bool contains_texture(sprite_batch *batch, unsigned int texture_ID) {
         if (batch->texture_count < 7) {

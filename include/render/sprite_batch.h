@@ -30,6 +30,8 @@ namespace SpriteBatch {
 
     void add_game_object(sprite_batch *batch, GameObject::game_object *obj);
 
+    bool remove_game_object(sprite_batch *batch, GameObject::game_object *obj);
+
     static void generate_vertex_data(sprite_batch *batch, int index);
 
     static void generate_element_indices(sprite_batch *batch);

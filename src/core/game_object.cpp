@@ -6,6 +6,8 @@
 #include <utility>
 #include "core/game_object.h"
 
+#include "editor/mouse_events.h"
+
 namespace GameObject {
 
     /**
@@ -22,6 +24,7 @@ namespace GameObject {
         obj->position = position;
         obj->scale = scale;
         obj->z_index = z_index;
+        obj->new_z_index = z_index;
         obj->sprite = *sprite;
         obj->is_dirty = true;
         obj->color = glm::vec4 {1.0f, 1.0f, 1.0f, 1.0f};
@@ -36,8 +39,8 @@ namespace GameObject {
     }
 
     /**
-     * Set the sprite for a game object
-     * @param obj Game object reference
+     * Set the sprite for a game object.
+     * @param obj Game object
      * @param spr Sprite
      */
     void set_sprite(GameObject::game_object *obj, Sprite::sprite *spr) {
@@ -46,8 +49,8 @@ namespace GameObject {
     }
 
     /**
-     * Set position of a game object
-     * @param obj Game object reference
+     * Set position of a game object.
+     * @param obj Game object
      * @param position Position
      */
     void set_position(GameObject::game_object *obj, glm::vec2 position) {
@@ -56,8 +59,8 @@ namespace GameObject {
     }
 
     /**
-     * Set scale of a game object
-     * @param obj Game object reference
+     * Set scale of a game object.
+     * @param obj Game object
      * @param scale Scale
      */
     void set_scale(GameObject::game_object *obj, glm::vec2 scale) {
@@ -66,9 +69,9 @@ namespace GameObject {
     }
 
     /**
-     * Set color of a game object
-     * @param obj Game object reference
-     * @param color Color of object
+     * Set color of a game object.
+     * @param obj Game object
+     * @param color Color
      */
     void set_color(GameObject::game_object *obj, glm::vec4 color) {
         obj->color = color;
@@ -78,8 +81,9 @@ namespace GameObject {
     }
 
     /**
-     * Set the saturation of a game object
-     * @param saturation
+     * Set the saturation of a game object.
+     * @param obj Game object
+     * @param saturation Saturation
      */
     void set_saturation(GameObject::game_object *obj, float saturation) {
         obj->saturation = saturation;
@@ -87,102 +91,66 @@ namespace GameObject {
     }
 
     /**
-     * Set a game object to be visible or not.
-     * @param obj Game object reference
-     * @param visible Set whether the object is visible
+     * Set a game object to be visible.
+     * @param obj Game object
+     * @param visible Visible
      */
     void set_visible(GameObject::game_object *obj, bool visible) {
-        if (obj->visible == visible) {
-            return;
-        }
         obj->visible = visible;
         update_color(obj);
     }
 
     /**
-     * Set a game object to be pickable or not.
-     * @param obj Game object reference
-     * @param pickable Set whether the object is pickable
-     */
-    void set_pickable(GameObject::game_object *obj, bool pickable) {
-        if (obj->pickable == pickable) {
-            return;
-        }
-        obj->pickable = pickable;
-    }
-
-    /**
-     * Set a game object to be highlighted or not.
-     * @param obj Game object reference
-     * @param highlighted Set whether the object is highlighted
+     * Set a game object to be highlighted.
+     * @param obj Game object
+     * @param highlighted Highlighted
      */
     void set_highlighted(GameObject::game_object *obj, bool highlighted) {
-        if (obj->highlighted == highlighted) {
-            return;
-        }
         obj->highlighted = highlighted;
         update_color(obj);
     }
 
     /**
-     * Set a game object to be selected or not.
-     * @param obj Game object reference
-     * @param selected Set whether the object is selected
+     * Set a game object to be selected.
+     * @param obj Game object
+     * @param selected Selected
      */
     void set_selected(GameObject::game_object *obj, bool selected) {
-        if (obj->selected == selected) {
-            return;
-        }
         obj->selected = selected;
         update_color(obj);
     }
 
     /**
-     * Set a game object to be dragging or not.
-     * @param obj Game object reference
-     * @param dragging Set whether the object is dragging
+     * Set a game object to be dragging.
+     * @param obj Game object
+     * @param dragging Dragging
      */
     void set_dragging(GameObject::game_object *obj, bool dragging) {
-        if (obj->dragging == dragging) {
-            return;
-        }
         obj->dragging = dragging;
         update_color(obj);
     }
 
     /**
-     * Set a game object to be dead. It will be deleted shortly.
-     * @param obj Game object reference
-     * @param dead Set the object to be dead
-     */
-    void set_dead(GameObject::game_object *obj, bool dead) {
-        if (obj->dead == dead) {
-            return;
-        }
-        obj->dead = dead;
-    }
-
-    /**
      * Update the output color of a game object
-     * @param obj Game object reference
+     * @param obj Game object
      */
     void update_color(GameObject::game_object *obj) {
         glm::vec3 color_offset {};
         obj->saturation = 0.2f;
-        if (obj->dragging) {
-            color_offset = glm::vec3 {-0.1f,-0.1f,-0.1f};
-        } else if (obj->selected) {
-            if (obj->highlighted) {
-                color_offset = glm::vec3 {0.3f,0.3f,1.0f};
-                obj->out_color.x = color_offset.x;
-                obj->out_color.y = color_offset.y;
-                obj->out_color.z = color_offset.z;
+        if (obj->selected) {
+            if (Mouse::is_invalid_placement()) {
+                obj->saturation = 0.4f;
+                color_offset = glm::vec3{1.0f, 0.3f, 0.3f};
             } else {
-                color_offset = glm::vec3 {0.0f,0.0f,1.0f};
-                obj->out_color.x = color_offset.x;
-                obj->out_color.y = color_offset.y;
-                obj->out_color.z = color_offset.z;
+                if (obj->highlighted) {
+                    color_offset = glm::vec3{0.3f, 0.3f, 1.0f};
+                } else {
+                    color_offset = glm::vec3{0.0f, 0.0f, 1.0f};
+                }
             }
+            obj->out_color.x = color_offset.x;
+            obj->out_color.y = color_offset.y;
+            obj->out_color.z = color_offset.z;
         } else {
             if (obj->highlighted) {
                 obj->out_color.x = obj->color.x + 0.2f;

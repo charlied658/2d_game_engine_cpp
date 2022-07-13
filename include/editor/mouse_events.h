@@ -34,10 +34,14 @@ namespace Mouse {
 
     bool is_shift_click_down();
 
+    bool is_invalid_placement();
+
     void set_multiselect(bool state);
 
     void set_dragging_objects(bool state);
 
     void set_shift_click_down(bool state);
+
+    void set_invalid_placement(bool state);
 
 }

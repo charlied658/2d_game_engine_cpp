@@ -11,4 +11,6 @@ namespace Math {
 
     float f_mod(float a, float b);
 
+    int i_mod(int a, int b);
+
 }

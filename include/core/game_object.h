@@ -34,11 +34,15 @@ namespace GameObject {
         bool selected;
         bool dragging;
         bool dead;
+        int new_z_index;
+        int grid_x, grid_y;
+        int last_grid_x, last_grid_y;
+        glm::vec2 last_position;
 
         template<class Archive>
         void serialize(Archive & archive)
         {
-            archive(name, position, scale, z_index, sprite, color, pickable);
+            archive(name, position, scale, z_index, sprite, color, pickable, grid_x, grid_y);
         }
     };
 
@@ -56,15 +60,11 @@ namespace GameObject {
 
     void set_visible(GameObject::game_object *obj, bool visible);
 
-    void set_pickable(GameObject::game_object *obj, bool pickable);
-
     void set_highlighted(GameObject::game_object *obj, bool highlighted);
 
     void set_selected(GameObject::game_object *obj, bool selected);
 
     void set_dragging(GameObject::game_object *obj, bool dragging);
-
-    void set_dead(GameObject::game_object *obj, bool dead);
 
     void update_color(GameObject::game_object *obj);
 

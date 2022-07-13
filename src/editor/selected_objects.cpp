@@ -38,6 +38,10 @@ namespace Selected {
     void start_frame() {
         Highlight::get_highlighted_objects(&highlighted_objects, &highlighted_object_count);
         Highlight::get_highlighted_object(&highlighted_obj);
+
+        for (int i = 0; i < selected_object_count; i++) {
+            selected_objects[i]->new_z_index = 5;
+        }
     }
 
     /**

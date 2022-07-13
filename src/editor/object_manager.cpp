@@ -87,7 +87,7 @@ namespace ObjectManager {
 
         // Render visual elements
         Shadows::render();
-        Preview::render();
+        Preview::update();
         GridLines::update();
 
         // Update Z-index

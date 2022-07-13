@@ -23,9 +23,6 @@ namespace Preview {
     static int selected_object_count;
     static GameObject::game_object *holding_object;
 
-    static const float block_width = 0.25f;
-    static const float block_height = 0.25f;
-
     /**
      * Initialize the preview objects.
      */
@@ -44,67 +41,53 @@ namespace Preview {
     }
 
     /**
-     * Render the preview objects.
+     * Update the preview objects.
      */
-    void render() {
-
-        // Update selected objects
-        Selected::get_selected_objects(&selected_objects, &selected_object_count);
-
+    void update() {
         // Render preview objects for each selected game object
         if (Drag::is_dragging_objects()) {
-            for (int i = 0; i < selected_object_count; i++) {
-                if (i < preview_object_count) {
-                    GameObject::set_visible(&preview_objects[i], true);
-                    glm::vec2 centered_position = {selected_objects[i]->position.x + block_width / 2,
-                                                   selected_objects[i]->position.y + block_height / 2};
-                    glm::vec2 position = {centered_position.x - Math::f_mod(centered_position.x, block_width),
-                                          centered_position.y - Math::f_mod(centered_position.y, block_height)};
-                    GameObject::init(&preview_objects[i], "preview", position, selected_objects[i]->scale, -5,
-                                     &selected_objects[i]->sprite);
-                    GameObject::set_color(&preview_objects[i], glm::vec4(1.0f, 1.0f, 1.0f, 0.0f));
-                    GameObject::set_saturation(&preview_objects[i], 0.3f);
-                    preview_objects[i].pickable = false;
-                } else {
-                    // Add new preview objects if necessary
-                    if (preview_object_count < 1000) {
-                        preview_objects[i] = GameObject::game_object{};
-                        glm::vec2 centered_position = {selected_objects[i]->position.x + block_width / 2,
-                                                       selected_objects[i]->position.y + block_height / 2};
-                        glm::vec2 position = {centered_position.x - Math::f_mod(centered_position.x, block_width),
-                                              centered_position.y - Math::f_mod(centered_position.y, block_height)};
-                        GameObject::init(&preview_objects[i], "preview", position, selected_objects[i]->scale, -5,
-                                         &selected_objects[i]->sprite);
-                        GameObject::set_color(&preview_objects[i], glm::vec4(1.0f, 1.0f, 1.0f, 0.0f));
-                        GameObject::set_saturation(&preview_objects[i], 0.3f);
-                        preview_objects[i].pickable = false;
-                        SpriteRenderer::add_game_object(&preview_objects[i]);
-                        preview_object_count++;
-                    }
-                }
-            }
-            // Set the remaining preview objects to be invisible
-            if (preview_object_count > selected_object_count) {
-                for (int i = selected_object_count; i < preview_object_count; i++) {
-                    GameObject::set_visible(&preview_objects[i], false);
-                }
-            }
+            Preview::render();
         } else {
-            for (int i = 0; i < preview_object_count; i++) {
-                GameObject::set_visible(&preview_objects[i], false);
-            }
+            // If not dragging, set preview objects to be not visible
+            Preview::hide();
         }
 
         // Render the holding object preview
+        Preview::render_holding();
+    }
+
+    /**
+     * Render preview objects.
+     */
+    void render() {
+        Selected::get_selected_objects(&selected_objects, &selected_object_count);
+        for (int i = 0; i < selected_object_count; i++) {
+            glm::vec2 position = Math::grid_position(selected_objects[i]->position);
+            generate_preview_object(&preview_objects[i], position,
+                                    selected_objects[i]->scale, &selected_objects[i]->sprite);
+            // Add new preview objects if necessary
+            if (i >= preview_object_count && preview_object_count < 1000) {
+                SpriteRenderer::add_game_object(&preview_objects[i]);
+                preview_object_count++;
+            }
+        }
+        // Set the remaining preview objects to be invisible
+        if (preview_object_count > selected_object_count) {
+            for (int i = selected_object_count; i < preview_object_count; i++) {
+                GameObject::set_visible(&preview_objects[i], false);
+            }
+        }
+    }
+
+    /**
+     * Render preview for holding object.
+     */
+    void render_holding() {
         Holding::get_holding_object(&holding_object);
         if (holding_object && Holding::is_holding()) {
-            GameObject::set_visible(&holding_object_preview, true);
-            glm::vec2 centered_position = {holding_object->position.x + block_width / 2, holding_object->position.y + block_height / 2};
-            glm::vec2 position = {centered_position.x - Math::f_mod(centered_position.x, block_width), centered_position.y - Math::f_mod(centered_position.y, block_height)};
-            GameObject::init(&holding_object_preview, "preview", position, holding_object->scale, -5, &holding_object->sprite);
-            GameObject::set_color(&holding_object_preview, glm::vec4(1.0f, 1.0f, 1.0f, 0.0f));
-            GameObject::set_saturation(&holding_object_preview, 0.3f);
-            holding_object_preview.pickable = false;
+            glm::vec2 position = Math::grid_position(holding_object->position);
+            generate_preview_object(&holding_object_preview, position,
+                                    holding_object->scale, &holding_object->sprite);
             if (!holding_preview_added) {
                 holding_preview_added = true;
                 SpriteRenderer::add_game_object(&holding_object_preview);
@@ -112,5 +95,21 @@ namespace Preview {
         } else {
             GameObject::set_visible(&holding_object_preview, false);
         }
+    }
+
+    /**
+     * Hide preview objects.
+     */
+    void hide() {
+        for (int i = 0; i < preview_object_count; i++) {
+            GameObject::set_visible(&preview_objects[i], false);
+        }
+    }
+
+    void generate_preview_object(GameObject::game_object *obj, glm::vec2 position, glm::vec2 scale, Sprite::sprite *sprite) {
+        GameObject::init(obj, "preview", position, scale, -5, sprite);
+        GameObject::set_color(obj, glm::vec4(1.0f, 1.0f, 1.0f, 0.0f));
+        GameObject::set_saturation(obj, 0.3f);
+        obj->pickable = false;
     }
 }

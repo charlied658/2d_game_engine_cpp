@@ -83,6 +83,8 @@ namespace Serializer {
         for (auto obj : serialized_game_objects) {
             GameObject::set_visible(&obj, true);
             ChunkManager::set_solid_block(obj.grid_x, obj.grid_y, true);
+            obj.last_grid_x =  obj.grid_x;
+            obj.last_grid_y =  obj.grid_y;
             obj.last_position = obj.position;
             obj.sprite.texture_ID = Texture::get_texture(obj.sprite.texture_filepath)->textureID;
             Scene::add_game_object(&obj);

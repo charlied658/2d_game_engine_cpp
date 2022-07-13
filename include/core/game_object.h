@@ -66,10 +66,6 @@ namespace GameObject {
 
     void set_dragging(GameObject::game_object *obj, bool dragging);
 
-    void set_grid_position(GameObject::game_object *obj, int grid_x, int grid_y);
-
-    void set_last_grid_position(GameObject::game_object *obj, int grid_x, int grid_y);
-
     void update_color(GameObject::game_object *obj);
 
 }

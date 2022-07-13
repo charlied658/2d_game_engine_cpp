@@ -76,16 +76,6 @@ namespace GameObject {
         update_color(obj);
     }
 
-    void set_grid_position(GameObject::game_object *obj, int grid_x, int grid_y) {
-        obj->grid_x = grid_x;
-        obj->grid_y = grid_y;
-    }
-
-    void set_last_grid_position(GameObject::game_object *obj, int grid_x, int grid_y) {
-        obj->last_grid_x = grid_x;
-        obj->last_grid_y = grid_y;
-    }
-
     /**
      * Update the output color of a game object
      * @param obj Game object

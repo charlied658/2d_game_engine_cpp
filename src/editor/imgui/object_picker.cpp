@@ -28,7 +28,7 @@ namespace ObjectPicker {
 
 
     /**
-     * Initialize sprites to render as buttons.
+     * Initialize sprites to update as buttons.
      */
     void init() {
         // Blocks

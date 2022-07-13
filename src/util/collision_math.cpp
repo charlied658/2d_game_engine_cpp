@@ -9,6 +9,9 @@
 
 namespace Math {
 
+    static const float block_width = 0.25f;
+    static const float block_height = 0.25f;
+
     /**
      * Check if two line segments are intersecting in 1D. Used for detecting box collisions.
      * @param a_x1 Line segment 1 start
@@ -70,9 +73,9 @@ namespace Math {
      * @return Grid position
      */
     glm::vec2 grid_position(glm::vec2 position) {
-        glm::vec2 centered_position = {position.x + 0.25f / 2, position.y + 0.25f / 2};
-        glm::vec2 grid_position = {centered_position.x - Math::f_mod(centered_position.x, 0.25f),
-                              centered_position.y - Math::f_mod(centered_position.y, 0.25f)};
+        glm::vec2 centered_position = {position.x + block_width / 2, position.y + block_height / 2};
+        glm::vec2 grid_position = {centered_position.x - Math::f_mod(centered_position.x, block_width),
+                              centered_position.y - Math::f_mod(centered_position.y, block_height)};
         return grid_position;
     }
 }

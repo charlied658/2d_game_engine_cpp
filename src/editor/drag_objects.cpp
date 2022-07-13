@@ -56,7 +56,8 @@ namespace Drag {
             glm::vec2 grid_position = Math::grid_position(selected_objects[i]->position);
             int grid_x = (int) (grid_position.x / 0.25f);
             int grid_y = (int) (grid_position.y / 0.25f);
-            GameObject::set_grid_position(selected_objects[i], grid_x, grid_y);
+            selected_objects[i]->grid_x = grid_x;
+            selected_objects[i]->grid_y = grid_y;
             if (ChunkManager::is_solid_block(grid_x, grid_y)) {
                 invalid_placement = true;
             }
@@ -99,8 +100,10 @@ namespace Drag {
             int grid_y = (int) (grid_position.y / 0.25f);
             GameObject::set_position(selected_objects[i], grid_position);
             selected_objects[i]->last_position = grid_position;
-            GameObject::set_grid_position(selected_objects[i], grid_x, grid_y);
-            GameObject::set_last_grid_position(selected_objects[i], grid_x, grid_y);
+            selected_objects[i]->grid_x = grid_x;
+            selected_objects[i]->grid_y = grid_y;
+            selected_objects[i]->last_grid_x = grid_x;
+            selected_objects[i]->last_grid_y = grid_y;
             ChunkManager::set_solid_block(grid_x, grid_y, true);
         }
     }

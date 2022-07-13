@@ -95,7 +95,7 @@ namespace Copy {
         Selected::set_selected_objects_count(0);
         Scene::get_game_objects_list(&game_objects, &game_object_count);
 
-        // Rebuffer every render batch (since pointers to game objects are now invalid)
+        // Rebuffer every update batch (since pointers to game objects are now invalid)
         SpriteRenderer::clear_render_batches();
         for (int i = 0; i < game_object_count; i++) {
             SpriteRenderer::add_game_object(&game_objects[i]);

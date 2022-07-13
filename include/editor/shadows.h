@@ -15,4 +15,8 @@ namespace Shadows {
 
     void render();
 
+    void render_holding();
+
+    void generate_shadow(GameObject::game_object *obj, glm::vec2 position, glm::vec2 scale, Sprite::sprite *sprite);
+
 }

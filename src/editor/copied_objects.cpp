@@ -13,21 +13,21 @@
 
 namespace Copy {
 
-    static GameObject::game_object **copied_objects;
+    static SpriteManager::sprite_manager **copied_objects;
     static int copied_objects_count;
     static glm::vec2 copy_offset;
     static bool copied;
 
-    static GameObject::game_object *game_objects;
+    static SpriteManager::sprite_manager *game_objects;
     static int game_object_count;
-    static GameObject::game_object **selected_objects;
+    static SpriteManager::sprite_manager **selected_objects;
     static int selected_object_count;
 
     /**
      * Initialize copied objects.
      */
     void init() {
-        copied_objects = new GameObject::game_object *[1000];
+        copied_objects = new SpriteManager::sprite_manager *[1000];
         copied_objects_count = 0;
         copy_offset = glm::vec2 {0.1f, -0.1f};
         copied = false;
@@ -70,13 +70,13 @@ namespace Copy {
         copied = true;
         Selected::reset_selected();
         for (int i = 0; i < copied_objects_count; i++) {
-            GameObject::game_object copy = *copied_objects[i];
-            GameObject::set_position(&copy,copy.position + copy_offset);
+            SpriteManager::sprite_manager copy = *copied_objects[i];
+            SpriteManager::set_position(&copy, copy.position + copy_offset);
             Scene::add_game_object(&copy);
             Scene::get_game_objects_list(&game_objects, &game_object_count);
             // Set the pasted objects to be selected
-            GameObject::game_object *obj = &game_objects[game_object_count - 1];
-            GameObject::set_selected(obj, true);
+            SpriteManager::sprite_manager *obj = &game_objects[game_object_count - 1];
+            SpriteManager::set_selected(obj, true);
             Selected::get_selected_objects(&selected_objects, &selected_object_count);
             selected_objects[selected_object_count] = obj;
             Selected::set_selected_objects_count(selected_object_count + 1);
@@ -98,7 +98,7 @@ namespace Copy {
         // Rebuffer every update batch (since pointers to game objects are now invalid)
         SpriteRenderer::clear_render_batches();
         for (int i = 0; i < game_object_count; i++) {
-            SpriteRenderer::add_game_object(&game_objects[i]);
+            SpriteRenderer::add_sprite(&game_objects[i]);
         }
         ObjectManager::reload();
     }
@@ -108,7 +108,7 @@ namespace Copy {
      * @param objects Copied objects
      * @param object_count Copied object count
      */
-    void get_copied_objects(GameObject::game_object ***objects, int *object_count) {
+    void get_copied_objects(SpriteManager::sprite_manager ***objects, int *object_count) {
         *objects = copied_objects;
         *object_count = copied_objects_count;
     }

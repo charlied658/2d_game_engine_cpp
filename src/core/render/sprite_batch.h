@@ -7,13 +7,13 @@
 
 #include "glad/glad.h"
 
-#include "core/game_object.h"
+#include "core/sprite_manager.h"
 
 namespace SpriteBatch {
 
     struct sprite_batch {
-        GameObject::game_object **game_object_list;
-        int game_object_count;
+        SpriteManager::sprite_manager **sprite_list;
+        int sprite_count;
         int max_batch_size;
         bool has_room;
         float *vertex_data;
@@ -28,9 +28,9 @@ namespace SpriteBatch {
 
     void render(sprite_batch *batch);
 
-    void add_game_object(sprite_batch *batch, GameObject::game_object *obj);
+    void add_sprite(sprite_batch *batch, SpriteManager::sprite_manager *obj);
 
-    bool remove_game_object(sprite_batch *batch, GameObject::game_object *obj);
+    bool remove_sprite(sprite_batch *batch, SpriteManager::sprite_manager *obj);
 
     static void generate_vertex_data(sprite_batch *batch, int index);
 

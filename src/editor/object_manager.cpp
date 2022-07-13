@@ -5,7 +5,7 @@
 
 #include "editor/object_manager.h"
 
-#include "core/game_object.h"
+#include "core/sprite_manager.h"
 #include "core/imgui_layer.h"
 #include "core/scene.h"
 #include "editor/highlighted_objects.h"
@@ -24,14 +24,14 @@
 
 namespace ObjectManager {
 
-    static GameObject::game_object **highlighted_objects;
+    static SpriteManager::sprite_manager **highlighted_objects;
     static int highlighted_object_count;
-    static GameObject::game_object **selected_objects;
+    static SpriteManager::sprite_manager **selected_objects;
     static int selected_object_count;
-    static GameObject::game_object **copied_objects;
+    static SpriteManager::sprite_manager **copied_objects;
     static int copied_object_count;
-    static GameObject::game_object *highlighted_obj;
-    static GameObject::game_object *game_objects;
+    static SpriteManager::sprite_manager *highlighted_obj;
+    static SpriteManager::sprite_manager *game_objects;
     static int game_object_count;
 
     /**
@@ -109,7 +109,7 @@ namespace ObjectManager {
     void update_z_index() {
         for (int i = 0; i < game_object_count; i++) {
             if (game_objects[i].new_z_index != game_objects[i].z_index) {
-                SpriteRenderer::re_add_game_object(&game_objects[i]);
+                SpriteRenderer::re_add_sprite(&game_objects[i]);
             }
         }
     }

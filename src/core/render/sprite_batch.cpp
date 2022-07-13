@@ -5,7 +5,7 @@
 
 #include "sprite_batch.h"
 
-#include "core/game_object.h"
+#include "core/sprite_manager.h"
 #include "shader.h"
 #include "core/camera.h"
 
@@ -49,14 +49,14 @@ namespace SpriteBatch {
 
     /**
      * Create and initialize a render batch.
-     * @param batch Sprite batch reference
-     * @param max_batch_size Maximum number of allowed game objects
+     * @param batch Sprite batch
+     * @param max_batch_size Maximum number of allowed sprites
      * @param z_index Z-index of batch
      */
     void init(sprite_batch *batch, int max_batch_size, int z_index) {
         batch->max_batch_size = max_batch_size;
-        batch->game_object_list = new GameObject::game_object *[max_batch_size];
-        batch->game_object_count = 0;
+        batch->sprite_list = new SpriteManager::sprite_manager *[max_batch_size];
+        batch->sprite_count = 0;
         batch->has_room = true;
         batch->vertex_data = new float[batch->max_batch_size * 4 * vertex_size];
         batch->element_data = new int[batch->max_batch_size * 6];
@@ -101,21 +101,21 @@ namespace SpriteBatch {
 
     /**
      * Render vertex data for the given batch.
-     * @param batch Sprite batch reference
+     * @param batch Sprite batch
      */
     void render(sprite_batch *batch) {
 
         // Check if vertex data needs to be updated
-        for (int i = 0; i < batch->game_object_count; i++) {
-            if (batch->game_object_list[i]->is_dirty) {
+        for (int i = 0; i < batch->sprite_count; i++) {
+            if (batch->sprite_list[i]->is_dirty) {
                 generate_vertex_data(batch, i);
-                batch->game_object_list[i]->is_dirty = false;
+                batch->sprite_list[i]->is_dirty = false;
             }
         }
 
         // Rebuffer vertex data (do this every frame for now)
         glBindBuffer(GL_ARRAY_BUFFER, batch->vboID);
-        glBufferSubData(GL_ARRAY_BUFFER,0, (long) sizeof(float) * (batch->game_object_count) * 4 * vertex_size, batch->vertex_data);
+        glBufferSubData(GL_ARRAY_BUFFER, 0, (long) sizeof(float) * (batch->sprite_count) * 4 * vertex_size, batch->vertex_data);
 
         // Upload view and projection matrices to the shader program
         Shader::upload_mat4("view", Camera::get_view());
@@ -132,53 +132,53 @@ namespace SpriteBatch {
 
         // Draw elements
         glBindVertexArray(batch->vaoID);
-        glDrawElements(GL_TRIANGLES, 6 * batch->game_object_count, GL_UNSIGNED_INT, nullptr);
+        glDrawElements(GL_TRIANGLES, 6 * batch->sprite_count, GL_UNSIGNED_INT, nullptr);
     }
 
     /**
-     * Add a game object to the batch.
-     * @param batch Sprite batch reference
-     * @param obj Game object to be added
+     * Add a sprite to the batch.
+     * @param batch Sprite batch
+     * @param obj Sprite
      */
-    void add_game_object(sprite_batch *batch, GameObject::game_object *obj) {
-        batch->game_object_list[batch->game_object_count] = obj;
+    void add_sprite(sprite_batch *batch, SpriteManager::sprite_manager *obj) {
+        batch->sprite_list[batch->sprite_count] = obj;
 
-        // Generate vertex data for the newly added game object
-        generate_vertex_data(batch, batch->game_object_count);
+        // Generate vertex data for the newly added sprite
+        generate_vertex_data(batch, batch->sprite_count);
 
-        // Increment game object count
-        batch->game_object_count++;
-        if (batch->game_object_count >= batch->max_batch_size) {
+        // Increment sprite count
+        batch->sprite_count++;
+        if (batch->sprite_count >= batch->max_batch_size) {
             batch->has_room = false;
         }
     }
 
     /**
-     * Remove a game object from the batch.
+     * Remove a sprite from the batch.
      * @param batch Sprite batch
-     * @param obj Game object
+     * @param obj Sprite
      * @return Removed object successfully
      */
-    bool remove_game_object(sprite_batch *batch, GameObject::game_object *obj) {
+    bool remove_sprite(sprite_batch *batch, SpriteManager::sprite_manager *obj) {
         bool found_object = false;
-        for (int i = 0; i < batch->game_object_count; i++) {
-            if (batch->game_object_list[i] == obj) {
+        for (int i = 0; i < batch->sprite_count; i++) {
+            if (batch->sprite_list[i] == obj) {
                 found_object = true;
             }
-            if (found_object && i < batch->game_object_count - 1) {
-                batch->game_object_list[i] = batch->game_object_list[i + 1];
+            if (found_object && i < batch->sprite_count - 1) {
+                batch->sprite_list[i] = batch->sprite_list[i + 1];
             }
         }
         if (found_object) {
-            batch->game_object_count--;
+            batch->sprite_count--;
             return true;
         }
         return false;
     }
 
     /**
-     * Generate vertex data for the given game object.
-     * @param batch Sprite batch
+     * Generate vertex data for the given sprite.
+     * @param batch Sprite
      * @param index Index to begin adding vertex data
      */
     static void generate_vertex_data(sprite_batch *batch, int index) {
@@ -197,27 +197,27 @@ namespace SpriteBatch {
 
             // ============== Upload vertex information
             // Position
-            batch->vertex_data[offset + 0] = (xAdd * batch->game_object_list[index]->scale.x) + batch->game_object_list[index]->position.x;
-            batch->vertex_data[offset + 1] = (yAdd * batch->game_object_list[index]->scale.y) + batch->game_object_list[index]->position.y;
+            batch->vertex_data[offset + 0] = (xAdd * batch->sprite_list[index]->scale.x) + batch->sprite_list[index]->position.x;
+            batch->vertex_data[offset + 1] = (yAdd * batch->sprite_list[index]->scale.y) + batch->sprite_list[index]->position.y;
 
             // Color
-            batch->vertex_data[offset + 2] = batch->game_object_list[index]->out_color.x;
-            batch->vertex_data[offset + 3] = batch->game_object_list[index]->out_color.y;
-            batch->vertex_data[offset + 4] = batch->game_object_list[index]->out_color.z;
-            batch->vertex_data[offset + 5] = batch->game_object_list[index]->out_color.w;
+            batch->vertex_data[offset + 2] = batch->sprite_list[index]->out_color.x;
+            batch->vertex_data[offset + 3] = batch->sprite_list[index]->out_color.y;
+            batch->vertex_data[offset + 4] = batch->sprite_list[index]->out_color.z;
+            batch->vertex_data[offset + 5] = batch->sprite_list[index]->out_color.w;
 
             // Saturation
-            batch->vertex_data[offset + 6] = batch->game_object_list[index]->saturation;
+            batch->vertex_data[offset + 6] = batch->sprite_list[index]->saturation;
 
             // Texture Coordinates
-            batch->vertex_data[offset + 7] = (xAdd * batch->game_object_list[index]->sprite.tex_scale.x) + batch->game_object_list[index]->sprite.tex_coords.x;
-            batch->vertex_data[offset + 8] = (yAdd * batch->game_object_list[index]->sprite.tex_scale.y) + batch->game_object_list[index]->sprite.tex_coords.y;
+            batch->vertex_data[offset + 7] = (xAdd * batch->sprite_list[index]->sprite.tex_scale.x) + batch->sprite_list[index]->sprite.tex_coords.x;
+            batch->vertex_data[offset + 8] = (yAdd * batch->sprite_list[index]->sprite.tex_scale.y) + batch->sprite_list[index]->sprite.tex_coords.y;
 
             // Texture ID
-            if (batch->game_object_list[index]->sprite.is_null) {
+            if (batch->sprite_list[index]->sprite.is_null) {
                 batch->vertex_data[offset + 9] = 0.0f;
             } else {
-                batch->vertex_data[offset + 9] = (float) get_texture_slot(batch,batch->game_object_list[index]->sprite.texture_ID);
+                batch->vertex_data[offset + 9] = (float) get_texture_slot(batch,batch->sprite_list[index]->sprite.texture_ID);
             }
 
             offset += vertex_size;

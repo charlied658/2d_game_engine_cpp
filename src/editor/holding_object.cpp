@@ -15,11 +15,11 @@
 
 namespace Holding {
 
-    static GameObject::game_object holding_object;
+    static SpriteManager::sprite_manager holding_object;
     static bool generated_holding;
     static bool holding;
 
-    static GameObject::game_object *game_object_list;
+    static SpriteManager::sprite_manager *game_object_list;
     static int game_object_count;
 
     /**
@@ -47,13 +47,13 @@ namespace Holding {
         // Get the holding object
         if (generated_holding) {
             holding_object.name = name;
-            GameObject::set_visible(&holding_object, true);
-            GameObject::set_sprite(&holding_object, spr);
+            SpriteManager::set_visible(&holding_object, true);
+            SpriteManager::set_sprite(&holding_object, spr);
             return;
         }
-        GameObject::init(&holding_object, name, glm::vec2{}, glm::vec2{0.25f,0.25f}, 10, spr);
+        SpriteManager::init(&holding_object, name, glm::vec2{}, glm::vec2{0.25f, 0.25f}, 10, spr);
         holding_object.pickable = false;
-        SpriteRenderer::add_game_object(&holding_object);
+        SpriteRenderer::add_sprite(&holding_object);
         generated_holding = true;
     }
 
@@ -62,7 +62,7 @@ namespace Holding {
      */
     void update() {
         if (Holding::is_holding()) {
-            GameObject::set_position(&holding_object, glm::vec2{
+            SpriteManager::set_position(&holding_object, glm::vec2{
                 Mouse::get_worldX() - holding_object.scale.x / 2,
                 Mouse::get_worldY() - holding_object.scale.y / 2});
         }
@@ -90,17 +90,17 @@ namespace Holding {
             ChunkManager::set_solid_block(grid_x, grid_y, true);
         }
 
-        GameObject::game_object generated = holding_object;
+        SpriteManager::sprite_manager generated = holding_object;
         generated.z_index = 0;
         generated.pickable = true;
         generated.grid_x = grid_x;
         generated.grid_y = grid_y;
         generated.last_grid_x = grid_x;
         generated.last_grid_y = grid_y;
-        GameObject::set_position(&generated, position);
+        SpriteManager::set_position(&generated, position);
         generated.last_position = position;
         if (destroy) {
-            GameObject::set_selected(&generated, true);
+            SpriteManager::set_selected(&generated, true);
         }
         Scene::add_game_object(&generated);
         if (destroy) {
@@ -114,12 +114,12 @@ namespace Holding {
      * Destroy the holding object.
      */
     void destroy_holding_object() {
-        GameObject::set_visible(&holding_object, false);
+        SpriteManager::set_visible(&holding_object, false);
         Holding::set_holding(false);
         ObjectPicker::reset();
     }
 
-    void get_holding_object(GameObject::game_object **obj) {
+    void get_holding_object(SpriteManager::sprite_manager **obj) {
         *obj = &holding_object;
     }
 

@@ -11,20 +11,20 @@
 
 namespace Shadows {
 
-    static GameObject::game_object *shadow_objects;
+    static SpriteManager::sprite_manager *shadow_objects;
     static int shadow_object_count;
-    static GameObject::game_object holding_obj_shadow;
+    static SpriteManager::sprite_manager holding_obj_shadow;
 
-    static GameObject::game_object **selected_objects;
+    static SpriteManager::sprite_manager **selected_objects;
     static int selected_object_count;
-    static GameObject::game_object *holding_object;
+    static SpriteManager::sprite_manager *holding_object;
     static bool holding_shadow_added;
 
     /**
      * Initialize shadow objects.
      */
     void init() {
-        shadow_objects = new GameObject::game_object[1000];
+        shadow_objects = new SpriteManager::sprite_manager[1000];
         shadow_object_count = 0;
         holding_shadow_added = false;
     }
@@ -50,14 +50,14 @@ namespace Shadows {
             generate_shadow(&shadow_objects[i], position, selected_objects[i]->scale, &selected_objects[i]->sprite);
             // Add new shadows if necessary
             if (i >= shadow_object_count && shadow_object_count < 1000) {
-                SpriteRenderer::add_game_object(&shadow_objects[i]);
+                SpriteRenderer::add_sprite(&shadow_objects[i]);
                 shadow_object_count++;
             }
         }
         // Set the remaining shadows to be invisible
         if (shadow_object_count > selected_object_count) {
             for (int i = selected_object_count; i < shadow_object_count; i++) {
-                GameObject::set_visible(&shadow_objects[i], false);
+                SpriteManager::set_visible(&shadow_objects[i], false);
             }
         }
 
@@ -75,17 +75,17 @@ namespace Shadows {
             generate_shadow(&holding_obj_shadow, position, holding_object->scale, &holding_object->sprite);
             if (!holding_shadow_added) {
                 holding_shadow_added = true;
-                SpriteRenderer::add_game_object(&holding_obj_shadow);
+                SpriteRenderer::add_sprite(&holding_obj_shadow);
             }
         } else {
-            GameObject::set_visible(&holding_obj_shadow, false);
+            SpriteManager::set_visible(&holding_obj_shadow, false);
         }
     }
 
-    void generate_shadow(GameObject::game_object *obj, glm::vec2 position, glm::vec2 scale, Sprite::sprite *sprite) {
-        GameObject::init(obj, "shadow", position, scale, 4, sprite);
-        GameObject::set_color(obj, glm::vec4(0.0f, 0.0f, 0.0f, 0.7f));
-        GameObject::set_saturation(obj, 1.0f);
+    void generate_shadow(SpriteManager::sprite_manager *obj, glm::vec2 position, glm::vec2 scale, Sprite::sprite *sprite) {
+        SpriteManager::init(obj, "shadow", position, scale, 4, sprite);
+        SpriteManager::set_color(obj, glm::vec4(0.0f, 0.0f, 0.0f, 0.7f));
+        SpriteManager::set_saturation(obj, 1.0f);
         obj->pickable = false;
     }
 }

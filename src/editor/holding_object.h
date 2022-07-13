@@ -6,7 +6,7 @@
 #pragma once
 
 #include "core/sprite.h"
-#include "core/game_object.h"
+#include "core/sprite_manager.h"
 
 namespace Holding {
 
@@ -22,7 +22,7 @@ namespace Holding {
 
     void destroy_holding_object();
 
-    void get_holding_object(GameObject::game_object **obj);
+    void get_holding_object(SpriteManager::sprite_manager **obj);
 
     bool is_holding();
 

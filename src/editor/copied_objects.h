@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "core/game_object.h"
+#include "core/sprite_manager.h"
 
 namespace Copy {
 
@@ -21,7 +21,7 @@ namespace Copy {
 
     void delete_objects();
 
-    void get_copied_objects(GameObject::game_object ***objects, int *object_count);
+    void get_copied_objects(SpriteManager::sprite_manager ***objects, int *object_count);
 
     bool get_copied();
 

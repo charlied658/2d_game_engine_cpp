@@ -5,21 +5,21 @@
 
 #pragma once
 
-#include "core/game_object.h"
+#include "core/sprite_manager.h"
 
 namespace SpriteRenderer {
 
     void render();
 
-    void add_game_object(GameObject::game_object *obj);
+    void add_sprite(SpriteManager::sprite_manager *obj);
 
-    void remove_game_object(GameObject::game_object *obj);
+    void remove_sprite(SpriteManager::sprite_manager *obj);
 
-    void re_add_game_object(GameObject::game_object *obj);
+    void re_add_sprite(SpriteManager::sprite_manager *obj);
 
-    void highlight_game_object(GameObject::game_object **highlighted_obj);
+    void highlight_sprite(SpriteManager::sprite_manager **highlighted_obj);
 
-    void highlight_game_objects(GameObject::game_object **highlighted_objects, int *highlighted_count, GameObject::game_object *selection_box);
+    void highlight_sprites(SpriteManager::sprite_manager **highlighted_objects, int *highlighted_count, SpriteManager::sprite_manager *selection_box);
 
     void clear_render_batches();
 

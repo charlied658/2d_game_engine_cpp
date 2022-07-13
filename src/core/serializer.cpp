@@ -17,14 +17,14 @@
 #include "core/render/sprite_renderer.h"
 #include "core/render/texture.h"
 #include "editor/collision/chunk_manager.h"
-#include "game_object.h"
+#include "sprite_manager.h"
 #include "scene.h"
 #include "editor/object_manager.h"
 #include "util/properties.h"
 
 namespace Serializer {
 
-    static GameObject::game_object *game_objects;
+    static SpriteManager::sprite_manager *game_objects;
     static int game_object_count;
 
     /**
@@ -35,7 +35,7 @@ namespace Serializer {
         Scene::get_game_objects_list(&game_objects, &game_object_count);
 
         // Convert game objects list into a vector (which is readable by cereal library)
-        std::vector<GameObject::game_object> serialized_game_objects;
+        std::vector<SpriteManager::sprite_manager> serialized_game_objects;
         for (int i = 0; i < game_object_count; i++) {
             serialized_game_objects.push_back(game_objects[i]);
         }
@@ -57,7 +57,7 @@ namespace Serializer {
      */
     void deserialize_game_objects(const std::string& filepath) {
         // Create a vector to receive game object data from the file
-        std::vector<GameObject::game_object> serialized_game_objects;
+        std::vector<SpriteManager::sprite_manager> serialized_game_objects;
 
         // Open a file a read from it
         std::ifstream level_file;
@@ -81,7 +81,7 @@ namespace Serializer {
 
         // Re-add all the game objects
         for (auto obj : serialized_game_objects) {
-            GameObject::set_visible(&obj, true);
+            SpriteManager::set_visible(&obj, true);
             ChunkManager::set_solid_block(obj.grid_x, obj.grid_y, true);
             obj.last_grid_x =  obj.grid_x;
             obj.last_grid_y =  obj.grid_y;

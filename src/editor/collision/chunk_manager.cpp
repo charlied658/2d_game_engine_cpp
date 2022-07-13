@@ -6,7 +6,7 @@
 #include <cstdio>
 #include "chunk_manager.h"
 
-#include "core/game_object.h"
+#include "core/sprite_manager.h"
 #include "core/scene.h"
 #include "collision_math.h"
 
@@ -16,7 +16,7 @@ namespace ChunkManager {
     static int chunk_count;
     static const int chunk_size = 16;
 
-    static GameObject::game_object *game_objects;
+    static SpriteManager::sprite_manager *game_objects;
     static int game_object_count;
 
     /**

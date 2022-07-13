@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "core/game_object.h"
+#include "core/sprite_manager.h"
 
 namespace Highlight {
 
@@ -19,9 +19,9 @@ namespace Highlight {
 
     static void highlight_objects();
 
-    void get_highlighted_object(GameObject::game_object **object);
+    void get_highlighted_object(SpriteManager::sprite_manager **object);
 
-    void get_highlighted_objects(GameObject::game_object ***objects, int *object_count);
+    void get_highlighted_objects(SpriteManager::sprite_manager ***objects, int *object_count);
 
     bool is_highlighted();
 

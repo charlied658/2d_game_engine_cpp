@@ -5,7 +5,7 @@
 
 #include "editor/drag_objects.h"
 
-#include "core/game_object.h"
+#include "core/sprite_manager.h"
 #include "core/mouse_listener.h"
 #include "editor/collision/chunk_manager.h"
 #include "editor/selected_objects.h"
@@ -19,7 +19,7 @@ namespace Drag {
     static double start_x, start_y;
     static glm::vec2 *obj_start_pos;
 
-    static GameObject::game_object **selected_objects;
+    static SpriteManager::sprite_manager **selected_objects;
     static int selected_object_count;
 
     /**
@@ -61,14 +61,14 @@ namespace Drag {
             if (ChunkManager::is_solid_block(grid_x, grid_y)) {
                 invalid_placement = true;
             }
-            GameObject::set_dragging(selected_objects[i], true);
-            GameObject::set_position(selected_objects[i], glm::vec2{
+            SpriteManager::set_dragging(selected_objects[i], true);
+            SpriteManager::set_position(selected_objects[i], glm::vec2{
                     Mouse::get_worldX() - start_x + obj_start_pos[i].x,
                     Mouse::get_worldY() - start_y + +obj_start_pos[i].y});
         }
         if (invalid_placement) {
             for (int i = 0; i < selected_object_count; i++) {
-                GameObject::update_color(selected_objects[i]);
+                SpriteManager::update_color(selected_objects[i]);
             }
         }
     }
@@ -98,7 +98,7 @@ namespace Drag {
             glm::vec2 grid_position = Math::grid_position(selected_objects[i]->position);
             int grid_x = (int) (grid_position.x / 0.25f);
             int grid_y = (int) (grid_position.y / 0.25f);
-            GameObject::set_position(selected_objects[i], grid_position);
+            SpriteManager::set_position(selected_objects[i], grid_position);
             selected_objects[i]->last_position = grid_position;
             selected_objects[i]->grid_x = grid_x;
             selected_objects[i]->grid_y = grid_y;
@@ -110,7 +110,7 @@ namespace Drag {
 
     void snap_to_last_position() {
         for (int i = 0; i < selected_object_count; i++) {
-            GameObject::set_position(selected_objects[i], selected_objects[i]->last_position);
+            SpriteManager::set_position(selected_objects[i], selected_objects[i]->last_position);
             selected_objects[i]->grid_x = selected_objects[i]->last_grid_x;
             selected_objects[i]->grid_y = selected_objects[i]->last_grid_y;
             ChunkManager::set_solid_block(selected_objects[i]->grid_x, selected_objects[i]->grid_y, true);

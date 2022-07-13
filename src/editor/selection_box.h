@@ -6,7 +6,7 @@
 #pragma once
 
 #include "core/sprite.h"
-#include "core/game_object.h"
+#include "core/sprite_manager.h"
 
 namespace SelectionBox {
 
@@ -20,7 +20,7 @@ namespace SelectionBox {
 
     void hide();
 
-    void get_selection_box(GameObject::game_object **object);
+    void get_selection_box(SpriteManager::sprite_manager **object);
 
     bool is_multiselect();
 

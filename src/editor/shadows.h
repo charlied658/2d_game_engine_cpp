@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "core/game_object.h"
+#include "core/sprite_manager.h"
 
 namespace Shadows {
 
@@ -17,6 +17,6 @@ namespace Shadows {
 
     void render_holding();
 
-    void generate_shadow(GameObject::game_object *obj, glm::vec2 position, glm::vec2 scale, Sprite::sprite *sprite);
+    void generate_shadow(SpriteManager::sprite_manager *obj, glm::vec2 position, glm::vec2 scale, Sprite::sprite *sprite);
 
 }

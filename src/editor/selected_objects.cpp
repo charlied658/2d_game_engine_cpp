@@ -10,18 +10,18 @@
 
 namespace Selected {
 
-    static GameObject::game_object **selected_objects;
+    static SpriteManager::sprite_manager **selected_objects;
     static int selected_object_count;
 
-    static GameObject::game_object **highlighted_objects;
+    static SpriteManager::sprite_manager **highlighted_objects;
     static int highlighted_object_count;
-    static GameObject::game_object *highlighted_obj;
+    static SpriteManager::sprite_manager *highlighted_obj;
 
     /**
      * Initialize selected objects.
      */
     void init() {
-        selected_objects = new GameObject::game_object *[1000];
+        selected_objects = new SpriteManager::sprite_manager *[1000];
         selected_object_count = 0;
     }
 
@@ -50,7 +50,7 @@ namespace Selected {
     void reset_selected() {
         if (selected_object_count > 0) {
             for (int i = 0; i < selected_object_count; i++) {
-                GameObject::set_selected(selected_objects[i], false);
+                SpriteManager::set_selected(selected_objects[i], false);
             }
             selected_object_count = 0;
         }
@@ -61,7 +61,7 @@ namespace Selected {
      */
     void select_object() {
         selected_objects[selected_object_count] = highlighted_obj;
-        GameObject::set_selected(highlighted_obj, true);
+        SpriteManager::set_selected(highlighted_obj, true);
         selected_object_count++;
     }
 
@@ -72,7 +72,7 @@ namespace Selected {
         bool found_obj = false;
         for (int i = 0; i < selected_object_count; i++) {
             if (selected_objects[i] == highlighted_obj) {
-                GameObject::set_selected(highlighted_obj, false);
+                SpriteManager::set_selected(highlighted_obj, false);
                 found_obj = true;
             }
             if (found_obj && i < selected_object_count - 1) {
@@ -91,7 +91,7 @@ namespace Selected {
         if (!Drag::is_dragging_objects()) {
             Selected::reset_selected();
             selected_objects[0] = highlighted_obj;
-            GameObject::set_selected(selected_objects[0], true);
+            SpriteManager::set_selected(selected_objects[0], true);
             selected_object_count = 1;
         }
     }
@@ -103,7 +103,7 @@ namespace Selected {
         if (highlighted_object_count > 0) {
             for (int i = 0; i < highlighted_object_count; i++) {
                 selected_objects[i] = highlighted_objects[i];
-                GameObject::set_selected(selected_objects[i], true);
+                SpriteManager::set_selected(selected_objects[i], true);
             }
             selected_object_count = highlighted_object_count;
             highlighted_object_count = 0;
@@ -113,7 +113,7 @@ namespace Selected {
     /**
      * Select the holding object when it is placed.
      */
-    void select_holding_object(GameObject::game_object *obj) {
+    void select_holding_object(SpriteManager::sprite_manager *obj) {
         reset_selected();
         selected_objects[0] = obj;
         selected_object_count = 1;
@@ -124,7 +124,7 @@ namespace Selected {
      * @param objects Selected objects
      * @param object_count Selected object count
      */
-    void get_selected_objects(GameObject::game_object ***objects, int *object_count) {
+    void get_selected_objects(SpriteManager::sprite_manager ***objects, int *object_count) {
         *objects = selected_objects;
         *object_count = selected_object_count;
     }

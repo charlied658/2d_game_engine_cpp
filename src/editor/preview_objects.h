@@ -7,7 +7,7 @@
 
 #include <glm/vec2.hpp> // glm::vec2
 
-#include "core/game_object.h"
+#include "core/sprite_manager.h"
 
 
 namespace Preview {
@@ -24,6 +24,6 @@ namespace Preview {
 
     void hide();
 
-    void generate_preview_object(GameObject::game_object *obj, glm::vec2 position, glm::vec2 scale, Sprite::sprite *sprite);
+    void generate_preview_object(SpriteManager::sprite_manager *obj, glm::vec2 position, glm::vec2 scale, Sprite::sprite *sprite);
 
 }

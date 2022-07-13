@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "core/game_object.h"
+#include "core/sprite_manager.h"
 
 namespace Selected {
 
@@ -25,9 +25,9 @@ namespace Selected {
 
     void select_highlighted_objects();
 
-    void select_holding_object(GameObject::game_object *obj);
+    void select_holding_object(SpriteManager::sprite_manager *obj);
 
-    void get_selected_objects(GameObject::game_object ***objects, int *object_count);
+    void get_selected_objects(SpriteManager::sprite_manager ***objects, int *object_count);
 
     void set_selected_objects_count(int count);
 

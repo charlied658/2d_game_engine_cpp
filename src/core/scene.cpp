@@ -9,7 +9,7 @@
 
 #include "core/render/sprite_renderer.h"
 #include "editor/collision/chunk_manager.h"
-#include "game_object.h"
+#include "sprite_manager.h"
 #include "camera.h"
 #include "mouse_listener.h"
 #include "serializer.h"
@@ -20,7 +20,7 @@
 
 namespace Scene {
 
-    static GameObject::game_object *game_objects;
+    static SpriteManager::sprite_manager *game_objects;
     static int game_object_count;
     static std::string level_filepath;
 
@@ -32,7 +32,7 @@ namespace Scene {
         level_filepath = "level.txt";
 
         // Initialize game object array
-        game_objects = new GameObject::game_object[10000];
+        game_objects = new SpriteManager::sprite_manager[10000];
         game_object_count = 0;
 
         // Initialize objects
@@ -94,10 +94,10 @@ namespace Scene {
      * Add a game object to the scene.
      * @param obj Game object reference
      */
-    void add_game_object(GameObject::game_object *obj) {
+    void add_game_object(SpriteManager::sprite_manager *obj) {
         if (game_object_count < 10000) {
             game_objects[game_object_count] = *obj;
-            SpriteRenderer::add_game_object(&game_objects[game_object_count]);
+            SpriteRenderer::add_sprite(&game_objects[game_object_count]);
             game_object_count++;
         }
     }
@@ -157,7 +157,7 @@ namespace Scene {
      * @param game_objs Game objects reference
      * @param game_obj_count Count of game objects
      */
-    void get_game_objects_list(GameObject::game_object **objects, int *object_count) {
+    void get_game_objects_list(SpriteManager::sprite_manager **objects, int *object_count) {
         *objects = game_objects;
         *object_count = game_object_count;
     }

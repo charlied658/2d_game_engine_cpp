@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "game_object.h"
+#include "sprite_manager.h"
 
 namespace Scene {
 
@@ -15,11 +15,11 @@ namespace Scene {
 
     void imgui();
 
-    void add_game_object(GameObject::game_object *obj);
+    void add_game_object(SpriteManager::sprite_manager *obj);
 
     void remove_game_objects();
 
-    void get_game_objects_list(GameObject::game_object **objects, int *object_count);
+    void get_game_objects_list(SpriteManager::sprite_manager **objects, int *object_count);
 
     void save_level();
 

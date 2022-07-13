@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "core/game_object.h"
+#include "core/sprite_manager.h"
 
 namespace ObjectManager {
 

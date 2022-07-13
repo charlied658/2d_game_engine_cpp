@@ -18,6 +18,7 @@
 #include "editor/holding_object.h"
 #include "editor/grid_lines.h"
 #include "editor/preview_objects.h"
+#include "editor/drag_objects.h"
 #include "render/chunk_manager.h"
 #include "render/sprite_renderer.h"
 
@@ -43,7 +44,7 @@ namespace ObjectManager {
         Preview::init();
         Copy::init();
         SelectionBox::init();
-        Mouse::init();
+        Drag::init();
         Holding::init();
         GridLines::init();
         ChunkManager::init();
@@ -66,15 +67,16 @@ namespace ObjectManager {
      * Update objects in the scene.
      */
     void update() {
-
         Scene::get_game_objects_list(&game_objects, &game_object_count);
-        reset_z_index();
+
+        // Reset z-index of objects
+        ObjectManager::reset_z_index();
 
         // Update highlighted objects
         Highlight::update();
 
         // Get updated object information
-        Mouse::start_frame();
+        Drag::start_frame();
         Selected::start_frame();
         Copy::start_frame();
 
@@ -88,7 +90,8 @@ namespace ObjectManager {
         Preview::render();
         GridLines::update();
 
-        update_z_index();
+        // Update Z-index
+        ObjectManager::update_z_index();
     }
 
     /**
@@ -123,9 +126,9 @@ namespace ObjectManager {
         Scene::get_game_objects_list(&game_objects, &game_object_count);
 
         // Mouse information
-        ImGui::Text("Shift click down: %d", Mouse::is_shift_click_down());
-        ImGui::Text("Dragging objects: %d", Mouse::is_dragging_objects());
-        ImGui::Text("Multiselect: %d", Mouse::is_multiselect());
+        ImGui::Text("Mouse down: %d", Mouse::is_mouse_down());
+        ImGui::Text("Dragging objects: %d", Drag::is_dragging_objects());
+        ImGui::Text("Multiselect: %d", SelectionBox::is_multiselect());
         ImGui::Text("Holding object: %d", Holding::is_holding());
 
         // Object information
@@ -133,14 +136,5 @@ namespace ObjectManager {
         ImGui::Text("Highlighted object count: %d", highlighted_object_count);
         ImGui::Text("Selected object count: %d", selected_object_count);
         ImGui::Text("Copied object count: %d", copied_object_count);
-
-        // Display highlighted object
-        if (highlighted_obj) {
-            ImGui::Text("Highlighted object: %s", highlighted_obj->name.c_str());
-        }
-        // Display selected game objects
-        for (int i = 0; i < selected_object_count; i++) {
-            ImGui::Text("Selected: %s", selected_objects[i]->name.c_str());
-        }
     }
 }

@@ -17,11 +17,13 @@ namespace Selected {
 
     void reset_selected();
 
-    void unselect_object(GameObject::game_object *obj);
-
     void select_object();
 
-    void select_objects();
+    void unselect_object();
+
+    void select_highlighted_object();
+
+    void select_highlighted_objects();
 
     void select_holding_object(GameObject::game_object *obj);
 

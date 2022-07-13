@@ -14,6 +14,14 @@ namespace SelectionBox {
 
     void reload();
 
+    void start();
+
+    void update();
+
+    void hide();
+
     void get_selection_box(GameObject::game_object **object);
+
+    bool is_multiselect();
 
 }

@@ -8,8 +8,8 @@
 #include "core/key_listener.h"
 #include "editor/selected_objects.h"
 #include "editor/copied_objects.h"
-#include "editor/mouse_events.h"
 #include "editor/holding_object.h"
+#include "editor/drag_objects.h"
 
 namespace Key {
 
@@ -27,7 +27,7 @@ namespace Key {
         }
 
         // Escape will deselect all game objects
-        if (Key::get_key_pressed(GLFW_KEY_ESCAPE) && !Mouse::is_dragging_objects()) {
+        if (Key::get_key_pressed(GLFW_KEY_ESCAPE) && !Drag::is_dragging_objects()) {
             if (Copy::get_copied()) {
                 Copy::delete_objects();
             }

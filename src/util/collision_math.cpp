@@ -63,4 +63,16 @@ namespace Math {
             return a % b + b;
         }
     }
+
+    /**
+     * Get the grid-aligned position of an object.
+     * @param position Position
+     * @return Grid position
+     */
+    glm::vec2 grid_position(glm::vec2 position) {
+        glm::vec2 centered_position = {position.x + 0.25f / 2, position.y + 0.25f / 2};
+        glm::vec2 grid_position = {centered_position.x - Math::f_mod(centered_position.x, 0.25f),
+                              centered_position.y - Math::f_mod(centered_position.y, 0.25f)};
+        return grid_position;
+    }
 }

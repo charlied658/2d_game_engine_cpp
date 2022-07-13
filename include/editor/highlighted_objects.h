@@ -23,4 +23,8 @@ namespace Highlight {
 
     void get_highlighted_objects(GameObject::game_object ***objects, int *object_count);
 
+    bool is_highlighted();
+
+    bool is_selected();
+
 }

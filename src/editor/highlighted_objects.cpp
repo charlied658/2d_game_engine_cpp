@@ -9,7 +9,7 @@
 #include "core/imgui_layer.h"
 #include "render/sprite_renderer.h"
 #include "editor/selected_objects.h"
-#include "editor/mouse_events.h"
+#include "editor/drag_objects.h"
 #include "editor/selection_box.h"
 
 namespace Highlight {
@@ -60,7 +60,7 @@ namespace Highlight {
             GameObject::set_dragging(&game_objects[i], false);
         }
         // Only set the highlighted object to null if objects are not being dragged
-        if (!Mouse::is_dragging_objects()) {
+        if (!Drag::is_dragging_objects()) {
             highlighted_obj = nullptr;
         }
     }
@@ -70,12 +70,12 @@ namespace Highlight {
      */
     static void highlight_objects() {
         // Check if the mouse is being dragged or not
-        if (Mouse::is_multiselect()) {
+        if (SelectionBox::is_multiselect()) {
             // Highlight game objects intersecting with the selection box
             SpriteRenderer::highlight_game_objects(highlighted_objects, &highlighted_object_count, selection_box);
         } else {
             // Highlight the object that the mouse cursor is over
-            if (!ImGuiLayer::want_mouse_capture() && !Mouse::is_dragging_objects()) {
+            if (!ImGuiLayer::want_mouse_capture() && !Drag::is_dragging_objects()) {
                 SpriteRenderer::highlight_game_object(&highlighted_obj);
             }
             // Highlight the other selected objects
@@ -88,21 +88,20 @@ namespace Highlight {
         }
     }
 
-    /**
-     * Get the highlighted object.
-     * @param object Highlighted object
-     */
     void get_highlighted_object(GameObject::game_object **object) {
         *object = highlighted_obj;
     }
 
-    /**
-     * Get the highlighted objects.
-     * @param objects Highlighted objects
-     * @param object_count Highlighted object count
-     */
     void get_highlighted_objects(GameObject::game_object ***objects, int *object_count) {
         *objects = highlighted_objects;
         *object_count = highlighted_object_count;
+    }
+
+    bool is_highlighted() {
+        return highlighted_obj != nullptr;
+    }
+
+    bool is_selected() {
+        return highlighted_obj != nullptr && highlighted_obj->selected;
     }
 }

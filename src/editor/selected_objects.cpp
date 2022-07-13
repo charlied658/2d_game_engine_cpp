@@ -6,7 +6,7 @@
 #include "editor/selected_objects.h"
 
 #include "editor/highlighted_objects.h"
-#include "editor/mouse_events.h"
+#include "editor/drag_objects.h"
 
 namespace Selected {
 
@@ -57,14 +57,22 @@ namespace Selected {
     }
 
     /**
-     * Unselect one object.
-     * @param obj Game object reference
+     * Select one object.
      */
-    void unselect_object(GameObject::game_object *obj) {
+    void select_object() {
+        selected_objects[selected_object_count] = highlighted_obj;
+        GameObject::set_selected(highlighted_obj, true);
+        selected_object_count++;
+    }
+
+    /**
+     * Unselect one object.
+     */
+    void unselect_object() {
         bool found_obj = false;
         for (int i = 0; i < selected_object_count; i++) {
-            if (selected_objects[i] == obj) {
-                GameObject::set_selected(obj, false);
+            if (selected_objects[i] == highlighted_obj) {
+                GameObject::set_selected(highlighted_obj, false);
                 found_obj = true;
             }
             if (found_obj && i < selected_object_count - 1) {
@@ -79,8 +87,8 @@ namespace Selected {
     /**
      * Select the currently highlighted object.
      */
-    void select_object() {
-        if (!Mouse::is_dragging_objects()) {
+    void select_highlighted_object() {
+        if (!Drag::is_dragging_objects()) {
             Selected::reset_selected();
             selected_objects[0] = highlighted_obj;
             GameObject::set_selected(selected_objects[0], true);
@@ -91,7 +99,7 @@ namespace Selected {
     /**
      * Select all highlighted objects.
      */
-    void select_objects() {
+    void select_highlighted_objects() {
         if (highlighted_object_count > 0) {
             for (int i = 0; i < highlighted_object_count; i++) {
                 selected_objects[i] = highlighted_objects[i];

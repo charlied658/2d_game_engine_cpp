@@ -9,7 +9,7 @@
 #include "render/sprite_renderer.h"
 #include "editor/holding_object.h"
 #include "editor/selected_objects.h"
-#include "editor/mouse_events.h"
+#include "editor/drag_objects.h"
 #include "util/collision_math.h"
 
 namespace Preview {
@@ -51,8 +51,8 @@ namespace Preview {
         // Update selected objects
         Selected::get_selected_objects(&selected_objects, &selected_object_count);
 
-        // Render shadows for each selected game object
-        if (Mouse::is_dragging_objects()) {
+        // Render preview objects for each selected game object
+        if (Drag::is_dragging_objects()) {
             for (int i = 0; i < selected_object_count; i++) {
                 if (i < preview_object_count) {
                     GameObject::set_visible(&preview_objects[i], true);
@@ -66,7 +66,7 @@ namespace Preview {
                     GameObject::set_saturation(&preview_objects[i], 0.3f);
                     preview_objects[i].pickable = false;
                 } else {
-                    // Add new shadows if necessary
+                    // Add new preview objects if necessary
                     if (preview_object_count < 1000) {
                         preview_objects[i] = GameObject::game_object{};
                         glm::vec2 centered_position = {selected_objects[i]->position.x + block_width / 2,
@@ -83,7 +83,7 @@ namespace Preview {
                     }
                 }
             }
-            // Set the remaining shadows to be invisible
+            // Set the remaining preview objects to be invisible
             if (preview_object_count > selected_object_count) {
                 for (int i = selected_object_count; i < preview_object_count; i++) {
                     GameObject::set_visible(&preview_objects[i], false);

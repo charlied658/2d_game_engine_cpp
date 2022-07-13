@@ -28,11 +28,11 @@ namespace Chunk {
     }
 
     /**
-     * Check if a chunk unit within the chunk is a solid block.
-     * @param chunk Chunk reference
+     * Check if a block within the chunk is a solid block.
+     * @param chunk Chunk
      * @param x X position
      * @param y Y position
-     * @return True if chunk unit is solid
+     * @return True if block is solid
      */
     bool is_solid_block(Chunk::chunk *chunk, int x, int y) {
         //printf("Querying block %d, %d\n", x,y);
@@ -40,11 +40,11 @@ namespace Chunk {
     }
 
     /**
-     * Set a chunk unit to be solid or not.
-     * @param chunk Chunk reference
+     * Set a block to be solid.
+     * @param chunk Chunk
      * @param x X position
      * @param y Y position
-     * @param state True if chunk unit is to be solid
+     * @param state True if block is to be solid
      */
     void set_solid_block(Chunk::chunk *chunk, int x, int y, bool state) {
         //printf("Placed block %d, %d\n", x,y);

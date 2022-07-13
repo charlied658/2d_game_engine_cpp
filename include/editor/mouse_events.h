@@ -12,10 +12,6 @@
 
 namespace Mouse {
 
-    void init();
-
-    void start_frame();
-
     void update();
 
     static void mouse_click();
@@ -24,24 +20,10 @@ namespace Mouse {
 
     static void mouse_release();
 
-    void move_objects();
+    void update_drag_objects();
 
-    void start_multiselect();
+    void update_multiselect();
 
-    bool is_multiselect();
-
-    bool is_dragging_objects();
-
-    bool is_shift_click_down();
-
-    bool is_invalid_placement();
-
-    void set_multiselect(bool state);
-
-    void set_dragging_objects(bool state);
-
-    void set_shift_click_down(bool state);
-
-    void set_invalid_placement(bool state);
+    bool is_mouse_down();
 
 }

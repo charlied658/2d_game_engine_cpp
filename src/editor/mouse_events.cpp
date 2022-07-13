@@ -38,9 +38,11 @@ namespace Mouse {
      * Handle what happens when the mouse is clicked (not shift-clicked).
      */
     static void mouse_click() {
-        if (Holding::is_holding() && mouse_down) {
-            Holding::place_holding_object(true);
-            mouse_down = true;
+        if (Holding::is_holding()) {
+            if (!mouse_down) {
+                Holding::place_holding_object(true);
+                mouse_down = true;
+            }
             return;
         }
         if (Highlight::is_highlighted()) {
@@ -106,9 +108,6 @@ namespace Mouse {
      * Drag selected objects.
      */
     void update_drag_objects() {
-        if (Copy::get_copied()) {
-            Copy::set_copied(false);
-        }
         // If not dragging, initiate a drag action
         if (!Drag::is_dragging_objects()) {
             mouse_down = true;

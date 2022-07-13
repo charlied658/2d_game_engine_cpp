@@ -41,8 +41,9 @@ namespace Drag {
         start_x = Mouse::get_worldX();
         start_y = Mouse::get_worldY();
         for (int i = 0; i < selected_object_count; i++) {
-            // TODO: This line is problematic when copying objects
-            ChunkManager::set_solid_block(selected_objects[i]->grid_x, selected_objects[i]->grid_y, false);
+            if (!Copy::get_copied()) {
+                ChunkManager::set_solid_block(selected_objects[i]->grid_x, selected_objects[i]->grid_y, false);
+            }
             obj_start_pos[i] = selected_objects[i]->position;
         }
     }
@@ -74,10 +75,19 @@ namespace Drag {
     void end_drag() {
         if (!invalid_placement) {
             // If the block placement is valid, snap objects to grid
+            if (Copy::get_copied()) {
+                Copy::set_copied(false);
+            }
             Drag::snap_to_grid();
         } else {
             // Otherwise, snap objects to their last location
-            Drag::snap_to_last_position();
+            if (!Copy::get_copied()) {
+                Drag::snap_to_last_position();
+            } else {
+                Copy::delete_objects();
+                Copy::set_copied(false);
+                invalid_placement = false;
+            }
         }
         drag_objects = false;
     }

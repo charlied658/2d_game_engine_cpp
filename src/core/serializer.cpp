@@ -77,6 +77,7 @@ namespace Serializer {
         Scene::clear_game_objects();
         SpriteRenderer::clear_render_batches();
         ObjectManager::reload();
+        ChunkManager::reload();
 
         // Re-add all the game objects
         for (auto obj : serialized_game_objects) {

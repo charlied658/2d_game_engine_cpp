@@ -4,11 +4,11 @@
  */
 
 #include <cstdio>
-#include "render/chunk_manager.h"
+#include "chunk_manager.h"
 
 #include "core/game_object.h"
 #include "core/scene.h"
-#include "util/collision_math.h"
+#include "collision_math.h"
 
 namespace ChunkManager {
 

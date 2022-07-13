@@ -11,6 +11,6 @@
 *.DS_STORE
 
 # Utility
-include/util/properties.h
+properties.h
 level.txt
 imgui.ini

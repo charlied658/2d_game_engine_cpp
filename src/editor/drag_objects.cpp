@@ -7,10 +7,10 @@
 
 #include "core/game_object.h"
 #include "core/mouse_listener.h"
-#include "render/chunk_manager.h"
+#include "editor/collision/chunk_manager.h"
 #include "editor/selected_objects.h"
 #include "editor/copied_objects.h"
-#include "util/collision_math.h"
+#include "editor/collision/collision_math.h"
 
 namespace Drag {
 

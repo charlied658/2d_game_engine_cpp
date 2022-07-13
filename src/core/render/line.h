@@ -5,8 +5,8 @@
 
 #pragma once
 
-#include <glm/vec2.hpp> // glm::vec2
-#include <glm/vec4.hpp> // glm::vec4
+#include "glm/vec2.hpp" // glm::vec2
+#include "glm/vec4.hpp" // glm::vec4
 
 namespace Line {
 

@@ -8,10 +8,10 @@
 #include "core/scene.h"
 #include "core/mouse_listener.h"
 #include "editor/selected_objects.h"
-#include "editor/imgui/object_picker.h"
-#include "render/sprite_renderer.h"
-#include "render/chunk_manager.h"
-#include "util/collision_math.h"
+#include "editor/object_picker.h"
+#include "core/render/sprite_renderer.h"
+#include "editor/collision/chunk_manager.h"
+#include "editor/collision/collision_math.h"
 
 namespace Holding {
 

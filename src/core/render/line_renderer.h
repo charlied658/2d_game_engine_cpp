@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "render/line.h"
+#include "line.h"
 
 namespace LineRenderer {
 

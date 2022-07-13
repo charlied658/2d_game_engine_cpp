@@ -5,7 +5,7 @@
 
 #include "editor/selection_box.h"
 
-#include "render/sprite_renderer.h"
+#include "core/render/sprite_renderer.h"
 #include "editor/mouse_events.h"
 
 namespace SelectionBox {

@@ -5,9 +5,9 @@
 
 #pragma once
 
-#include "render/line.h"
+#include "line.h"
 
-#include <glad/glad.h>
+#include "glad/glad.h"
 
 namespace LineBatch {
 

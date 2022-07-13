@@ -3,19 +3,19 @@
  * Created on 6/27/22.
  */
 
-#include "core/window.h"
+#include "window.h"
 
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include "glad/glad.h"
+#include "glfw/include/GLFW/glfw3.h"
 
-#include "core/mouse_listener.h"
-#include "core/key_listener.h"
-#include "core/camera.h"
-#include "core/scene.h"
+#include "mouse_listener.h"
+#include "key_listener.h"
+#include "camera.h"
+#include "scene.h"
 #include "core/imgui_layer.h"
-#include "render/shader.h"
-#include "render/sprite_renderer.h"
-#include "render/line_renderer.h"
+#include "core/render/shader.h"
+#include "core/render/sprite_renderer.h"
+#include "core/render/line_renderer.h"
 #include <cstdio>
 
 static void error_callback(int error, const char* description) {

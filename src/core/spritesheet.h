@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "core/sprite.h"
+#include "sprite.h"
 
 namespace Spritesheet {
     struct spritesheet {

@@ -3,11 +3,11 @@
  * Created on 7/2/22.
  */
 
-#include "render/texture.h"
+#include "texture.h"
 #include "util/properties.h"
 
-#include <stb/stb_image.h>
-#include <glad/glad.h>
+#include "stb/stb_image.h"
+#include "glad/glad.h"
 
 #include <string>
 

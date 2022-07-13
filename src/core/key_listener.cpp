@@ -3,9 +3,9 @@
  * Created on 6/27/22.
  */
 
-#include <GLFW/glfw3.h>
+#include "glfw/include/GLFW/glfw3.h"
 #include <cstdio>
-#include "core/key_listener.h"
+#include "key_listener.h"
 
 namespace Key {
 

@@ -3,12 +3,12 @@
  * Created on 6/27/22.
  */
 
-#include "render/sprite_renderer.h"
+#include "sprite_renderer.h"
 
 #include "core/game_object.h"
-#include "render/sprite_batch.h"
+#include "sprite_batch.h"
 #include "core/mouse_listener.h"
-#include "util/collision_math.h"
+#include "editor/collision/collision_math.h"
 
 namespace SpriteRenderer {
 

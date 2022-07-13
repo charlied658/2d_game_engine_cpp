@@ -3,8 +3,8 @@
  * Created on 7/11/22.
  */
 
-#include "render/line_renderer.h"
-#include "render/line_batch.h"
+#include "line_renderer.h"
+#include "line_batch.h"
 
 namespace LineRenderer {
 

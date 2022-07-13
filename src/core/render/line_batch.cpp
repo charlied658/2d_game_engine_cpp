@@ -3,9 +3,9 @@
  * Created on 7/11/22.
  */
 
-#include "render/line_batch.h"
+#include "line_batch.h"
 
-#include "render/shader.h"
+#include "shader.h"
 #include "core/camera.h"
 
 namespace LineBatch {

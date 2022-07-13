@@ -3,7 +3,7 @@
  * Created on 7/8/22.
  */
 
-#include "util/collision_math.h"
+#include "collision_math.h"
 
 #include <cmath>
 

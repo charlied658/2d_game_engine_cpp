@@ -2,7 +2,7 @@
  * @author Charlie Davidson
  */
 
-#include "core/window.h"
+#include "window.h"
 
 int main()
 {

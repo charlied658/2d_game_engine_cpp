@@ -4,7 +4,7 @@
  */
 
 #include <utility>
-#include "core/game_object.h"
+#include "game_object.h"
 
 #include "editor/drag_objects.h"
 

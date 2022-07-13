@@ -4,7 +4,7 @@
  */
 
 #include <cstdio>
-#include "render/chunk.h"
+#include "chunk.h"
 
 namespace Chunk {
 

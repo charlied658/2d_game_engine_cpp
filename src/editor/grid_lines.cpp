@@ -6,8 +6,8 @@
 #include "editor/grid_lines.h"
 
 #include "core/camera.h"
-#include "render/line.h"
-#include "render/line_renderer.h"
+#include "core/render/line.h"
+#include "core/render/line_renderer.h"
 
 namespace GridLines {
 

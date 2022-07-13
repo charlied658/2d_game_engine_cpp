@@ -7,7 +7,7 @@
 
 #include "core/scene.h"
 #include "core/imgui_layer.h"
-#include "render/sprite_renderer.h"
+#include "core/render/sprite_renderer.h"
 #include "editor/selected_objects.h"
 #include "editor/drag_objects.h"
 #include "editor/selection_box.h"

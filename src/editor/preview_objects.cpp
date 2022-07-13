@@ -6,11 +6,11 @@
 #include "editor/preview_objects.h"
 
 #include "core/game_object.h"
-#include "render/sprite_renderer.h"
+#include "core/render/sprite_renderer.h"
 #include "editor/holding_object.h"
 #include "editor/selected_objects.h"
 #include "editor/drag_objects.h"
-#include "util/collision_math.h"
+#include "editor/collision/collision_math.h"
 
 namespace Preview {
 

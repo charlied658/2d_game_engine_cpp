@@ -3,12 +3,12 @@
  * Created on 6/27/22.
  */
 
-#include <GLFW/glfw3.h>
-#include "core/mouse_listener.h"
+#include "glfw/include/GLFW/glfw3.h"
+#include "mouse_listener.h"
 
-#include "core/window.h"
-#include "core/camera.h"
-#include "core/imgui_layer.h"
+#include "window.h"
+#include "camera.h"
+#include "imgui_layer.h"
 
 namespace Mouse {
     static double xPos, yPos;

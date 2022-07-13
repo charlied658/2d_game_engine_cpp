@@ -5,7 +5,7 @@
 
 #include "editor/shadows.h"
 
-#include "render/sprite_renderer.h"
+#include "core/render/sprite_renderer.h"
 #include "editor/selected_objects.h"
 #include "editor/holding_object.h"
 

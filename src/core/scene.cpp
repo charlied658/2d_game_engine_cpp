@@ -5,18 +5,18 @@
 
 #include <cstdio>
 
-#include "core/scene.h"
+#include "scene.h"
 
-#include "render/sprite_renderer.h"
-#include "render/chunk_manager.h"
-#include "core/game_object.h"
-#include "core/camera.h"
-#include "core/mouse_listener.h"
-#include "core/serializer.h"
+#include "core/render/sprite_renderer.h"
+#include "editor/collision/chunk_manager.h"
+#include "game_object.h"
+#include "camera.h"
+#include "mouse_listener.h"
+#include "serializer.h"
 #include "editor/object_manager.h"
-#include "editor/imgui/main_menu_bar.h"
-#include "editor/imgui/info_window.h"
-#include "editor/imgui/object_picker.h"
+#include "editor/main_menu_bar.h"
+#include "editor/info_window.h"
+#include "editor/object_picker.h"
 
 namespace Scene {
 

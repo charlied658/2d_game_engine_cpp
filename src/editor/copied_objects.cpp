@@ -6,8 +6,8 @@
 #include "editor/copied_objects.h"
 
 #include "core/scene.h"
-#include "render/sprite_renderer.h"
-#include "render/chunk_manager.h"
+#include "core/render/sprite_renderer.h"
+#include "editor/collision/chunk_manager.h"
 #include "editor/selected_objects.h"
 #include "editor/object_manager.h"
 

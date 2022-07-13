@@ -3,13 +3,13 @@ project(gameEngine)
 
 set(CMAKE_CXX_STANDARD 14)
 
-include_directories(gameEngine include)
+include_directories(gameEngine src)
 include_directories(gameEngine lib)
 
 
-file(GLOB SOURCES "src/*/*.cpp" "src/*/*/*.cpp")
+file(GLOB SOURCES "src/*.cpp" "src/*/*.cpp" "src/*/*/*.cpp")
 file(GLOB LIB "lib/glad/*.c" "lib/imgui/*.cpp" "lib/stb/*.cpp")
-add_executable(gameEngine ${SOURCES} ${LIB} src/main.cpp)
+add_executable(gameEngine ${SOURCES} ${LIB})
 
 # GLFW
 add_subdirectory(lib/glfw)

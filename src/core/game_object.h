@@ -5,13 +5,13 @@
 
 #pragma once
 
-#include <glm/vec2.hpp> // glm::vec2
-#include <glm/vec3.hpp> // glm::vec3
-#include <glm/vec4.hpp> // glm::vec4
+#include "glm/vec2.hpp" // glm::vec2
+#include "glm/vec3.hpp" // glm::vec3
+#include "glm/vec4.hpp" // glm::vec4
 
 #include <string>
 
-#include "core/sprite.h"
+#include "sprite.h"
 
 namespace glm {
     template<class Archive> void serialize(Archive& archive, glm::vec4& v) { archive(v.x, v.y, v.z, v.w); }

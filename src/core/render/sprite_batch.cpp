@@ -3,10 +3,10 @@
  * Created on 7/4/22.
  */
 
-#include "render/sprite_batch.h"
+#include "sprite_batch.h"
 
 #include "core/game_object.h"
-#include "render/shader.h"
+#include "shader.h"
 #include "core/camera.h"
 
 /*

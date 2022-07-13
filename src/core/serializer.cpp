@@ -3,7 +3,7 @@
  * Created on 7/9/22.
  */
 
-#include "core/serializer.h"
+#include "serializer.h"
 
 #include <vector>
 #include <cstdio>
@@ -14,11 +14,11 @@
 #include "cereal/types/string.hpp"
 #include "cereal/types/vector.hpp"
 
-#include "render/sprite_renderer.h"
-#include "render/texture.h"
-#include "render/chunk_manager.h"
-#include "core/game_object.h"
-#include "core/scene.h"
+#include "core/render/sprite_renderer.h"
+#include "core/render/texture.h"
+#include "editor/collision/chunk_manager.h"
+#include "game_object.h"
+#include "scene.h"
 #include "editor/object_manager.h"
 #include "util/properties.h"
 

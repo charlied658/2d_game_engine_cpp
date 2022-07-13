@@ -3,11 +3,11 @@
  * Created on 6/28/22.
  */
 
-#include "core/camera.h"
+#include "camera.h"
 
-#include <glm/gtc/matrix_transform.hpp> // glm::transform, glm::ortho
+#include "glm/gtc/matrix_transform.hpp" // glm::transform, glm::ortho
 
-#include "core/window.h"
+#include "window.h"
 
 namespace Camera {
     static glm::vec2 position;

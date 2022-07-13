@@ -3,9 +3,9 @@
  * Created on 6/27/22.
  */
 
-#include "render/shader.h"
+#include "shader.h"
 
-#include <glm/gtc/type_ptr.hpp>
+#include "glm/gtc/type_ptr.hpp"
 #include <cstdio>
 #include <sstream>
 

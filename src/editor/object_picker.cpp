@@ -3,7 +3,7 @@
  * Created on 7/10/22.
  */
 
-#include "editor/imgui/object_picker.h"
+#include "editor/object_picker.h"
 
 #include "imgui/imgui.h"
 #include "core/spritesheet.h"

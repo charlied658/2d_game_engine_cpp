@@ -19,8 +19,8 @@
 #include "editor/grid_lines.h"
 #include "editor/preview_objects.h"
 #include "editor/drag_objects.h"
-#include "render/chunk_manager.h"
-#include "render/sprite_renderer.h"
+#include "editor/collision/chunk_manager.h"
+#include "core/render/sprite_renderer.h"
 
 namespace ObjectManager {
 

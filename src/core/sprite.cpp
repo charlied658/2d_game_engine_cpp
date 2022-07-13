@@ -3,7 +3,7 @@
  * Created on 7/5/22.
  */
 
-#include "core/sprite.h"
+#include "sprite.h"
 
 namespace Sprite {
 

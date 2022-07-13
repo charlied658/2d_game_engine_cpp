@@ -5,9 +5,9 @@
 
 #pragma once
 
-#include <glad/glad.h>
+#include "glad/glad.h"
 
-#include <glm/mat4x4.hpp> // glm::mat4
+#include "glm/mat4x4.hpp" // glm::mat4
 
 #include <regex>
 #include <filesystem>

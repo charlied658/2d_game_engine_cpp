@@ -3,8 +3,8 @@
  * Created on 7/5/22.
  */
 
-#include "core/spritesheet.h"
-#include "render/texture.h"
+#include "spritesheet.h"
+#include "core/render/texture.h"
 
 namespace Spritesheet {
 

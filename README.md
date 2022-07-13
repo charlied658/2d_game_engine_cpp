@@ -13,7 +13,7 @@ Tools this project is built on:
 - [ ] [Box2D](https://box2d.org/) - Physics
 
 ## Running
-After cloning this repository, navigate to `include/util/properties.h.example`.
+After cloning this repository, navigate to `src/util/properties.h.example`.
 Replace the `PROJECT_PATH` identifier with the absolute path of this project on your machine,
 then remove the `.example` extension.
 Example: `/Users/projects/.../2d_game_engine_cpp/`.

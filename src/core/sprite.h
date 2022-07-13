@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <glm/vec2.hpp> // glm::vec2
+#include "glm/vec2.hpp" // glm::vec2
 
 #include <string>
 

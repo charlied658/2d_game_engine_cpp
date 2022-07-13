@@ -3,7 +3,7 @@
  * Created on 7/10/22.
  */
 
-#include "editor/imgui/info_window.h"
+#include "editor/info_window.h"
 
 #include "imgui/imgui.h"
 

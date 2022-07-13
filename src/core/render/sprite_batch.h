@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include <glad/glad.h>
+#include "glad/glad.h"
 
 #include "core/game_object.h"
 

@@ -3,10 +3,10 @@
  * Created on 7/7/22.
  */
 
-#include "core/imgui_layer.h"
+#include "imgui_layer.h"
 
-#include "core/scene.h"
-#include "editor/imgui/main_menu_bar.h"
+#include "scene.h"
+#include "editor/main_menu_bar.h"
 
 namespace ImGuiLayer {
 

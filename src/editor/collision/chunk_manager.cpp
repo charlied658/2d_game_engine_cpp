@@ -6,8 +6,8 @@
 #include <cstdio>
 #include "chunk_manager.h"
 
-#include "core/sprite_manager.h"
-#include "core/scene.h"
+#include "editor/sprite_manager.h"
+#include "editor/scene.h"
 #include "collision_math.h"
 
 namespace ChunkManager {
@@ -16,7 +16,7 @@ namespace ChunkManager {
     static int chunk_count;
     static const int chunk_size = 16;
 
-    static SpriteManager::sprite_manager *game_objects;
+    static Editor::SpriteManager::sprite_manager *game_objects;
     static int game_object_count;
 
     /**
@@ -41,7 +41,7 @@ namespace ChunkManager {
         chunk_count = 0;
 
         // Re-add chunk information
-        Scene::get_game_objects_list(&game_objects, &game_object_count);
+        Editor::Scene::get_game_objects_list(&game_objects, &game_object_count);
         for (int i = 0; i < game_object_count; i++) {
             ChunkManager::set_solid_block(game_objects[i].grid_x, game_objects[i].grid_y, true);
         }

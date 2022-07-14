@@ -4,7 +4,7 @@
  */
 
 #include "spritesheet.h"
-#include "core/render/texture.h"
+#include "texture.h"
 
 namespace Spritesheet {
 

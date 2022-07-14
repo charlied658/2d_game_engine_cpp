@@ -11,11 +11,11 @@
 #include "mouse_listener.h"
 #include "key_listener.h"
 #include "camera.h"
-#include "scene.h"
+#include "editor/scene.h"
 #include "core/imgui_layer.h"
-#include "core/render/shader.h"
-#include "core/render/sprite_renderer.h"
-#include "core/render/line_renderer.h"
+#include "shader.h"
+#include "editor/render/sprite_renderer.h"
+#include "editor/render/line_renderer.h"
 #include <cstdio>
 
 static void error_callback(int error, const char* description) {
@@ -110,7 +110,7 @@ namespace Window {
 
 
         // Initialize scene
-        Scene::init();
+        Editor::Scene::init();
         Camera::init();
         ImGuiLayer::init(window);
 
@@ -139,18 +139,18 @@ namespace Window {
             fps = 1.0f/dt;
 
             // Update the scene
-            Scene::update(dt);
+            Editor::Scene::update(dt);
 
             // Clear the screen
             glClear(GL_COLOR_BUFFER_BIT);
 
             // Render lines
             Shader::use_program(line_shader);
-            LineRenderer::render();
+            Editor::LineRenderer::render();
 
             // Draw sprites to the screen
             Shader::use_program(sprite_shader);
-            SpriteRenderer::render();
+            Editor::SpriteRenderer::render();
 
             // Render ImGui elements
             ImGuiLayer::render();

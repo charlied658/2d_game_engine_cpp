@@ -14,17 +14,17 @@
 #include "cereal/types/string.hpp"
 #include "cereal/types/vector.hpp"
 
-#include "core/render/sprite_renderer.h"
-#include "core/render/texture.h"
+#include "editor/render/sprite_renderer.h"
+#include "texture.h"
 #include "editor/collision/chunk_manager.h"
-#include "sprite_manager.h"
-#include "scene.h"
-#include "editor/object_manager.h"
+#include "editor/sprite_manager.h"
+#include "editor/scene.h"
+#include "editor/interface/object_manager.h"
 #include "util/properties.h"
 
 namespace Serializer {
 
-    static SpriteManager::sprite_manager *game_objects;
+    static Editor::SpriteManager::sprite_manager *game_objects;
     static int game_object_count;
 
     /**
@@ -32,10 +32,10 @@ namespace Serializer {
      */
     void serialize_game_objects(const std::string& filepath) {
         // Get the game objects list
-        Scene::get_game_objects_list(&game_objects, &game_object_count);
+        Editor::Scene::get_game_objects_list(&game_objects, &game_object_count);
 
         // Convert game objects list into a vector (which is readable by cereal library)
-        std::vector<SpriteManager::sprite_manager> serialized_game_objects;
+        std::vector<Editor::SpriteManager::sprite_manager> serialized_game_objects;
         for (int i = 0; i < game_object_count; i++) {
             serialized_game_objects.push_back(game_objects[i]);
         }
@@ -57,14 +57,14 @@ namespace Serializer {
      */
     void deserialize_game_objects(const std::string& filepath) {
         // Create a vector to receive game object data from the file
-        std::vector<SpriteManager::sprite_manager> serialized_game_objects;
+        std::vector<Editor::SpriteManager::sprite_manager> serialized_game_objects;
 
         // Open a file a read from it
         std::ifstream level_file;
         std::string path_absolute = PROJECT_PATH + filepath;
         level_file.open (path_absolute);
         if (!level_file.is_open()) {
-            Scene::save_level();
+            Editor::Scene::save_level();
             return;
         }
         {
@@ -74,20 +74,20 @@ namespace Serializer {
         level_file.close();
 
         // Clear game object lists
-        Scene::clear_game_objects();
-        SpriteRenderer::clear_render_batches();
+        Editor::Scene::clear_game_objects();
+        Editor::SpriteRenderer::clear_render_batches();
         ObjectManager::reload();
         ChunkManager::reload();
 
         // Re-add all the game objects
         for (auto obj : serialized_game_objects) {
-            SpriteManager::set_visible(&obj, true);
+            Editor::SpriteManager::set_visible(&obj, true);
             ChunkManager::set_solid_block(obj.grid_x, obj.grid_y, true);
             obj.last_grid_x =  obj.grid_x;
             obj.last_grid_y =  obj.grid_y;
             obj.last_position = obj.position;
             obj.sprite.texture_ID = Texture::get_texture(obj.sprite.texture_filepath)->textureID;
-            Scene::add_game_object(&obj);
+            Editor::Scene::add_game_object(&obj);
         }
         printf("Loaded level\n");
     }

@@ -6,6 +6,8 @@
 #pragma once
 
 #include "glm/vec2.hpp"
+#include "physics/box_collider.h"
+#include "physics/circle_collider.h"
 
 namespace Editor {
     namespace PhysicsManager {
@@ -15,8 +17,10 @@ namespace Editor {
             glm::vec2 scale;
             glm::vec2 velocity;
             glm::vec2 acceleration;
-            bool box_collider;
-            bool circle_collider;
+            BoxCollider::box_collider box_collider;
+            CircleCollider::circle_collider circle_collider;
+            bool has_box_collider;
+            bool has_circle_collider;
         };
 
         void init(Editor::PhysicsManager::physics_manager *py_manager);

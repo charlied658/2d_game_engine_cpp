@@ -83,16 +83,20 @@ namespace Serializer {
         ChunkManager::reload();
 
         // Re-add all the game objects
-        for (auto obj : serialized_game_objects) {
-            Editor::SpriteManager::set_visible(&obj, true);
-            ChunkManager::set_solid_block(obj.grid_x, obj.grid_y, true);
-            obj.last_grid_x =  obj.grid_x;
-            obj.last_grid_y =  obj.grid_y;
-            obj.last_position = obj.position;
-            obj.sprite.texture_ID = Texture::get_texture(obj.sprite.texture_filepath)->textureID;
+        for (const auto& obj : serialized_game_objects) {
+            Editor::SpriteManager::sprite_manager *spr_manager;
+            Editor::SpriteSystem::add_sprite_manager(&spr_manager);
+            *spr_manager = obj;
+            Editor::SpriteManager::set_visible(spr_manager, true);
+            ChunkManager::set_solid_block(spr_manager->grid_x, spr_manager->grid_y, true);
+            spr_manager->last_grid_x =  spr_manager->grid_x;
+            spr_manager->last_grid_y =  spr_manager->grid_y;
+            spr_manager->last_position = spr_manager->position;
+            spr_manager->sprite.texture_ID = Texture::get_texture(spr_manager->sprite.texture_filepath)->textureID;
             Editor::GameObject::game_object *go;
             Editor::Scene::add_game_object(&go);
-            go->spr_manager = &obj;
+            go->spr_manager = spr_manager;
+            spr_manager->game_object = go;
             Editor::SpriteRenderer::add_sprite(go->spr_manager);
         }
         printf("Loaded level\n");

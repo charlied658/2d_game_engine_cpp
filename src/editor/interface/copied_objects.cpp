@@ -11,6 +11,8 @@
 #include "editor/collision/chunk_manager.h"
 #include "selected_objects.h"
 #include "object_manager.h"
+#include "editor/sprite_system.h"
+#include "drag_objects.h"
 
 namespace Copy {
 
@@ -73,9 +75,12 @@ namespace Copy {
         for (int i = 0; i < copied_objects_count; i++) {
             Editor::GameObject::game_object *copy;
             Editor::Scene::add_game_object(&copy);
-            *copy = *copied_objects[i];
+            Editor::SpriteSystem::add_sprite_manager(&copy->spr_manager);
+            *copy->spr_manager = *copied_objects[i]->spr_manager;
+            copy->spr_manager->game_object = copy;
             Editor::SpriteManager::set_position(copy->spr_manager, copy->spr_manager->position + copy_offset);
             Editor::Scene::get_game_objects_list(&game_objects, &game_object_count);
+            Editor::SpriteRenderer::add_sprite(copy->spr_manager);
             // Set the pasted objects to be selected
             Editor::GameObject::game_object *obj = &game_objects[game_object_count - 1];
             Editor::SpriteManager::set_selected(obj->spr_manager, true);
@@ -91,7 +96,10 @@ namespace Copy {
     void delete_objects() {
         for (int i = 0; i < selected_object_count; i++) {
             selected_objects[i]->spr_manager->dead = true;
-            ChunkManager::set_solid_block(selected_objects[i]->spr_manager->grid_x, selected_objects[i]->spr_manager->grid_y, false);
+            if (!Drag::is_invalid_placement()) {
+                ChunkManager::set_solid_block(selected_objects[i]->spr_manager->grid_x,
+                                              selected_objects[i]->spr_manager->grid_y, false);
+            }
         }
         Editor::Scene::remove_game_objects();
         Selected::set_selected_objects_count(0);

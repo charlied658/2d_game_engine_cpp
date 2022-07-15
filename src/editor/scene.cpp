@@ -151,6 +151,7 @@ namespace Editor {
          * Create a new level.
          */
         void new_level() {
+            Scene::clear_game_objects();
             SpriteRenderer::clear_render_batches();
             ObjectManager::reload();
             ChunkManager::reload();

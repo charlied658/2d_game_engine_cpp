@@ -90,7 +90,7 @@ namespace ChunkManager {
         int y_mod = Math::i_mod(y, chunk_size);
         Chunk::init(&chunk_list[chunk_count], x - x_mod, y - y_mod, chunk_size);
         Chunk::set_solid_block(&chunk_list[chunk_count], x_mod ,y_mod, state);
-        printf("Created new chunk %d, %d\n",chunk_list[chunk_count].x, chunk_list[chunk_count].y);
+        //printf("Created new chunk %d, %d\n",chunk_list[chunk_count].x, chunk_list[chunk_count].y);
         chunk_count++;
     }
 }

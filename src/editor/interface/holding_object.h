@@ -22,7 +22,7 @@ namespace Holding {
 
     void destroy_holding_object();
 
-    void get_holding_object(Editor::SpriteManager::sprite_manager **obj);
+    void get_holding_object(Editor::GameObject::game_object **obj);
 
     bool is_holding();
 

@@ -6,6 +6,8 @@
 #pragma once
 
 #include "glm/vec2.hpp"
+
+#include "editor/game_object.h"
 #include "physics/box_collider.h"
 #include "physics/circle_collider.h"
 
@@ -13,6 +15,9 @@ namespace Editor {
     namespace PhysicsManager {
 
         struct physics_manager {
+            int id;
+            Editor::GameObject::game_object *game_object;
+
             glm::vec2 position;
             glm::vec2 scale;
             glm::vec2 velocity;

@@ -19,7 +19,7 @@ namespace Drag {
     static double start_x, start_y;
     static glm::vec2 *obj_start_pos;
 
-    static Editor::SpriteManager::sprite_manager **selected_objects;
+    static Editor::GameObject::game_object **selected_objects;
     static int selected_object_count;
 
     /**
@@ -42,9 +42,9 @@ namespace Drag {
         start_y = Mouse::get_worldY();
         for (int i = 0; i < selected_object_count; i++) {
             if (!Copy::get_copied()) {
-                ChunkManager::set_solid_block(selected_objects[i]->grid_x, selected_objects[i]->grid_y, false);
+                ChunkManager::set_solid_block(selected_objects[i]->spr_manager->grid_x, selected_objects[i]->spr_manager->grid_y, false);
             }
-            obj_start_pos[i] = selected_objects[i]->position;
+            obj_start_pos[i] = selected_objects[i]->spr_manager->position;
         }
     }
 
@@ -53,22 +53,22 @@ namespace Drag {
 
         // If there are multiple selected objects, dragging one will move all of them
         for (int i = 0; i < selected_object_count; i++) {
-            glm::vec2 grid_position = Math::grid_position(selected_objects[i]->position);
+            glm::vec2 grid_position = Math::grid_position(selected_objects[i]->spr_manager->position);
             int grid_x = (int) (grid_position.x / 0.25f);
             int grid_y = (int) (grid_position.y / 0.25f);
-            selected_objects[i]->grid_x = grid_x;
-            selected_objects[i]->grid_y = grid_y;
+            selected_objects[i]->spr_manager->grid_x = grid_x;
+            selected_objects[i]->spr_manager->grid_y = grid_y;
             if (ChunkManager::is_solid_block(grid_x, grid_y)) {
                 invalid_placement = true;
             }
-            Editor::SpriteManager::set_dragging(selected_objects[i], true);
-            Editor::SpriteManager::set_position(selected_objects[i], glm::vec2{
+            Editor::SpriteManager::set_dragging(selected_objects[i]->spr_manager, true);
+            Editor::SpriteManager::set_position(selected_objects[i]->spr_manager, glm::vec2{
                     Mouse::get_worldX() - start_x + obj_start_pos[i].x,
                     Mouse::get_worldY() - start_y + +obj_start_pos[i].y});
         }
         if (invalid_placement) {
             for (int i = 0; i < selected_object_count; i++) {
-                Editor::SpriteManager::update_color(selected_objects[i]);
+                Editor::SpriteManager::update_color(selected_objects[i]->spr_manager);
             }
         }
     }
@@ -95,25 +95,25 @@ namespace Drag {
 
     void snap_to_grid() {
         for (int i = 0; i < selected_object_count; i++) {
-            glm::vec2 grid_position = Math::grid_position(selected_objects[i]->position);
+            glm::vec2 grid_position = Math::grid_position(selected_objects[i]->spr_manager->position);
             int grid_x = (int) (grid_position.x / 0.25f);
             int grid_y = (int) (grid_position.y / 0.25f);
-            Editor::SpriteManager::set_position(selected_objects[i], grid_position);
-            selected_objects[i]->last_position = grid_position;
-            selected_objects[i]->grid_x = grid_x;
-            selected_objects[i]->grid_y = grid_y;
-            selected_objects[i]->last_grid_x = grid_x;
-            selected_objects[i]->last_grid_y = grid_y;
+            Editor::SpriteManager::set_position(selected_objects[i]->spr_manager, grid_position);
+            selected_objects[i]->spr_manager->last_position = grid_position;
+            selected_objects[i]->spr_manager->grid_x = grid_x;
+            selected_objects[i]->spr_manager->grid_y = grid_y;
+            selected_objects[i]->spr_manager->last_grid_x = grid_x;
+            selected_objects[i]->spr_manager->last_grid_y = grid_y;
             ChunkManager::set_solid_block(grid_x, grid_y, true);
         }
     }
 
     void snap_to_last_position() {
         for (int i = 0; i < selected_object_count; i++) {
-            Editor::SpriteManager::set_position(selected_objects[i], selected_objects[i]->last_position);
-            selected_objects[i]->grid_x = selected_objects[i]->last_grid_x;
-            selected_objects[i]->grid_y = selected_objects[i]->last_grid_y;
-            ChunkManager::set_solid_block(selected_objects[i]->grid_x, selected_objects[i]->grid_y, true);
+            Editor::SpriteManager::set_position(selected_objects[i]->spr_manager, selected_objects[i]->spr_manager->last_position);
+            selected_objects[i]->spr_manager->grid_x = selected_objects[i]->spr_manager->last_grid_x;
+            selected_objects[i]->spr_manager->grid_y = selected_objects[i]->spr_manager->last_grid_y;
+            ChunkManager::set_solid_block(selected_objects[i]->spr_manager->grid_x, selected_objects[i]->spr_manager->grid_y, true);
         }
         invalid_placement = false;
     }

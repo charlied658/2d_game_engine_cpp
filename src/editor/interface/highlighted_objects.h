@@ -19,9 +19,9 @@ namespace Highlight {
 
     static void highlight_objects();
 
-    void get_highlighted_object(Editor::SpriteManager::sprite_manager **object);
+    void get_highlighted_object(Editor::GameObject::game_object **object);
 
-    void get_highlighted_objects(Editor::SpriteManager::sprite_manager ***objects, int *object_count);
+    void get_highlighted_objects(Editor::GameObject::game_object ***objects, int *object_count);
 
     bool is_highlighted();
 

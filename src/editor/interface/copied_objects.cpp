@@ -5,6 +5,7 @@
 
 #include "copied_objects.h"
 
+#include "editor/game_object.h"
 #include "editor/scene.h"
 #include "editor/render/sprite_renderer.h"
 #include "editor/collision/chunk_manager.h"
@@ -13,21 +14,21 @@
 
 namespace Copy {
 
-    static Editor::SpriteManager::sprite_manager **copied_objects;
+    static Editor::GameObject::game_object **copied_objects;
     static int copied_objects_count;
     static glm::vec2 copy_offset;
     static bool copied;
 
-    static Editor::SpriteManager::sprite_manager *game_objects;
+    static Editor::GameObject::game_object *game_objects;
     static int game_object_count;
-    static Editor::SpriteManager::sprite_manager **selected_objects;
+    static Editor::GameObject::game_object **selected_objects;
     static int selected_object_count;
 
     /**
      * Initialize copied objects.
      */
     void init() {
-        copied_objects = new Editor::SpriteManager::sprite_manager *[1000];
+        copied_objects = new Editor::GameObject::game_object *[1000];
         copied_objects_count = 0;
         copy_offset = glm::vec2 {0.1f, -0.1f};
         copied = false;
@@ -70,13 +71,14 @@ namespace Copy {
         copied = true;
         Selected::reset_selected();
         for (int i = 0; i < copied_objects_count; i++) {
-            Editor::SpriteManager::sprite_manager copy = *copied_objects[i];
-            Editor::SpriteManager::set_position(&copy, copy.position + copy_offset);
+            Editor::GameObject::game_object *copy;
             Editor::Scene::add_game_object(&copy);
+            *copy = *copied_objects[i];
+            Editor::SpriteManager::set_position(copy->spr_manager, copy->spr_manager->position + copy_offset);
             Editor::Scene::get_game_objects_list(&game_objects, &game_object_count);
             // Set the pasted objects to be selected
-            Editor::SpriteManager::sprite_manager *obj = &game_objects[game_object_count - 1];
-            Editor::SpriteManager::set_selected(obj, true);
+            Editor::GameObject::game_object *obj = &game_objects[game_object_count - 1];
+            Editor::SpriteManager::set_selected(obj->spr_manager, true);
             Selected::get_selected_objects(&selected_objects, &selected_object_count);
             selected_objects[selected_object_count] = obj;
             Selected::set_selected_objects_count(selected_object_count + 1);
@@ -88,8 +90,8 @@ namespace Copy {
      */
     void delete_objects() {
         for (int i = 0; i < selected_object_count; i++) {
-            selected_objects[i]->dead = true;
-            ChunkManager::set_solid_block(selected_objects[i]->grid_x, selected_objects[i]->grid_y, false);
+            selected_objects[i]->spr_manager->dead = true;
+            ChunkManager::set_solid_block(selected_objects[i]->spr_manager->grid_x, selected_objects[i]->spr_manager->grid_y, false);
         }
         Editor::Scene::remove_game_objects();
         Selected::set_selected_objects_count(0);
@@ -98,7 +100,7 @@ namespace Copy {
         // Rebuffer every update batch (since pointers to game objects are now invalid)
         Editor::SpriteRenderer::clear_render_batches();
         for (int i = 0; i < game_object_count; i++) {
-            Editor::SpriteRenderer::add_sprite(&game_objects[i]);
+            Editor::SpriteRenderer::add_sprite(game_objects[i].spr_manager);
         }
         ObjectManager::reload();
     }
@@ -108,7 +110,7 @@ namespace Copy {
      * @param objects Copied objects
      * @param object_count Copied object count
      */
-    void get_copied_objects(Editor::SpriteManager::sprite_manager ***objects, int *object_count) {
+    void get_copied_objects(Editor::GameObject::game_object ***objects, int *object_count) {
         *objects = copied_objects;
         *object_count = copied_objects_count;
     }

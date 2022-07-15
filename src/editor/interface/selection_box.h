@@ -20,7 +20,7 @@ namespace SelectionBox {
 
     void hide();
 
-    void get_selection_box(Editor::SpriteManager::sprite_manager **object);
+    void get_selection_box(Editor::GameObject::game_object **object);
 
     bool is_multiselect();
 

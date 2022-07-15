@@ -7,6 +7,7 @@
 
 #include "scene.h"
 
+#include "editor/game_object.h"
 #include "editor/render/sprite_renderer.h"
 #include "editor/collision/chunk_manager.h"
 #include "sprite_manager.h"
@@ -18,10 +19,12 @@
 #include "editor/interface/info_window.h"
 #include "editor/interface/object_picker.h"
 
+#include "editor/sprite_system.h"
+
 namespace Editor {
     namespace Scene {
 
-        static Editor::SpriteManager::sprite_manager *game_objects;
+        static Editor::GameObject::game_object *game_objects;
         static int game_object_count;
         static std::string level_filepath;
 
@@ -33,8 +36,11 @@ namespace Editor {
             level_filepath = "level.txt";
 
             // Initialize game object array
-            game_objects = new Editor::SpriteManager::sprite_manager[10000];
+            game_objects = new Editor::GameObject::game_object[10000];
             game_object_count = 0;
+
+            // Initialize systems
+            SpriteSystem::init();
 
             // Initialize objects
             ObjectManager::init();
@@ -43,7 +49,7 @@ namespace Editor {
             MainMenuBar::init();
             ObjectPicker::init();
 
-            Scene::load_level();
+            //Scene::load_level();
 
         }
 
@@ -95,10 +101,9 @@ namespace Editor {
          * Add a game object to the scene.
          * @param obj Game object reference
          */
-        void add_game_object(Editor::SpriteManager::sprite_manager *obj) {
+        void add_game_object(Editor::GameObject::game_object **obj) {
             if (game_object_count < 10000) {
-                game_objects[game_object_count] = *obj;
-                SpriteRenderer::add_sprite(&game_objects[game_object_count]);
+                *obj = &game_objects[game_object_count];
                 game_object_count++;
             }
         }
@@ -116,7 +121,7 @@ namespace Editor {
                 if (dead_count > 0) {
                     game_objects[i] = game_objects[i + dead_count];
                 }
-                if (game_objects[i].dead) {
+                if (game_objects[i].spr_manager->dead) {
                     dead = true;
                     dead_count++;
                 }
@@ -158,7 +163,7 @@ namespace Editor {
          * @param game_objs Game objects reference
          * @param game_obj_count Count of game objects
          */
-        void get_game_objects_list(Editor::SpriteManager::sprite_manager **objects, int *object_count) {
+        void get_game_objects_list(Editor::GameObject::game_object **objects, int *object_count) {
             *objects = game_objects;
             *object_count = game_object_count;
         }

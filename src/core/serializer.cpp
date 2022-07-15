@@ -14,6 +14,7 @@
 #include "cereal/types/string.hpp"
 #include "cereal/types/vector.hpp"
 
+#include "editor/game_object.h"
 #include "editor/render/sprite_renderer.h"
 #include "texture.h"
 #include "editor/collision/chunk_manager.h"
@@ -21,10 +22,12 @@
 #include "editor/scene.h"
 #include "editor/interface/object_manager.h"
 #include "util/properties.h"
+#include "editor/sprite_system.h"
+#include "editor/render/sprite_renderer.h"
 
 namespace Serializer {
 
-    static Editor::SpriteManager::sprite_manager *game_objects;
+    static Editor::GameObject::game_object *game_objects;
     static int game_object_count;
 
     /**
@@ -37,7 +40,7 @@ namespace Serializer {
         // Convert game objects list into a vector (which is readable by cereal library)
         std::vector<Editor::SpriteManager::sprite_manager> serialized_game_objects;
         for (int i = 0; i < game_object_count; i++) {
-            serialized_game_objects.push_back(game_objects[i]);
+            serialized_game_objects.push_back(*game_objects[i].spr_manager);
         }
 
         // Open a file and write to it
@@ -87,7 +90,10 @@ namespace Serializer {
             obj.last_grid_y =  obj.grid_y;
             obj.last_position = obj.position;
             obj.sprite.texture_ID = Texture::get_texture(obj.sprite.texture_filepath)->textureID;
-            Editor::Scene::add_game_object(&obj);
+            Editor::GameObject::game_object *go;
+            Editor::Scene::add_game_object(&go);
+            go->spr_manager = &obj;
+            Editor::SpriteRenderer::add_sprite(go->spr_manager);
         }
         printf("Loaded level\n");
     }

@@ -11,6 +11,7 @@
 
 #include <string>
 
+#include "game_object.h"
 #include "core/sprite.h"
 
 namespace glm {
@@ -18,8 +19,16 @@ namespace glm {
 }
 
 namespace Editor {
+
+    namespace GameObject {
+        struct game_object;
+    }
+
     namespace SpriteManager {
         struct sprite_manager {
+            int id;
+            Editor::GameObject::game_object *game_object;
+
             std::string name;
             glm::vec2 position;
             glm::vec2 scale;

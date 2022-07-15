@@ -4,6 +4,8 @@
  */
 
 #pragma once
+
+#include "editor/game_object.h"
 #include "behavior/solid_block.h"
 #include "behavior/breakable_block.h"
 #include "behavior/item_box.h"
@@ -15,9 +17,17 @@
 #include "behavior/pipe.h"
 
 namespace Editor {
+
+    namespace GameObject {
+        struct game_object;
+    }
+
     namespace BehaviorManager {
 
         struct behavior_manager {
+            int id;
+            Editor::GameObject::game_object *game_object;
+
             SolidBlock::solid_block solid_block;
             BreakableBlock::breakable_block breakable_block;
             ItemBox::item_box item_box;

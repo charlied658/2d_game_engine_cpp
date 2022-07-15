@@ -25,9 +25,9 @@ namespace Selected {
 
     void select_highlighted_objects();
 
-    void select_holding_object(Editor::SpriteManager::sprite_manager *obj);
+    void select_holding_object(Editor::GameObject::game_object *obj);
 
-    void get_selected_objects(Editor::SpriteManager::sprite_manager ***objects, int *object_count);
+    void get_selected_objects(Editor::GameObject::game_object ***objects, int *object_count);
 
     void set_selected_objects_count(int count);
 

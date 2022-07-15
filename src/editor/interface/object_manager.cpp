@@ -24,14 +24,14 @@
 
 namespace ObjectManager {
 
-    static Editor::SpriteManager::sprite_manager **highlighted_objects;
+    static Editor::GameObject::game_object **highlighted_objects;
     static int highlighted_object_count;
-    static Editor::SpriteManager::sprite_manager **selected_objects;
+    static Editor::GameObject::game_object **selected_objects;
     static int selected_object_count;
-    static Editor::SpriteManager::sprite_manager **copied_objects;
+    static Editor::GameObject::game_object **copied_objects;
     static int copied_object_count;
-    static Editor::SpriteManager::sprite_manager *highlighted_obj;
-    static Editor::SpriteManager::sprite_manager *game_objects;
+    static Editor::GameObject::game_object *highlighted_obj;
+    static Editor::GameObject::game_object *game_objects;
     static int game_object_count;
 
     /**
@@ -99,7 +99,7 @@ namespace ObjectManager {
      */
     void reset_z_index() {
         for (int i = 0; i < game_object_count; i++) {
-            game_objects[i].new_z_index = 0;
+            game_objects[i].spr_manager->new_z_index = 0;
         }
     }
 
@@ -108,8 +108,10 @@ namespace ObjectManager {
      */
     void update_z_index() {
         for (int i = 0; i < game_object_count; i++) {
-            if (game_objects[i].new_z_index != game_objects[i].z_index) {
-                Editor::SpriteRenderer::re_add_sprite(&game_objects[i]);
+            //printf("z-index: %d, new z-index: %d\n", game_objects[i].spr_manager->z_index, game_objects[i].spr_manager->new_z_index);
+            if (game_objects[i].spr_manager->new_z_index != game_objects[i].spr_manager->z_index) {
+                //printf("Re-added spr %d\n", i);
+                Editor::SpriteRenderer::re_add_sprite(game_objects[i].spr_manager);
             }
         }
     }

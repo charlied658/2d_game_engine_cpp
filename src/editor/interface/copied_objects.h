@@ -21,7 +21,7 @@ namespace Copy {
 
     void delete_objects();
 
-    void get_copied_objects(Editor::SpriteManager::sprite_manager ***objects, int *object_count);
+    void get_copied_objects(Editor::GameObject::game_object ***objects, int *object_count);
 
     bool get_copied();
 

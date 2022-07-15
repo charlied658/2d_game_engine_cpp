@@ -23,7 +23,9 @@ namespace Editor {
          */
         void render() {
             // Render each batch one at a time, in order of z-index
+            //printf("Starting rendering\n");
             for (int i = 0; i < batch_count; i++) {
+                //printf("Rendering batch %d\n",sorted_batches[i]->z_index);
                 Editor::SpriteBatch::render(sorted_batches[i]);
             }
         }
@@ -33,6 +35,7 @@ namespace Editor {
          * @param obj Sprite
          */
         void add_sprite(Editor::SpriteManager::sprite_manager *obj) {
+            //printf("Added sprite %s with z-index %d\n", obj->name.c_str(), obj->z_index);
             for (int i = 0; i < batch_count; i++) {
                 // If there is enough space to add the sprite and its texture, and the z-index matches, add it to the first available batch
                 if (batches[i].has_room &&
@@ -90,7 +93,7 @@ namespace Editor {
         /**
          * Highlight the sprite under the mouse cursor.
          */
-        void highlight_sprite(Editor::SpriteManager::sprite_manager **highlighted_obj) {
+        void highlight_sprite(Editor::GameObject::game_object **highlighted_obj) {
             double xPos = Mouse::get_worldX();
             double yPos = Mouse::get_worldY();
 
@@ -104,7 +107,7 @@ namespace Editor {
                         && yPos > obj->position.y && yPos < obj->position.y + obj->scale.y
                         && obj->pickable && obj->visible) {
                         Editor::SpriteManager::set_highlighted(obj, true);
-                        *highlighted_obj = obj;
+                        *highlighted_obj = obj->game_object;
                         return;
                     }
                 }
@@ -120,11 +123,11 @@ namespace Editor {
          * @param selection_pos Starting position of selection
          * @param selection_scale Size of selection
          */
-        void highlight_sprites(Editor::SpriteManager::sprite_manager **highlighted_objects, int *highlighted_count,
-                               Editor::SpriteManager::sprite_manager *selection_box) {
+        void highlight_sprites(Editor::GameObject::game_object **highlighted_objects, int *highlighted_count,
+                               Editor::GameObject::game_object *selection_box) {
             *highlighted_count = 0;
-            glm::vec2 selection_pos = selection_box->position;
-            glm::vec2 selection_scale = selection_box->scale;
+            glm::vec2 selection_pos = selection_box->spr_manager->position;
+            glm::vec2 selection_scale = selection_box->spr_manager->scale;
             // Loop through each batch
             for (int i = batch_count - 1; i >= 0; i--) {
                 // Loop through the sprites
@@ -137,7 +140,9 @@ namespace Editor {
                         Math::line_segment_collision(obj->position.y, obj->position.y + obj->scale.y, selection_pos.y,
                                                      selection_pos.y + selection_scale.y)) {
                         Editor::SpriteManager::set_highlighted(obj, true);
-                        highlighted_objects[*highlighted_count] = obj;
+                        //printf("Highlighted object %d\n", j);
+                        //printf("Name: %s\n", obj->game_object->spr_manager->name.c_str());
+                        highlighted_objects[*highlighted_count] = obj->game_object;
                         *highlighted_count = *highlighted_count + 1;
                     } else {
                         SpriteManager::set_highlighted(obj, false);

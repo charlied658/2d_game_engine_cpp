@@ -16,7 +16,7 @@ namespace ChunkManager {
     static int chunk_count;
     static const int chunk_size = 16;
 
-    static Editor::SpriteManager::sprite_manager *game_objects;
+    static Editor::GameObject::game_object *game_objects;
     static int game_object_count;
 
     /**
@@ -43,7 +43,7 @@ namespace ChunkManager {
         // Re-add chunk information
         Editor::Scene::get_game_objects_list(&game_objects, &game_object_count);
         for (int i = 0; i < game_object_count; i++) {
-            ChunkManager::set_solid_block(game_objects[i].grid_x, game_objects[i].grid_y, true);
+            ChunkManager::set_solid_block(game_objects[i].spr_manager->grid_x, game_objects[i].spr_manager->grid_y, true);
         }
     }
 

@@ -10,6 +10,19 @@
 #include "editor/physics_manager.h"
 
 namespace Editor {
+
+    namespace SpriteManager {
+        struct sprite_manager;
+    }
+
+    namespace BehaviorManager {
+        struct behavior_manager;
+    }
+
+    namespace PhysicsManager {
+        struct physics_manager;
+    }
+
     namespace GameObject {
 
         struct game_object {
@@ -17,7 +30,6 @@ namespace Editor {
             Editor::SpriteManager::sprite_manager *spr_manager;
             Editor::PhysicsManager::physics_manager *py_manager;
             Editor::BehaviorManager::behavior_manager *bh_manager;
-
         };
 
     }

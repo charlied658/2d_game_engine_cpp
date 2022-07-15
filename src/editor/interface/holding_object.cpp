@@ -13,13 +13,15 @@
 #include "editor/collision/chunk_manager.h"
 #include "editor/collision/collision_math.h"
 
+#include "editor/sprite_system.h"
+
 namespace Holding {
 
-    static Editor::SpriteManager::sprite_manager holding_object;
+    static Editor::GameObject::game_object holding_object;
     static bool generated_holding;
     static bool holding;
 
-    static Editor::SpriteManager::sprite_manager *game_object_list;
+    static Editor::GameObject::game_object *game_object_list;
     static int game_object_count;
 
     /**
@@ -46,14 +48,15 @@ namespace Holding {
         Holding::set_holding(true);
         // Get the holding object
         if (generated_holding) {
-            holding_object.name = name;
-            Editor::SpriteManager::set_visible(&holding_object, true);
-            Editor::SpriteManager::set_sprite(&holding_object, spr);
+            holding_object.spr_manager->name = name;
+            Editor::SpriteManager::set_visible(holding_object.spr_manager, true);
+            Editor::SpriteManager::set_sprite(holding_object.spr_manager, spr);
             return;
         }
-        Editor::SpriteManager::init(&holding_object, name, glm::vec2{}, glm::vec2{0.25f, 0.25f}, 10, spr);
-        holding_object.pickable = false;
-        Editor::SpriteRenderer::add_sprite(&holding_object);
+        Editor::SpriteSystem::add_sprite_manager(&holding_object.spr_manager);
+        Editor::SpriteManager::init(holding_object.spr_manager, name, glm::vec2{}, glm::vec2{0.25f, 0.25f}, 10, spr);
+        holding_object.spr_manager->pickable = false;
+        Editor::SpriteRenderer::add_sprite(holding_object.spr_manager);
         generated_holding = true;
     }
 
@@ -61,10 +64,11 @@ namespace Holding {
      * Update the position of the holding object.
      */
     void update() {
+        //printf("Holding object update\n");
         if (Holding::is_holding()) {
-            Editor::SpriteManager::set_position(&holding_object, glm::vec2{
-                Mouse::get_worldX() - holding_object.scale.x / 2,
-                Mouse::get_worldY() - holding_object.scale.y / 2});
+            Editor::SpriteManager::set_position(holding_object.spr_manager, glm::vec2{
+                Mouse::get_worldX() - holding_object.spr_manager->scale.x / 2,
+                Mouse::get_worldY() - holding_object.spr_manager->scale.y / 2});
         }
     }
 
@@ -75,8 +79,8 @@ namespace Holding {
     void place_holding_object(bool destroy) {
 
         // Check grid coordinates.
-        glm::vec2 centered_position = {holding_object.position.x + 0.25f / 2,
-                                       holding_object.position.y + 0.25f / 2};
+        glm::vec2 centered_position = {holding_object.spr_manager->position.x + 0.25f / 2,
+                                       holding_object.spr_manager->position.y + 0.25f / 2};
         glm::vec2 position = {centered_position.x - Math::f_mod(centered_position.x, 0.25f),
                               centered_position.y - Math::f_mod(centered_position.y, 0.25f)};
         int grid_x = (int) (position.x / 0.25f);
@@ -90,20 +94,23 @@ namespace Holding {
             ChunkManager::set_solid_block(grid_x, grid_y, true);
         }
 
-        Editor::SpriteManager::sprite_manager generated = holding_object;
-        generated.z_index = 0;
-        generated.pickable = true;
-        generated.grid_x = grid_x;
-        generated.grid_y = grid_y;
-        generated.last_grid_x = grid_x;
-        generated.last_grid_y = grid_y;
-        Editor::SpriteManager::set_position(&generated, position);
-        generated.last_position = position;
-        if (destroy) {
-            Editor::SpriteManager::set_selected(&generated, true);
-        }
+        Editor::GameObject::game_object *generated;
         Editor::Scene::add_game_object(&generated);
+        *generated = holding_object;
+        Editor::SpriteSystem::add_sprite_manager(&generated->spr_manager);
+        Editor::SpriteRenderer::add_sprite(generated->spr_manager);
+        *generated->spr_manager = *holding_object.spr_manager;
+        generated->spr_manager->game_object = generated;
+        generated->spr_manager->z_index = 0;
+        generated->spr_manager->pickable = true;
+        generated->spr_manager->grid_x = grid_x;
+        generated->spr_manager->grid_y = grid_y;
+        generated->spr_manager->last_grid_x = grid_x;
+        generated->spr_manager->last_grid_y = grid_y;
+        Editor::SpriteManager::set_position(generated->spr_manager, position);
+        generated->spr_manager->last_position = position;
         if (destroy) {
+            Editor::SpriteManager::set_selected(generated->spr_manager, true);
             Editor::Scene::get_game_objects_list(&game_object_list, &game_object_count);
             Selected::select_holding_object(&game_object_list[game_object_count - 1]);
             Holding::destroy_holding_object();
@@ -114,12 +121,12 @@ namespace Holding {
      * Destroy the holding object.
      */
     void destroy_holding_object() {
-        Editor::SpriteManager::set_visible(&holding_object, false);
+        Editor::SpriteManager::set_visible(holding_object.spr_manager, false);
         Holding::set_holding(false);
         ObjectPicker::reset();
     }
 
-    void get_holding_object(Editor::SpriteManager::sprite_manager **obj) {
+    void get_holding_object(Editor::GameObject::game_object **obj) {
         *obj = &holding_object;
     }
 

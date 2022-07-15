@@ -48,13 +48,13 @@ namespace Holding {
         Holding::set_holding(true);
         // Get the holding object
         if (generated_holding) {
-            holding_object.spr_manager->name = name;
+            holding_object.name = name;
             Editor::SpriteManager::set_visible(holding_object.spr_manager, true);
             Editor::SpriteManager::set_sprite(holding_object.spr_manager, spr);
             return;
         }
-        Editor::SpriteSystem::add_sprite_manager(&holding_object.spr_manager);
-        Editor::SpriteManager::init(holding_object.spr_manager, name, glm::vec2{}, glm::vec2{0.25f, 0.25f}, 10, spr);
+        Editor::SpriteSystem::init_sprite_manager(&holding_object.spr_manager);
+        Editor::SpriteManager::init(holding_object.spr_manager, glm::vec2{}, glm::vec2{0.25f, 0.25f}, 10, spr);
         holding_object.spr_manager->pickable = false;
         Editor::SpriteRenderer::add_sprite(holding_object.spr_manager);
         generated_holding = true;
@@ -97,7 +97,7 @@ namespace Holding {
         Editor::GameObject::game_object *generated;
         Editor::Scene::add_game_object(&generated);
         *generated = holding_object;
-        Editor::SpriteSystem::add_sprite_manager(&generated->spr_manager);
+        Editor::SpriteSystem::init_sprite_manager(&generated->spr_manager);
         Editor::SpriteRenderer::add_sprite(generated->spr_manager);
         *generated->spr_manager = *holding_object.spr_manager;
         generated->spr_manager->game_object = generated;

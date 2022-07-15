@@ -22,13 +22,13 @@ namespace SelectionBox {
      */
     void init() {
 
-        Editor::SpriteSystem::add_sprite_manager(&selection_box.spr_manager);
+        Editor::SpriteSystem::init_sprite_manager(&selection_box.spr_manager);
 
         // Generate null sprite (Renders as a solid color)
         Sprite::get_null_sprite(&sprite_null);
 
         // Generate selection box (Appears when you click and drag to multiselect)
-        Editor::SpriteManager::init(selection_box.spr_manager, "selection_box", glm::vec2 {1.0f, 1.5f}, glm::vec2 {1.0f, 1.0f}, 2, &sprite_null);
+        Editor::SpriteManager::init(selection_box.spr_manager, glm::vec2 {1.0f, 1.5f}, glm::vec2 {1.0f, 1.0f}, 2, &sprite_null);
         Editor::SpriteManager::set_color(selection_box.spr_manager, glm::vec4 {1.0f, 1.0f, 0.0f, 0.2f});
         selection_box.spr_manager->pickable = false;
         Editor::SpriteManager::set_visible(selection_box.spr_manager, false);

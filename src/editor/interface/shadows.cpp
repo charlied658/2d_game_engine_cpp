@@ -48,7 +48,7 @@ namespace Shadows {
         // Render shadows for each selected game object
         for (int i = 0; i < selected_object_count; i++) {
             if (i >= shadow_object_count && shadow_object_count < 1000) {
-                Editor::SpriteSystem::add_sprite_manager(&shadow_objects[i].spr_manager);
+                Editor::SpriteSystem::init_sprite_manager(&shadow_objects[i].spr_manager);
             }
             glm::vec2 position = selected_objects[i]->spr_manager->position + glm::vec2 {0.02f, -0.02f};
             generate_shadow(shadow_objects[i].spr_manager, position, selected_objects[i]->spr_manager->scale, &selected_objects[i]->spr_manager->sprite);
@@ -75,7 +75,7 @@ namespace Shadows {
         // Put shadow under holding object
         Holding::get_holding_object(&holding_object);
         if (!holding_shadow_added) {
-            Editor::SpriteSystem::add_sprite_manager(&holding_obj_shadow.spr_manager);
+            Editor::SpriteSystem::init_sprite_manager(&holding_obj_shadow.spr_manager);
             holding_shadow_added = true;
             Editor::SpriteRenderer::add_sprite(holding_obj_shadow.spr_manager);
         }
@@ -88,7 +88,7 @@ namespace Shadows {
     }
 
     void generate_shadow(Editor::SpriteManager::sprite_manager *obj, glm::vec2 position, glm::vec2 scale, Sprite::sprite *sprite) {
-        Editor::SpriteManager::init(obj, "shadow", position, scale, 4, sprite);
+        Editor::SpriteManager::init(obj, position, scale, 4, sprite);
         Editor::SpriteManager::set_color(obj, glm::vec4(0.0f, 0.0f, 0.0f, 0.7f));
         Editor::SpriteManager::set_saturation(obj, 1.0f);
         obj->pickable = false;

@@ -16,6 +16,7 @@ namespace MainMenuBar {
     static bool info_window;
     static bool object_picker;
     static bool imgui_demo_window;
+    static bool properties_window;
 
     /**
      * Initialize main menu bar.
@@ -24,6 +25,7 @@ namespace MainMenuBar {
         info_window = false;
         object_picker = true;
         imgui_demo_window = false;
+        properties_window = true;
     }
 
     /**
@@ -72,6 +74,9 @@ namespace MainMenuBar {
                 if (ImGui::MenuItem("Object Picker", nullptr, object_picker)) {
                     object_picker = !object_picker;
                 }
+                if (ImGui::MenuItem("Properties", nullptr, properties_window)) {
+                    properties_window = !properties_window;
+                }
                 if (ImGui::MenuItem("ImGui Demo", nullptr, imgui_demo_window)) {
                     imgui_demo_window = !imgui_demo_window;
                 }
@@ -81,27 +86,19 @@ namespace MainMenuBar {
         }
     }
 
-    /**
-     * Get whether the info window should show.
-     * @return Show info window
-     */
     bool show_info_window() {
         return info_window;
     }
 
-    /**
-     * Get whether the object picker should show.
-     * @return Show object picker
-     */
     bool show_object_picker() {
         return object_picker;
     }
 
-    /**
-     * Get whether the ImGui demo window should show.
-     * @return Show ImGui demo
-     */
     bool show_imgui_demo_window() {
         return imgui_demo_window;
+    }
+
+    bool show_properties_window() {
+        return properties_window;
     }
 }

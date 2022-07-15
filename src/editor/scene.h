@@ -23,6 +23,8 @@ namespace Editor {
 
         void get_game_objects_list(Editor::GameObject::game_object **objects, int *object_count);
 
+        void get_active_game_object(Editor::GameObject::game_object ***object);
+
         void save_level();
 
         void load_level();

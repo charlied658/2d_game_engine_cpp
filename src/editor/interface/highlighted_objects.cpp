@@ -59,7 +59,6 @@ namespace Highlight {
         // Set all game objects to not be highlighted or dragging
         for (int i = 0; i < game_object_count; i++) {
             Editor::SpriteManager::set_highlighted(game_objects[i].spr_manager, false);
-            Editor::SpriteManager::set_dragging(game_objects[i].spr_manager, false);
         }
         // Only set the highlighted object to null if objects are not being dragged
         if (!Drag::is_dragging_objects()) {

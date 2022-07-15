@@ -27,6 +27,8 @@ namespace Selected {
 
     void select_holding_object(Editor::GameObject::game_object *obj);
 
+    void update_active_game_object();
+
     void get_selected_objects(Editor::GameObject::game_object ***objects, int *object_count);
 
     void set_selected_objects_count(int count);

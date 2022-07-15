@@ -17,4 +17,6 @@ namespace MainMenuBar {
 
     bool show_imgui_demo_window();
 
+    bool show_properties_window();
+
 }

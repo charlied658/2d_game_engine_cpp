@@ -8,6 +8,7 @@
 #include "editor/game_object.h"
 #include "highlighted_objects.h"
 #include "drag_objects.h"
+#include "editor/scene.h"
 
 namespace Selected {
 
@@ -124,6 +125,18 @@ namespace Selected {
         reset_selected();
         selected_objects[0] = obj;
         selected_object_count = 1;
+    }
+
+    void update_active_game_object() {
+        if (selected_object_count == 1) {
+            Editor::GameObject::game_object **active_game_object;
+            Editor::Scene::get_active_game_object(&active_game_object);
+            *active_game_object = selected_objects[0];
+        } else {
+            Editor::GameObject::game_object **active_game_object;
+            Editor::Scene::get_active_game_object(&active_game_object);
+            *active_game_object = nullptr;
+        }
     }
 
     /**

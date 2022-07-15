@@ -75,7 +75,7 @@ namespace Copy {
         for (int i = 0; i < copied_objects_count; i++) {
             Editor::GameObject::game_object *copy;
             Editor::Scene::add_game_object(&copy);
-            Editor::SpriteSystem::add_sprite_manager(&copy->spr_manager);
+            Editor::SpriteSystem::init_sprite_manager(&copy->spr_manager);
             *copy->spr_manager = *copied_objects[i]->spr_manager;
             copy->spr_manager->game_object = copy;
             Editor::SpriteManager::set_position(copy->spr_manager, copy->spr_manager->position + copy_offset);
@@ -95,7 +95,7 @@ namespace Copy {
      */
     void delete_objects() {
         for (int i = 0; i < selected_object_count; i++) {
-            selected_objects[i]->spr_manager->dead = true;
+            selected_objects[i]->dead = true;
             if (!Drag::is_invalid_placement()) {
                 ChunkManager::set_solid_block(selected_objects[i]->spr_manager->grid_x,
                                               selected_objects[i]->spr_manager->grid_y, false);

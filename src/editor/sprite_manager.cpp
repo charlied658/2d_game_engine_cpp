@@ -3,7 +3,6 @@
  * Created on 7/3/22.
  */
 
-#include <utility>
 #include "sprite_manager.h"
 
 #include "editor/interface/drag_objects.h"
@@ -11,25 +10,23 @@
 namespace Editor {
     namespace SpriteManager {
 
-        void
-        init(Editor::SpriteManager::sprite_manager *obj, std::string name, glm::vec2 position, glm::vec2 scale, int z_index,
-             Sprite::sprite *sprite) {
-            obj->name = std::move(name);
+        void init(Editor::SpriteManager::sprite_manager *obj, glm::vec2 position, glm::vec2 scale, int z_index, Sprite::sprite *sprite) {
+            // Essential data
             obj->position = position;
             obj->scale = scale;
             obj->z_index = z_index;
             obj->sprite = *sprite;
             obj->color = glm::vec4{1.0f, 1.0f, 1.0f, 1.0f};
             obj->saturation = 0.0f;
+
+            // Editor information
             obj->is_dirty = true;
-            obj->new_z_index = z_index;
             obj->out_color = glm::vec4{1.0f, 1.0f, 1.0f, 1.0f};
             obj->pickable = true;
             obj->visible = true;
             obj->highlighted = false;
-            obj->dragging = false;
             obj->selected = false;
-            obj->dead = false;
+            obj->new_z_index = z_index;
         }
 
         void set_sprite(Editor::SpriteManager::sprite_manager *obj, Sprite::sprite *spr) {
@@ -71,11 +68,6 @@ namespace Editor {
 
         void set_selected(Editor::SpriteManager::sprite_manager *obj, bool selected) {
             obj->selected = selected;
-            update_color(obj);
-        }
-
-        void set_dragging(Editor::SpriteManager::sprite_manager *obj, bool dragging) {
-            obj->dragging = dragging;
             update_color(obj);
         }
 

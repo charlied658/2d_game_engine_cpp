@@ -84,6 +84,7 @@ namespace ObjectManager {
         Mouse::update();
         Key::update();
         Holding::update();
+        Selected::update_active_game_object();
 
         // Render visual elements
         Shadows::render();

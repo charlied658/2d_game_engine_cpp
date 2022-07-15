@@ -26,24 +26,25 @@ namespace Editor {
 
     namespace SpriteManager {
         struct sprite_manager {
+            // Game object reference
             int id;
             Editor::GameObject::game_object *game_object;
 
-            std::string name;
+            // Essential data
             glm::vec2 position;
             glm::vec2 scale;
             int z_index;
             Sprite::sprite sprite;
-            bool is_dirty;
             glm::vec4 color;
-            glm::vec4 out_color;
             float saturation;
+
+            // Editor information
+            bool is_dirty;
+            glm::vec4 out_color;
             bool pickable;
             bool visible;
             bool highlighted;
             bool selected;
-            bool dragging;
-            bool dead;
             int new_z_index;
             int grid_x, grid_y;
             int last_grid_x, last_grid_y;
@@ -51,13 +52,11 @@ namespace Editor {
 
             template<class Archive>
             void serialize(Archive &archive) {
-                archive(name, position, scale, z_index, sprite, color, pickable, grid_x, grid_y);
+                archive(id, position, scale, z_index, sprite, color, pickable, grid_x, grid_y);
             }
         };
 
-        void
-        init(Editor::SpriteManager::sprite_manager *obj, std::string name, glm::vec2 position, glm::vec2 scale, int z_index,
-             Sprite::sprite *sprite);
+        void init(Editor::SpriteManager::sprite_manager *obj, glm::vec2 position, glm::vec2 scale, int z_index, Sprite::sprite *sprite);
 
         void set_sprite(Editor::SpriteManager::sprite_manager *obj, Sprite::sprite *spr);
 
@@ -74,8 +73,6 @@ namespace Editor {
         void set_highlighted(Editor::SpriteManager::sprite_manager *obj, bool highlighted);
 
         void set_selected(Editor::SpriteManager::sprite_manager *obj, bool selected);
-
-        void set_dragging(Editor::SpriteManager::sprite_manager *obj, bool dragging);
 
         void update_color(Editor::SpriteManager::sprite_manager *obj);
 

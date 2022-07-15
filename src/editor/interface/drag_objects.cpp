@@ -61,7 +61,6 @@ namespace Drag {
             if (ChunkManager::is_solid_block(grid_x, grid_y)) {
                 invalid_placement = true;
             }
-            Editor::SpriteManager::set_dragging(selected_objects[i]->spr_manager, true);
             Editor::SpriteManager::set_position(selected_objects[i]->spr_manager, glm::vec2{
                     Mouse::get_worldX() - start_x + obj_start_pos[i].x,
                     Mouse::get_worldY() - start_y + +obj_start_pos[i].y});

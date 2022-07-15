@@ -13,11 +13,12 @@
 #include "sprite_manager.h"
 #include "core/camera.h"
 #include "core/mouse_listener.h"
-#include "core/serializer.h"
+#include "editor/serialization/serializer.h"
 #include "editor/interface/object_manager.h"
 #include "editor/interface/main_menu_bar.h"
 #include "editor/interface/info_window.h"
 #include "editor/interface/object_picker.h"
+#include "editor/interface/properties_window.h"
 
 #include "editor/sprite_system.h"
 
@@ -27,6 +28,8 @@ namespace Editor {
         static Editor::GameObject::game_object *game_objects;
         static int game_object_count;
         static std::string level_filepath;
+
+        static Editor::GameObject::game_object *active_game_object;
 
         /**
          * Initialize the scene.
@@ -95,11 +98,16 @@ namespace Editor {
             if (MainMenuBar::show_object_picker()) {
                 ObjectPicker::imgui();
             }
+
+            // Properties Window
+            if (MainMenuBar::show_properties_window()) {
+                PropertiesWindow::imgui();
+            }
         }
 
         /**
          * Add a game object to the scene.
-         * @param obj Game object reference
+         * @param obj Game object
          */
         void add_game_object(Editor::GameObject::game_object **obj) {
             if (game_object_count < 10000) {
@@ -121,7 +129,7 @@ namespace Editor {
                 if (dead_count > 0) {
                     game_objects[i] = game_objects[i + dead_count];
                 }
-                if (game_objects[i].spr_manager->dead) {
+                if (game_objects[i].dead) {
                     dead = true;
                     dead_count++;
                 }
@@ -159,19 +167,15 @@ namespace Editor {
             printf("Created new level\n");
         }
 
-        /**
-         * Get the game objects list.
-         * @param game_objs Game objects reference
-         * @param game_obj_count Count of game objects
-         */
         void get_game_objects_list(Editor::GameObject::game_object **objects, int *object_count) {
             *objects = game_objects;
             *object_count = game_object_count;
         }
 
-        /**
-         * Clear the list of game objects.
-         */
+        void get_active_game_object(Editor::GameObject::game_object ***object) {
+            *object = &active_game_object;
+        }
+
         void clear_game_objects() {
             game_object_count = 0;
         }

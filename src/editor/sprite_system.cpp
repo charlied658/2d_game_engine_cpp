@@ -20,7 +20,7 @@ namespace Editor {
             sprite_manager_count = 0;
         }
 
-        void add_sprite_manager(Editor::SpriteManager::sprite_manager **spr_manager) {
+        void init_sprite_manager(Editor::SpriteManager::sprite_manager **spr_manager) {
             if (sprite_manager_count < 10000) {
                 //printf("Added sprite manager %d\n", sprite_manager_count);
                 *spr_manager = &sprite_manager_list[sprite_manager_count];
@@ -43,8 +43,9 @@ namespace Editor {
             }
         }
 
-        void get_sprite_manager(Editor::SpriteManager::sprite_manager **spr_manager) {
-            *spr_manager = &sprite_manager_list[sprite_manager_count - 1];
+        void get_sprite_manager_list(Editor::SpriteManager::sprite_manager **objects, int *object_count) {
+            *objects = sprite_manager_list;
+            *object_count = sprite_manager_count;
         }
     }
 }

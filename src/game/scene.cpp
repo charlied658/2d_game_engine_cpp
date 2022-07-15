@@ -9,7 +9,7 @@
 #include "sprite_manager.h"
 #include "core/camera.h"
 #include "core/mouse_listener.h"
-#include "core/serializer.h"
+#include "editor/serialization/serializer.h"
 
 namespace Game {
     namespace Scene {

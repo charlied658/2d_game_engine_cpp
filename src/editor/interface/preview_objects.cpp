@@ -64,7 +64,7 @@ namespace Preview {
         Selected::get_selected_objects(&selected_objects, &selected_object_count);
         for (int i = 0; i < selected_object_count; i++) {
             if (i >= preview_object_count && preview_object_count < 1000) {
-                Editor::SpriteSystem::add_sprite_manager(&preview_objects[i].spr_manager);
+                Editor::SpriteSystem::init_sprite_manager(&preview_objects[i].spr_manager);
             }
             glm::vec2 position = Math::grid_position(selected_objects[i]->spr_manager->position);
             generate_preview_object(preview_objects[i].spr_manager, position,
@@ -90,7 +90,7 @@ namespace Preview {
         Holding::get_holding_object(&holding_object);
         if (holding_object && Holding::is_holding()) {
             if (!holding_preview_added) {
-                Editor::SpriteSystem::add_sprite_manager(&holding_object_preview.spr_manager);
+                Editor::SpriteSystem::init_sprite_manager(&holding_object_preview.spr_manager);
             }
             glm::vec2 position = Math::grid_position(holding_object->spr_manager->position);
             generate_preview_object(holding_object_preview.spr_manager, position,
@@ -116,7 +116,7 @@ namespace Preview {
     }
 
     void generate_preview_object(Editor::SpriteManager::sprite_manager *obj, glm::vec2 position, glm::vec2 scale, Sprite::sprite *sprite) {
-        Editor::SpriteManager::init(obj, "preview", position, scale, -5, sprite);
+        Editor::SpriteManager::init(obj, position, scale, -5, sprite);
         Editor::SpriteManager::set_color(obj, glm::vec4(1.0f, 1.0f, 1.0f, 0.0f));
         Editor::SpriteManager::set_saturation(obj, 0.3f);
         obj->pickable = false;

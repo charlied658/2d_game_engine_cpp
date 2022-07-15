@@ -117,7 +117,7 @@ namespace ObjectPicker {
                 } else {
                     ObjectPicker::reset();
                     *selected_block = n;
-                    Holding::generateHoldingObject(&spr, list_name + std::to_string(n));
+                    Holding::generate_holding_object(&spr, list_name + std::to_string(n));
                 }
             }
             if (block_selected) {

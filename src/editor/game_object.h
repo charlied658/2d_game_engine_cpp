@@ -49,5 +49,9 @@ namespace Editor {
 
         void init_sprite_manager(Editor::GameObject::game_object *obj, Editor::SpriteManager::sprite_manager *spr_manager);
 
+        void init_physics_manager(Editor::GameObject::game_object *obj, Editor::PhysicsManager::physics_manager *py_manager);
+
+        void init_behavior_manager(Editor::GameObject::game_object *obj, Editor::BehaviorManager::behavior_manager *bh_manager);
+
     }
 }

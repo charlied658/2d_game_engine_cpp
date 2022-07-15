@@ -74,7 +74,7 @@ namespace Copy {
         Selected::reset_selected();
         for (int i = 0; i < copied_objects_count; i++) {
             Editor::GameObject::game_object *copy;
-            Editor::Scene::add_game_object(&copy);
+            Editor::Scene::init_game_object(&copy);
             Editor::SpriteSystem::init_sprite_manager(&copy->spr_manager);
             *copy->spr_manager = *copied_objects[i]->spr_manager;
             copy->spr_manager->game_object = copy;

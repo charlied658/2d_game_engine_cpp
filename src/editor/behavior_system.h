@@ -7,14 +7,16 @@
 
 #include "behavior_manager.h"
 
-namespace BehaviorSystem {
+namespace Editor {
+    namespace BehaviorSystem {
 
-    void init();
+        void init();
 
-    void reload();
+        void reload();
 
-    void add_behavior_manager(Editor::BehaviorManager::behavior_manager *bh_manager);
+        void init_behavior_manager(Editor::BehaviorManager::behavior_manager **bh_manager);
 
-    void remove_behavior_manager(Editor::BehaviorManager::behavior_manager *bh_manager);
+        void remove_behavior_manager(Editor::BehaviorManager::behavior_manager *bh_manager);
 
+    }
 }

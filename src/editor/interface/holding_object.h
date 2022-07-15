@@ -14,11 +14,13 @@ namespace Holding {
 
     void reload();
 
-    void generateHoldingObject(Sprite::sprite *spr, const std::string& name);
+    void generate_holding_object(Sprite::sprite *spr, const std::string& name);
 
     void update();
 
     void place_holding_object(bool destroy);
+
+    void generate_game_object(Editor::GameObject::game_object *generated);
 
     void destroy_holding_object();
 

@@ -5,13 +5,11 @@
 
 #include "serializer.h"
 
-#include <vector>
 #include <cstdio>
 #include <fstream>
 
 #include "cereal/archives/json.hpp"
 #include "cereal/archives/binary.hpp"
-#include "cereal/types/string.hpp"
 #include "cereal/types/vector.hpp"
 
 #include "editor/game_object.h"
@@ -23,7 +21,6 @@
 #include "editor/interface/object_manager.h"
 #include "util/properties.h"
 #include "editor/sprite_system.h"
-#include "editor/render/sprite_renderer.h"
 #include "editor/serialization/level_state.h"
 
 namespace Serializer {
@@ -87,7 +84,7 @@ namespace Serializer {
             spr_manager->last_position = spr_manager->position;
             spr_manager->sprite.texture_ID = Texture::get_texture(spr_manager->sprite.texture_filepath)->textureID;
             Editor::GameObject::game_object *go;
-            Editor::Scene::add_game_object(&go);
+            Editor::Scene::init_game_object(&go);
             go->spr_manager = spr_manager;
             spr_manager->game_object = go;
             Editor::SpriteRenderer::add_sprite(go->spr_manager);

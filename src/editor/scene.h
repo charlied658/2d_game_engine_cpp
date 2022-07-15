@@ -17,7 +17,7 @@ namespace Editor {
 
         void imgui();
 
-        void add_game_object(Editor::GameObject::game_object **obj);
+        void init_game_object(Editor::GameObject::game_object **obj);
 
         void remove_game_objects();
 

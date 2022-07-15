@@ -5,37 +5,39 @@
 
 #include "behavior_system.h"
 
-namespace BehaviorSystem {
+namespace Editor {
+    namespace BehaviorSystem {
 
-    static Editor::BehaviorManager::behavior_manager *behavior_manager_list;
-    static int behavior_manager_count;
+        static Editor::BehaviorManager::behavior_manager *behavior_manager_list;
+        static int behavior_manager_count;
 
-    void init() {
-        behavior_manager_list = new Editor::BehaviorManager::behavior_manager[1000];
-        behavior_manager_count = 0;
-    }
-
-    void reload() {
-        behavior_manager_count = 0;
-    }
-
-    void add_behavior_manager(Editor::BehaviorManager::behavior_manager *bh_manager) {
-        behavior_manager_list[behavior_manager_count] = *bh_manager;
-        behavior_manager_count++;
-    }
-
-    void remove_behavior_manager(Editor::BehaviorManager::behavior_manager *bh_manager) {
-        bool found = false;
-        for (int i = 0; i < behavior_manager_count; i++) {
-            if (&behavior_manager_list[i] == bh_manager) {
-                found = true;
-            }
-            if (found && i < behavior_manager_count - 1) {
-                behavior_manager_list[i] = behavior_manager_list[i + 1];
-            }
+        void init() {
+            behavior_manager_list = new Editor::BehaviorManager::behavior_manager[1000];
+            behavior_manager_count = 0;
         }
-        if (found) {
-            behavior_manager_count--;
+
+        void reload() {
+            behavior_manager_count = 0;
+        }
+
+        void init_behavior_manager(Editor::BehaviorManager::behavior_manager **bh_manager) {
+            *bh_manager = &behavior_manager_list[behavior_manager_count];
+            behavior_manager_count++;
+        }
+
+        void remove_behavior_manager(Editor::BehaviorManager::behavior_manager *bh_manager) {
+            bool found = false;
+            for (int i = 0; i < behavior_manager_count; i++) {
+                if (&behavior_manager_list[i] == bh_manager) {
+                    found = true;
+                }
+                if (found && i < behavior_manager_count - 1) {
+                    behavior_manager_list[i] = behavior_manager_list[i + 1];
+                }
+            }
+            if (found) {
+                behavior_manager_count--;
+            }
         }
     }
 }

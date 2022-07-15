@@ -76,12 +76,14 @@ namespace Shadows {
         Holding::get_holding_object(&holding_object);
         if (!holding_shadow_added) {
             Editor::SpriteSystem::init_sprite_manager(&holding_obj_shadow.spr_manager);
-            holding_shadow_added = true;
-            Editor::SpriteRenderer::add_sprite(holding_obj_shadow.spr_manager);
         }
         if (holding_object && Holding::is_holding()) {
             glm::vec2 position = holding_object->spr_manager->position + glm::vec2 {0.02f, -0.02f};
             generate_shadow(holding_obj_shadow.spr_manager, position, holding_object->spr_manager->scale, &holding_object->spr_manager->sprite);
+            if (!holding_shadow_added) {
+                holding_shadow_added = true;
+                Editor::SpriteRenderer::add_sprite(holding_obj_shadow.spr_manager);
+            }
         } else {
             Editor::SpriteManager::set_visible(holding_obj_shadow.spr_manager, false);
         }

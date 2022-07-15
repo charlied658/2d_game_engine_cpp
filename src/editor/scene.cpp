@@ -21,6 +21,8 @@
 #include "editor/interface/properties_window.h"
 
 #include "editor/sprite_system.h"
+#include "editor/physics_system.h"
+#include "editor/behavior_system.h"
 
 namespace Editor {
     namespace Scene {
@@ -44,6 +46,8 @@ namespace Editor {
 
             // Initialize systems
             SpriteSystem::init();
+            PhysicsSystem::init();
+            BehaviorSystem::init();
 
             // Initialize objects
             ObjectManager::init();
@@ -109,7 +113,7 @@ namespace Editor {
          * Add a game object to the scene.
          * @param obj Game object
          */
-        void add_game_object(Editor::GameObject::game_object **obj) {
+        void init_game_object(Editor::GameObject::game_object **obj) {
             if (game_object_count < 10000) {
                 *obj = &game_objects[game_object_count];
                 game_object_count++;

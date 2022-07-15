@@ -23,13 +23,28 @@ namespace PropertiesWindow {
 
             ImGui::Text("Game Object ID: %d", obj->id);
 
-            if (ImGui::CollapsingHeader("Sprite Manager")) {
-                ImGui::Text("Position: %f,%f", obj->spr_manager->position.x, obj->spr_manager->position.y);
-                ImGui::Text("Scale: %f,%f", obj->spr_manager->scale.x, obj->spr_manager->scale.y);
-                ImGui::Text("Z-index: %d", obj->spr_manager->z_index);
-                ImGui::Text("Texture: %s", obj->spr_manager->sprite.texture_filepath.c_str());
-                ImGui::Text("Color: %f,%f,%f,%f", obj->spr_manager->color.x, obj->spr_manager->color.y, obj->spr_manager->color.z, obj->spr_manager->color.w);
-                ImGui::Text("Saturation: %f", obj->spr_manager->saturation);
+            if (obj->has_sprite_manager) {
+                if (ImGui::CollapsingHeader("Sprite Manager")) {
+                    ImGui::Text("ID: %d", obj->spr_manager->id);
+                    ImGui::Text("Position: %f,%f", obj->spr_manager->position.x, obj->spr_manager->position.y);
+                    ImGui::Text("Grid position: %d,%d", obj->spr_manager->grid_x, obj->spr_manager->grid_y);
+                    ImGui::Text("Scale: %f,%f", obj->spr_manager->scale.x, obj->spr_manager->scale.y);
+                    ImGui::Text("Z-index: %d", obj->spr_manager->z_index);
+                    ImGui::Text("Texture: %s", obj->spr_manager->sprite.texture_filepath.c_str());
+                    ImGui::Text("Color: %f,%f,%f,%f", obj->spr_manager->color.x, obj->spr_manager->color.y,
+                                obj->spr_manager->color.z, obj->spr_manager->color.w);
+                    ImGui::Text("Saturation: %f", obj->spr_manager->saturation);
+                }
+            }
+            if (obj->has_physics_manager) {
+                if (ImGui::CollapsingHeader("Physics Manager")) {
+                    ImGui::Text("ID: %d", obj->py_manager->id);
+                }
+            }
+            if (obj->has_behavior_manager) {
+                if (ImGui::CollapsingHeader("Behavior Manager")) {
+                    ImGui::Text("ID: %d", obj->bh_manager->id);
+                }
             }
 
             ImGui::End();

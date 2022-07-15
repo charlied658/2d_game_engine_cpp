@@ -7,13 +7,15 @@
 
 #include "physics_manager.h"
 
-namespace PhysicsSystem {
+namespace Editor {
+    namespace PhysicsSystem {
 
-    void init();
+        void init();
 
-    void reload();
+        void reload();
 
-    void add_physics_manager(Editor::PhysicsManager::physics_manager *py_manager);
+        void init_physics_manager(Editor::PhysicsManager::physics_manager **py_manager);
 
-    void remove_physics_manager(Editor::PhysicsManager::physics_manager *py_manager);
+        void remove_physics_manager(Editor::PhysicsManager::physics_manager *py_manager);
+    }
 }

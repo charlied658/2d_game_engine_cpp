@@ -26,5 +26,19 @@ namespace Editor {
             obj->spr_manager->id = obj->id;
             obj->has_sprite_manager = true;
         }
+
+        void init_physics_manager(Editor::GameObject::game_object *obj, Editor::PhysicsManager::physics_manager *py_manager) {
+            obj->py_manager = py_manager;
+            obj->py_manager->game_object = obj;
+            obj->py_manager->id = obj->id;
+            obj->has_physics_manager = true;
+        }
+
+        void init_behavior_manager(Editor::GameObject::game_object *obj, Editor::BehaviorManager::behavior_manager *bh_manager) {
+            obj->bh_manager = bh_manager;
+            obj->bh_manager->game_object = obj;
+            obj->bh_manager->id = obj->id;
+            obj->has_behavior_manager = true;
+        }
     }
 }

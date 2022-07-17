@@ -43,7 +43,7 @@ namespace Shadows {
             if (i >= shadow_object_count && shadow_object_count < 1000) {
                 Editor::Scene::init_transient_game_object(&shadow_objects[i]);
                 Editor::GameObject::init_transient(shadow_objects[i]);
-                Editor::SpriteSystem::init_sprite_manager(&shadow_objects[i]->spr_manager);
+                Editor::SpriteSystem::init_transient_sprite_manager(&shadow_objects[i]->spr_manager);
                 Editor::GameObject::init_sprite_manager(shadow_objects[i], shadow_objects[i]->spr_manager);
             }
             glm::vec2 position = selected_objects[i]->spr_manager->position + glm::vec2 {0.02f, -0.02f};
@@ -74,7 +74,7 @@ namespace Shadows {
             if (!holding_shadow_added) {
                 Editor::Scene::init_transient_game_object(&holding_obj_shadow);
                 Editor::GameObject::init_transient(holding_obj_shadow);
-                Editor::SpriteSystem::init_sprite_manager(&holding_obj_shadow->spr_manager);
+                Editor::SpriteSystem::init_transient_sprite_manager(&holding_obj_shadow->spr_manager);
                 Editor::GameObject::init_sprite_manager(holding_obj_shadow, holding_obj_shadow->spr_manager);
             }
             glm::vec2 position = holding_object->spr_manager->position + glm::vec2 {0.02f, -0.02f};

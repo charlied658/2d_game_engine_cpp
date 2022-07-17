@@ -23,6 +23,7 @@ namespace Editor {
             int texture_count;
             int z_index;
             GLuint vaoID, vboID, eboID;
+            bool transient;
         };
 
         void init(sprite_batch *batch, int max_batch_size, int z_index);

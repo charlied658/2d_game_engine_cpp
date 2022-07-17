@@ -61,7 +61,7 @@ namespace Editor {
             MainMenuBar::init();
             ObjectPicker::init();
 
-            //Scene::load_level();
+            Scene::load_level();
 
         }
 
@@ -143,6 +143,9 @@ namespace Editor {
                     game_objects[i].bh_manager->game_object = &game_objects[i];
                 }
                 if (game_objects[i].dead) {
+                    SpriteSystem::remove_sprite_manager(game_objects[i].spr_manager);
+                    PhysicsSystem::remove_physics_manager(game_objects[i].py_manager);
+                    BehaviorSystem::remove_behavior_manager(game_objects[i].bh_manager);
                     dead = true;
                     dead_count++;
                 }
@@ -152,6 +155,12 @@ namespace Editor {
                 }
             }
             game_object_count -= dead_count;
+
+            // Reset render batches since pointers are now invalid
+            SpriteRenderer::clear_render_batches();
+            for (int i = 0; i < game_object_count; i++) {
+                SpriteRenderer::add_sprite(game_objects[i].spr_manager);
+            }
         }
 
         void init_transient_game_object(Editor::GameObject::game_object **obj) {
@@ -184,6 +193,9 @@ namespace Editor {
             SpriteRenderer::clear_render_batches();
             ObjectManager::reload();
             ChunkManager::reload();
+            SpriteSystem::reload();
+            PhysicsSystem::reload();
+            BehaviorSystem::reload();
 
             printf("Created new level\n");
         }

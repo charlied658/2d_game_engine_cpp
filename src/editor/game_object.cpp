@@ -51,5 +51,13 @@ namespace Editor {
             obj->bh_manager->id = obj->id;
             obj->has_behavior_manager = true;
         }
+
+        /**
+         * Set the ID counter. Used when deserializing.
+         * @param id
+         */
+        void set_id(int id) {
+            id_counter = id;
+        }
     }
 }

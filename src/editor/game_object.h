@@ -55,5 +55,7 @@ namespace Editor {
 
         void init_behavior_manager(Editor::GameObject::game_object *obj, Editor::BehaviorManager::behavior_manager *bh_manager);
 
+        void set_id(int id);
+
     }
 }

@@ -59,7 +59,7 @@ namespace Preview {
             if (i >= preview_object_count && preview_object_count < 1000) {
                 Editor::Scene::init_transient_game_object(&preview_objects[i]);
                 Editor::GameObject::init_transient(preview_objects[i]);
-                Editor::SpriteSystem::init_sprite_manager(&preview_objects[i]->spr_manager);
+                Editor::SpriteSystem::init_transient_sprite_manager(&preview_objects[i]->spr_manager);
                 Editor::GameObject::init_sprite_manager(preview_objects[i],preview_objects[i]->spr_manager);
             }
             glm::vec2 position = Math::grid_position(selected_objects[i]->spr_manager->position);
@@ -88,7 +88,7 @@ namespace Preview {
             if (!holding_preview_added) {
                 Editor::Scene::init_transient_game_object(&holding_object_preview);
                 Editor::GameObject::init_transient(holding_object_preview);
-                Editor::SpriteSystem::init_sprite_manager(&holding_object_preview->spr_manager);
+                Editor::SpriteSystem::init_transient_sprite_manager(&holding_object_preview->spr_manager);
                 Editor::GameObject::init_sprite_manager(holding_object_preview,holding_object_preview->spr_manager);
             }
             glm::vec2 position = Math::grid_position(holding_object->spr_manager->position);

@@ -16,6 +16,12 @@ namespace Editor {
 
         void init_physics_manager(Editor::PhysicsManager::physics_manager **py_manager);
 
+        void init_transient_physics_manager(Editor::PhysicsManager::physics_manager **py_manager);
+
         void remove_physics_manager(Editor::PhysicsManager::physics_manager *py_manager);
+
+        void get_physics_manager_list(Editor::PhysicsManager::physics_manager **objects, int *object_count);
+
+        void get_transient_physics_manager_list(Editor::PhysicsManager::physics_manager **objects, int *object_count);
     }
 }

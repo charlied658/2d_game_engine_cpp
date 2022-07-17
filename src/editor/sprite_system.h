@@ -16,9 +16,13 @@ namespace Editor {
 
         void init_sprite_manager(Editor::SpriteManager::sprite_manager **spr_manager);
 
+        void init_transient_sprite_manager(Editor::SpriteManager::sprite_manager **spr_manager);
+
         void remove_sprite_manager(Editor::SpriteManager::sprite_manager *spr_manager);
 
         void get_sprite_manager_list(Editor::SpriteManager::sprite_manager **objects, int *object_count);
+
+        void get_transient_sprite_manager_list(Editor::SpriteManager::sprite_manager **objects, int *object_count);
 
     }
 }

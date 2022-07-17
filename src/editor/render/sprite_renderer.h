@@ -24,7 +24,11 @@ namespace Editor {
 
         void highlight_sprites(Editor::GameObject::game_object **highlighted_objects, int *highlighted_count, Editor::GameObject::game_object *selection_box);
 
+        void sort_batches();
+
         void clear_render_batches();
+
+        void imgui();
 
     }
 }

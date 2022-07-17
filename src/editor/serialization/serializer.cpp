@@ -21,9 +21,20 @@
 #include "editor/interface/object_manager.h"
 #include "util/properties.h"
 #include "editor/sprite_system.h"
+#include "editor/physics_system.h"
+#include "editor/behavior_system.h"
 #include "editor/serialization/level_state.h"
 
 namespace Serializer {
+
+    static Editor::GameObject::game_object *game_objects_list;
+    static int game_objects_count;
+    static Editor::SpriteManager::sprite_manager *sprite_manager_list;
+    static int sprite_manager_count;
+    static Editor::PhysicsManager::physics_manager *physics_manager_list;
+    static int physics_manager_count;
+    static Editor::BehaviorManager::behavior_manager *behavior_manager_list;
+    static int behavior_manager_count;
 
     /**
      * Serialize the game objects and place them into an output file.
@@ -71,24 +82,85 @@ namespace Serializer {
         Editor::SpriteRenderer::clear_render_batches();
         ObjectManager::reload();
         ChunkManager::reload();
+        Editor::SpriteSystem::reload();
+        Editor::PhysicsSystem::reload();
+        Editor::BehaviorSystem::reload();
 
-        // Re-add all the game objects
-        for (const auto& obj : level_state.serialized_sprite_managers) {
+        int max_game_object_ID = -1;
+
+        // Re-add game objects
+        for (auto & serialized_game_object : level_state.serialized_game_objects) {
+            Editor::GameObject::game_object *obj;
+            Editor::Scene::init_game_object(&obj);
+            *obj = serialized_game_object;
+
+            if (obj->id > max_game_object_ID) {
+                max_game_object_ID = obj->id;
+            }
+            //printf("Added game object with ID %d\n", obj->id);
+        }
+
+        // Re-add sprite managers
+        for (const auto& serialized_sprite_manager : level_state.serialized_sprite_managers) {
             Editor::SpriteManager::sprite_manager *spr_manager;
             Editor::SpriteSystem::init_sprite_manager(&spr_manager);
-            *spr_manager = obj;
+            *spr_manager = serialized_sprite_manager;
             Editor::SpriteManager::set_visible(spr_manager, true);
             ChunkManager::set_solid_block(spr_manager->grid_x, spr_manager->grid_y, true);
             spr_manager->last_grid_x =  spr_manager->grid_x;
             spr_manager->last_grid_y =  spr_manager->grid_y;
             spr_manager->last_position = spr_manager->position;
             spr_manager->sprite.texture_ID = Texture::get_texture(spr_manager->sprite.texture_filepath)->textureID;
-            Editor::GameObject::game_object *go;
-            Editor::Scene::init_game_object(&go);
-            go->spr_manager = spr_manager;
-            spr_manager->game_object = go;
-            Editor::SpriteRenderer::add_sprite(go->spr_manager);
         }
+
+        // Re-add physics managers
+        for (auto & serialized_physics_manager : level_state.serialized_physics_managers) {
+            Editor::PhysicsManager::physics_manager *py_manager;
+            Editor::PhysicsSystem::init_physics_manager(&py_manager);
+            *py_manager = serialized_physics_manager;
+        }
+
+        // Re-add behavior managers
+        for (auto & serialized_behavior_manager : level_state.serialized_behavior_managers) {
+            Editor::BehaviorManager::behavior_manager *bh_manager;
+            Editor::BehaviorSystem::init_behavior_manager(&bh_manager);
+            *bh_manager = serialized_behavior_manager;
+        }
+
+        // Link game objects with their components
+        Editor::Scene::get_game_objects_list(&game_objects_list,&game_objects_count);
+        Editor::SpriteSystem::get_sprite_manager_list(&sprite_manager_list,&sprite_manager_count);
+        Editor::PhysicsSystem::get_physics_manager_list(&physics_manager_list,&physics_manager_count);
+        Editor::BehaviorSystem::get_behavior_manager_list(&behavior_manager_list,&behavior_manager_count);
+        for (int i = 0; i < game_objects_count; i++) {
+            // Sprite manager
+            for (int j = 0; j < sprite_manager_count; j++) {
+                if (sprite_manager_list[j].id == game_objects_list[i].id) {
+                    //printf("Found sprite renderer for object %d\n", game_objects_list[i].id);
+                    Editor::GameObject::init_sprite_manager(&game_objects_list[i], &sprite_manager_list[j]);
+                    Editor::SpriteRenderer::add_sprite(game_objects_list[i].spr_manager);
+                    break;
+                }
+            }
+            // Physics manager
+            for (int j = 0; j < physics_manager_count; j++) {
+                if (physics_manager_list[j].id == game_objects_list[i].id) {
+                    Editor::GameObject::init_physics_manager(&game_objects_list[i], &physics_manager_list[j]);
+                    break;
+                }
+            }
+            // Behavior manager
+            for (int j = 0; j < behavior_manager_count; j++) {
+                if (behavior_manager_list[j].id == game_objects_list[i].id) {
+                    Editor::GameObject::init_behavior_manager(&game_objects_list[i], &behavior_manager_list[j]);
+                    break;
+                }
+            }
+        }
+
+        // Set the game object ID counter
+        Editor::GameObject::set_id(max_game_object_ID + 1);
+
         printf("Loaded level\n");
     }
 }

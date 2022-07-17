@@ -25,7 +25,7 @@ namespace SelectionBox {
 
         Editor::Scene::init_transient_game_object(&selection_box);
         Editor::GameObject::init_transient(selection_box);
-        Editor::SpriteSystem::init_sprite_manager(&selection_box->spr_manager);
+        Editor::SpriteSystem::init_transient_sprite_manager(&selection_box->spr_manager);
         Editor::GameObject::init_sprite_manager(selection_box, selection_box->spr_manager);
 
         // Generate null sprite (Renders as a solid color)

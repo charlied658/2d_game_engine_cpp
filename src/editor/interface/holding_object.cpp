@@ -53,13 +53,13 @@ namespace Holding {
         Editor::Scene::init_transient_game_object(&holding_object);
         Editor::GameObject::init_transient(holding_object);
         holding_object->name = name;
-        Editor::SpriteSystem::init_sprite_manager(&holding_object->spr_manager);
+        Editor::SpriteSystem::init_transient_sprite_manager(&holding_object->spr_manager);
         Editor::GameObject::init_sprite_manager(holding_object, holding_object->spr_manager);
         Editor::SpriteManager::init(holding_object->spr_manager, glm::vec2{}, glm::vec2{0.25f, 0.25f}, 10, spr);
         holding_object->spr_manager->pickable = false;
         Editor::SpriteRenderer::add_transient_sprite(holding_object->spr_manager);
-        Editor::PhysicsSystem::init_physics_manager(&holding_object->py_manager);
-        Editor::BehaviorSystem::init_behavior_manager(&holding_object->bh_manager);
+        Editor::PhysicsSystem::init_transient_physics_manager(&holding_object->py_manager);
+        Editor::BehaviorSystem::init_transient_behavior_manager(&holding_object->bh_manager);
         Editor::GameObject::init_physics_manager(holding_object, holding_object->py_manager);
         Editor::GameObject::init_behavior_manager(holding_object, holding_object->bh_manager);
         generated_holding = true;

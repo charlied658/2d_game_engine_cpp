@@ -10,10 +10,14 @@ namespace Editor {
 
         static Editor::SpriteManager::sprite_manager *sprite_manager_list;
         static int sprite_manager_count;
+        static Editor::SpriteManager::sprite_manager *transient_sprite_manager_list;
+        static int transient_sprite_manager_count;
 
         void init() {
             sprite_manager_list = new Editor::SpriteManager::sprite_manager[10000];
             sprite_manager_count = 0;
+            transient_sprite_manager_list = new Editor::SpriteManager::sprite_manager[10000];
+            transient_sprite_manager_count = 0;
         }
 
         void reload() {
@@ -28,6 +32,14 @@ namespace Editor {
             }
         }
 
+        void init_transient_sprite_manager(Editor::SpriteManager::sprite_manager **spr_manager) {
+            if (transient_sprite_manager_count < 10000) {
+                //printf("Added sprite manager %d\n", sprite_manager_count);
+                *spr_manager = &transient_sprite_manager_list[transient_sprite_manager_count];
+                transient_sprite_manager_count++;
+            }
+        }
+
         void remove_sprite_manager(Editor::SpriteManager::sprite_manager *spr_manager) {
             bool found = false;
             for (int i = 0; i < sprite_manager_count; i++) {
@@ -36,6 +48,7 @@ namespace Editor {
                 }
                 if (found && i < sprite_manager_count - 1) {
                     sprite_manager_list[i] = sprite_manager_list[i + 1];
+                    sprite_manager_list[i].game_object->spr_manager = &sprite_manager_list[i];
                 }
             }
             if (found) {
@@ -46,6 +59,11 @@ namespace Editor {
         void get_sprite_manager_list(Editor::SpriteManager::sprite_manager **objects, int *object_count) {
             *objects = sprite_manager_list;
             *object_count = sprite_manager_count;
+        }
+
+        void get_transient_sprite_manager_list(Editor::SpriteManager::sprite_manager **objects, int *object_count) {
+            *objects = transient_sprite_manager_list;
+            *object_count = transient_sprite_manager_count;
         }
     }
 }

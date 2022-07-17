@@ -9,6 +9,7 @@
 #include "sprite_batch.h"
 #include "core/mouse_listener.h"
 #include "editor/collision/collision_math.h"
+#include "imgui/imgui.h"
 
 namespace Editor {
     namespace SpriteRenderer {
@@ -39,7 +40,7 @@ namespace Editor {
          * @param obj Sprite
          */
         void add_sprite(Editor::SpriteManager::sprite_manager *obj) {
-            //printf("Added sprite %s with z-index %d\n", obj->game_object->name.c_str(), obj->z_index);
+            //printf("Added sprite %s with z-index %d and id %d\n", obj->game_object->name.c_str(), obj->z_index, obj->id);
             for (int i = 0; i < batch_count; i++) {
                 // If there is enough space to add the sprite and its texture, and the z-index matches, add it to the first available batch
                 if (batches[i].has_room &&
@@ -59,16 +60,7 @@ namespace Editor {
             total_batch_count = batch_count + transient_batch_count;
 
             // Sort the list of batches by z-index
-            for (int i = 0; i < total_batch_count - 1; i++) {
-                for (int j = 0; j < total_batch_count - 1 - i; j++) {
-                    if (sorted_batches[j]->z_index > sorted_batches[j + 1]->z_index) {
-                        Editor::SpriteBatch::sprite_batch *temp;
-                        temp = sorted_batches[j];
-                        sorted_batches[j] = sorted_batches[j + 1];
-                        sorted_batches[j + 1] = temp;
-                    }
-                }
-            }
+            sort_batches();
         }
 
         /**
@@ -117,16 +109,7 @@ namespace Editor {
             total_batch_count = batch_count + transient_batch_count;
 
             // Sort the list of batches by z-index
-            for (int i = 0; i < total_batch_count - 1; i++) {
-                for (int j = 0; j < total_batch_count - 1 - i; j++) {
-                    if (sorted_batches[j]->z_index > sorted_batches[j + 1]->z_index) {
-                        Editor::SpriteBatch::sprite_batch *temp;
-                        temp = sorted_batches[j];
-                        sorted_batches[j] = sorted_batches[j + 1];
-                        sorted_batches[j + 1] = temp;
-                    }
-                }
-            }
+            sort_batches();
         }
 
         /**
@@ -191,6 +174,22 @@ namespace Editor {
         }
 
         /**
+         * Sort the render batches in order of z-index.
+         */
+        void sort_batches() {
+            for (int i = 0; i < total_batch_count - 1; i++) {
+                for (int j = 0; j < total_batch_count - 1 - i; j++) {
+                    if (sorted_batches[j]->z_index > sorted_batches[j + 1]->z_index) {
+                        Editor::SpriteBatch::sprite_batch *temp;
+                        temp = sorted_batches[j];
+                        sorted_batches[j] = sorted_batches[j + 1];
+                        sorted_batches[j + 1] = temp;
+                    }
+                }
+            }
+        }
+
+        /**
          * Clear the render batches (used when deserializing)
          */
         void clear_render_batches() {
@@ -199,7 +198,18 @@ namespace Editor {
                 delete batches[i].sprite_list;
             }
             batch_count = 0;
-            total_batch_count = batch_count + transient_batch_count;
+            total_batch_count = 0;
+            for (int i = 0; i < transient_batch_count; i++) {
+                sorted_batches[i] = &transient_batches[i];
+                total_batch_count++;
+            }
+            sort_batches();
+        }
+
+        void imgui() {
+            for (int i = 0; i < total_batch_count; i++) {
+                ImGui::Text("Batch %d: Z-index %d, Count %d", i, sorted_batches[i]->z_index, sorted_batches[i]->sprite_count);
+            }
         }
     }
 }

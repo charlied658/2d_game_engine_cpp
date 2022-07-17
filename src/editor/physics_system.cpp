@@ -41,5 +41,10 @@ namespace Editor {
                 physics_manager_count--;
             }
         }
+
+        void get_physics_manager_list(Editor::PhysicsManager::physics_manager **objects, int *object_count) {
+            *objects = physics_manager_list;
+            *object_count = physics_manager_count;
+        }
     }
 }

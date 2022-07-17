@@ -18,5 +18,7 @@ namespace Editor {
 
         void remove_behavior_manager(Editor::BehaviorManager::behavior_manager *bh_manager);
 
+        void get_behavior_manager_list(Editor::BehaviorManager::behavior_manager **objects, int *object_count);
+
     }
 }

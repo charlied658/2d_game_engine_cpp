@@ -39,5 +39,10 @@ namespace Editor {
                 behavior_manager_count--;
             }
         }
+
+        void get_behavior_manager_list(Editor::BehaviorManager::behavior_manager **objects, int *object_count) {
+            *objects = behavior_manager_list;
+            *object_count = behavior_manager_count;
+        }
     }
 }

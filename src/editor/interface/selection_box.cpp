@@ -9,11 +9,12 @@
 #include "editor/render/sprite_renderer.h"
 #include "mouse_events.h"
 #include "editor/sprite_system.h"
+#include "editor/scene.h"
 
 namespace SelectionBox {
 
     static Sprite::sprite sprite_null;
-    static Editor::GameObject::game_object selection_box;
+    static Editor::GameObject::game_object *selection_box;
     static double start_x, start_y;
     static bool multiselect;
 
@@ -22,25 +23,28 @@ namespace SelectionBox {
      */
     void init() {
 
-        Editor::SpriteSystem::init_sprite_manager(&selection_box.spr_manager);
+        Editor::Scene::init_transient_game_object(&selection_box);
+        Editor::GameObject::init_transient(selection_box);
+        Editor::SpriteSystem::init_sprite_manager(&selection_box->spr_manager);
+        Editor::GameObject::init_sprite_manager(selection_box, selection_box->spr_manager);
 
         // Generate null sprite (Renders as a solid color)
         Sprite::get_null_sprite(&sprite_null);
 
         // Generate selection box (Appears when you click and drag to multiselect)
-        Editor::SpriteManager::init(selection_box.spr_manager, glm::vec2 {1.0f, 1.5f}, glm::vec2 {1.0f, 1.0f}, 2, &sprite_null);
-        Editor::SpriteManager::set_color(selection_box.spr_manager, glm::vec4 {1.0f, 1.0f, 0.0f, 0.2f});
-        selection_box.spr_manager->pickable = false;
-        Editor::SpriteManager::set_visible(selection_box.spr_manager, false);
-        Editor::SpriteRenderer::add_sprite(selection_box.spr_manager);
+        Editor::SpriteManager::init(selection_box->spr_manager, glm::vec2 {1.0f, 1.5f}, glm::vec2 {1.0f, 1.0f}, 2, &sprite_null);
+        Editor::SpriteManager::set_color(selection_box->spr_manager, glm::vec4 {1.0f, 1.0f, 0.0f, 0.2f});
+        selection_box->spr_manager->pickable = false;
+        Editor::SpriteManager::set_visible(selection_box->spr_manager, false);
+        Editor::SpriteRenderer::add_transient_sprite(selection_box->spr_manager);
     }
 
     /**
      * Reset selection box when the scene is reloaded.
      */
     void reload() {
-        Editor::SpriteManager::set_visible(selection_box.spr_manager, false);
-        Editor::SpriteRenderer::add_sprite(selection_box.spr_manager);
+        Editor::SpriteManager::set_visible(selection_box->spr_manager, false);
+        Editor::SpriteRenderer::add_sprite(selection_box->spr_manager);
     }
 
     /**
@@ -49,8 +53,8 @@ namespace SelectionBox {
     void start() {
         start_x = Mouse::get_worldX();
         start_y = Mouse::get_worldY();
-        Editor::SpriteManager::set_position(selection_box.spr_manager, glm::vec2{start_x, start_y });
-        Editor::SpriteManager::set_visible(selection_box.spr_manager, true);
+        Editor::SpriteManager::set_position(selection_box->spr_manager, glm::vec2{start_x, start_y });
+        Editor::SpriteManager::set_visible(selection_box->spr_manager, true);
         multiselect = true;
     }
 
@@ -59,19 +63,19 @@ namespace SelectionBox {
      */
     void update() {
         glm::vec2 new_scale{ Mouse::get_worldX() - start_x, Mouse::get_worldY() - start_y };
-        Editor::SpriteManager::set_scale(selection_box.spr_manager, new_scale);
+        Editor::SpriteManager::set_scale(selection_box->spr_manager, new_scale);
     }
 
     /**
      * Hide the selection box.
      */
     void hide() {
-        Editor::SpriteManager::set_visible(selection_box.spr_manager, false);
+        Editor::SpriteManager::set_visible(selection_box->spr_manager, false);
         multiselect = false;
     }
 
     void get_selection_box(Editor::GameObject::game_object **object) {
-        *object = &selection_box;
+        *object = selection_box;
     }
 
     bool is_multiselect() {

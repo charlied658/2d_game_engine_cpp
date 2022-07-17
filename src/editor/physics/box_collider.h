@@ -12,6 +12,11 @@ namespace BoxCollider {
     struct box_collider {
         glm::vec2 position;
         glm::vec2 scale;
+
+        template<class Archive>
+        void serialize(Archive &archive) {
+            archive(position, scale);
+        }
     };
 
 }

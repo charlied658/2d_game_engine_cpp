@@ -46,6 +46,13 @@ namespace Editor {
             bool is_mushroom;
             bool is_fire_flower;
             bool is_pipe;
+
+            template<class Archive>
+            void serialize(Archive &archive) {
+                archive(id, solid_block, breakable_block, item_box, player, goomba, turtle, mushroom, fire_flower, pipe,
+                        is_solid_block, is_breakable_block, is_item_box, is_player, is_goomba, is_turtle, is_mushroom,
+                        is_fire_flower, is_pipe);
+            }
         };
 
         void init(Editor::BehaviorManager::behavior_manager *bh_manager);

@@ -56,11 +56,7 @@ namespace ObjectManager {
     void reload() {
         Highlight::reload();
         Selected::reload();
-        Shadows::reload();
-        Preview::reload();
         Copy::reload();
-        SelectionBox::reload();
-        Holding::reload();
     }
 
     /**
@@ -69,28 +65,30 @@ namespace ObjectManager {
     void update() {
         Editor::Scene::get_game_objects_list(&game_objects, &game_object_count);
 
+        //printf("Update 1\n");
         // Reset z-index of objects
         ObjectManager::reset_z_index();
-
+        //printf("Update 2\n");
         // Update highlighted objects
         Highlight::update();
-
+        //printf("Update 3\n");
         // Get updated object information
         Drag::start_frame();
         Selected::start_frame();
         Copy::start_frame();
-
+        //printf("Update 4\n");
         // Update objects
         Mouse::update();
+        //printf("Mouse update finished\n");
         Key::update();
         Holding::update();
         Selected::update_active_game_object();
-
+        //printf("Update 5\n");
         // Render visual elements
         Shadows::render();
         Preview::update();
         GridLines::update();
-
+        //printf("Update 6\n");
         // Update Z-index
         ObjectManager::update_z_index();
     }

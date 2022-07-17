@@ -18,10 +18,11 @@ namespace Editor {
 
         void re_add_sprite(Editor::SpriteManager::sprite_manager *obj);
 
+        void add_transient_sprite(Editor::SpriteManager::sprite_manager *obj);
+
         void highlight_sprite(Editor::GameObject::game_object **highlighted_obj);
 
-        void highlight_sprites(Editor::GameObject::game_object **highlighted_objects, int *highlighted_count,
-                               Editor::GameObject::game_object *selection_box);
+        void highlight_sprites(Editor::GameObject::game_object **highlighted_objects, int *highlighted_count, Editor::GameObject::game_object *selection_box);
 
         void clear_render_batches();
 

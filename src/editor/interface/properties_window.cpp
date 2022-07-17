@@ -22,6 +22,7 @@ namespace PropertiesWindow {
             ImGui::Begin("Properties");
 
             ImGui::Text("Game Object ID: %d", obj->id);
+            ImGui::Text("Name: %s", obj->name.c_str());
 
             if (obj->has_sprite_manager) {
                 if (ImGui::CollapsingHeader("Sprite Manager")) {

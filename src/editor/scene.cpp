@@ -31,6 +31,9 @@ namespace Editor {
         static int game_object_count;
         static std::string level_filepath;
 
+        static Editor::GameObject::game_object *transient_game_objects;
+        static int transient_game_object_count;
+
         static Editor::GameObject::game_object *active_game_object;
 
         /**
@@ -43,6 +46,8 @@ namespace Editor {
             // Initialize game object array
             game_objects = new Editor::GameObject::game_object[10000];
             game_object_count = 0;
+            transient_game_objects = new Editor::GameObject::game_object[10000];
+            transient_game_object_count = 0;
 
             // Initialize systems
             SpriteSystem::init();
@@ -110,10 +115,11 @@ namespace Editor {
         }
 
         /**
-         * Add a game object to the scene.
-         * @param obj Game object
+         * Return memory location of next available game object.
+         * @param obj Pointer to available memory
          */
         void init_game_object(Editor::GameObject::game_object **obj) {
+            //printf("Added game object %d\n", game_object_count);
             if (game_object_count < 10000) {
                 *obj = &game_objects[game_object_count];
                 game_object_count++;
@@ -132,6 +138,9 @@ namespace Editor {
                 }
                 if (dead_count > 0) {
                     game_objects[i] = game_objects[i + dead_count];
+                    game_objects[i].spr_manager->game_object = &game_objects[i];
+                    game_objects[i].py_manager->game_object = &game_objects[i];
+                    game_objects[i].bh_manager->game_object = &game_objects[i];
                 }
                 if (game_objects[i].dead) {
                     dead = true;
@@ -143,6 +152,14 @@ namespace Editor {
                 }
             }
             game_object_count -= dead_count;
+        }
+
+        void init_transient_game_object(Editor::GameObject::game_object **obj) {
+            //printf("Added transient game object %d\n", transient_game_object_count);
+            if (transient_game_object_count < 10000) {
+                *obj = &transient_game_objects[transient_game_object_count];
+                transient_game_object_count++;
+            }
         }
 
         /**
@@ -178,6 +195,11 @@ namespace Editor {
 
         void get_active_game_object(Editor::GameObject::game_object ***object) {
             *object = &active_game_object;
+        }
+
+        void get_transient_game_objects_list(Editor::GameObject::game_object **objects, int *object_count) {
+            *objects = transient_game_objects;
+            *object_count = transient_game_object_count;
         }
 
         void clear_game_objects() {

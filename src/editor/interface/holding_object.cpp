@@ -19,7 +19,7 @@
 
 namespace Holding {
 
-    static Editor::GameObject::game_object holding_object;
+    static Editor::GameObject::game_object *holding_object;
     static bool generated_holding;
     static bool holding;
 
@@ -35,38 +35,35 @@ namespace Holding {
     }
 
     /**
-     * Reload the holding object.
-     */ 
-    void reload() {
-        generated_holding = false;
-    }
-
-    /**
      * Generate a holding object.
      * @param spr Sprite reference
      */
     void generate_holding_object(Sprite::sprite *spr, const std::string& name) {
+        //printf("Name: %s\n",name.c_str());
         Selected::reset_selected();
         Holding::set_holding(true);
         // Get the holding object
         if (generated_holding) {
-            holding_object.name = name;
-            Editor::SpriteManager::set_visible(holding_object.spr_manager, true);
-            Editor::SpriteManager::set_sprite(holding_object.spr_manager, spr);
+            holding_object->name = name;
+            Editor::SpriteManager::set_visible(holding_object->spr_manager, true);
+            Editor::SpriteManager::set_sprite(holding_object->spr_manager, spr);
             return;
         }
-        Editor::GameObject::init(&holding_object);
-        Editor::SpriteSystem::init_sprite_manager(&holding_object.spr_manager);
-        Editor::GameObject::init_sprite_manager(&holding_object, holding_object.spr_manager);
-        Editor::SpriteManager::init(holding_object.spr_manager, glm::vec2{}, glm::vec2{0.25f, 0.25f}, 10, spr);
-        holding_object.spr_manager->pickable = false;
-        Editor::SpriteRenderer::add_sprite(holding_object.spr_manager);
-        Editor::PhysicsSystem::init_physics_manager(&holding_object.py_manager);
-        Editor::BehaviorSystem::init_behavior_manager(&holding_object.bh_manager);
-        Editor::GameObject::init_physics_manager(&holding_object, holding_object.py_manager);
-        Editor::GameObject::init_behavior_manager(&holding_object, holding_object.bh_manager);
+        //printf("Generating holding...\n");
+        Editor::Scene::init_transient_game_object(&holding_object);
+        Editor::GameObject::init_transient(holding_object);
+        holding_object->name = name;
+        Editor::SpriteSystem::init_sprite_manager(&holding_object->spr_manager);
+        Editor::GameObject::init_sprite_manager(holding_object, holding_object->spr_manager);
+        Editor::SpriteManager::init(holding_object->spr_manager, glm::vec2{}, glm::vec2{0.25f, 0.25f}, 10, spr);
+        holding_object->spr_manager->pickable = false;
+        Editor::SpriteRenderer::add_transient_sprite(holding_object->spr_manager);
+        Editor::PhysicsSystem::init_physics_manager(&holding_object->py_manager);
+        Editor::BehaviorSystem::init_behavior_manager(&holding_object->bh_manager);
+        Editor::GameObject::init_physics_manager(holding_object, holding_object->py_manager);
+        Editor::GameObject::init_behavior_manager(holding_object, holding_object->bh_manager);
         generated_holding = true;
-        printf("Finished generating holding\n");
+        //printf("Finished generating holding\n");
     }
 
     /**
@@ -75,9 +72,9 @@ namespace Holding {
     void update() {
         //printf("Holding object update\n");
         if (Holding::is_holding()) {
-            Editor::SpriteManager::set_position(holding_object.spr_manager, glm::vec2{
-                Mouse::get_worldX() - holding_object.spr_manager->scale.x / 2,
-                Mouse::get_worldY() - holding_object.spr_manager->scale.y / 2});
+            Editor::SpriteManager::set_position(holding_object->spr_manager, glm::vec2{
+                Mouse::get_worldX() - holding_object->spr_manager->scale.x / 2,
+                Mouse::get_worldY() - holding_object->spr_manager->scale.y / 2});
         }
     }
 
@@ -88,8 +85,8 @@ namespace Holding {
     void place_holding_object(bool destroy) {
 
         // Calculate grid coordinates.
-        glm::vec2 centered_position = {holding_object.spr_manager->position.x + 0.25f / 2,
-                                       holding_object.spr_manager->position.y + 0.25f / 2};
+        glm::vec2 centered_position = {holding_object->spr_manager->position.x + 0.25f / 2,
+                                       holding_object->spr_manager->position.y + 0.25f / 2};
         glm::vec2 position = {centered_position.x - Math::f_mod(centered_position.x, 0.25f),
                               centered_position.y - Math::f_mod(centered_position.y, 0.25f)};
         int grid_x = (int) (position.x / 0.25f);
@@ -103,11 +100,12 @@ namespace Holding {
             //printf("Placed block %d,%d\n", grid_x, grid_y);
             ChunkManager::set_solid_block(grid_x, grid_y, true);
         }
-
+        //printf("Generating object\n");
         // Generate a new game object to place
         Editor::GameObject::game_object *generated;
         Editor::Scene::init_game_object(&generated);
         Holding::generate_game_object(generated);
+        //printf("Finished generating object\n");
 
         generated->spr_manager->z_index = 0;
         generated->spr_manager->pickable = true;
@@ -118,8 +116,10 @@ namespace Holding {
         Editor::SpriteManager::set_position(generated->spr_manager, position);
         generated->spr_manager->last_position = position;
 
+        //printf("Adding to sprite renderer\n");
         // Add the new object to the sprite renderer
         Editor::SpriteRenderer::add_sprite(generated->spr_manager);
+        //printf("Added successfully\n");
 
         // Destroy the holding object if the function call requested it
         if (destroy) {
@@ -128,6 +128,7 @@ namespace Holding {
             Selected::select_holding_object(&game_object_list[game_object_count - 1]);
             Holding::destroy_holding_object();
         }
+        //printf("Destroyed holding object\n");
     }
 
     /**
@@ -136,16 +137,17 @@ namespace Holding {
      */
     void generate_game_object(Editor::GameObject::game_object *generated) {
         Editor::GameObject::init(generated);
+        generated->name = holding_object->name;
         Editor::SpriteSystem::init_sprite_manager(&generated->spr_manager);
         Editor::PhysicsSystem::init_physics_manager(&generated->py_manager);
         Editor::BehaviorSystem::init_behavior_manager(&generated->bh_manager);
 
         // Copy the information from the holding object to the generated object
-        *generated->spr_manager = *holding_object.spr_manager;
+        *generated->spr_manager = *holding_object->spr_manager;
         Editor::GameObject::init_sprite_manager(generated, generated->spr_manager);
-        *generated->py_manager = *holding_object.py_manager;
+        *generated->py_manager = *holding_object->py_manager;
         Editor::GameObject::init_physics_manager(generated, generated->py_manager);
-        *generated->bh_manager = *holding_object.bh_manager;
+        *generated->bh_manager = *holding_object->bh_manager;
         Editor::GameObject::init_behavior_manager(generated, generated->bh_manager);
     }
 
@@ -153,13 +155,13 @@ namespace Holding {
      * Destroy the holding object.
      */
     void destroy_holding_object() {
-        Editor::SpriteManager::set_visible(holding_object.spr_manager, false);
+        Editor::SpriteManager::set_visible(holding_object->spr_manager, false);
         Holding::set_holding(false);
         ObjectPicker::reset();
     }
 
     void get_holding_object(Editor::GameObject::game_object **obj) {
-        *obj = &holding_object;
+        *obj = holding_object;
     }
 
     /**

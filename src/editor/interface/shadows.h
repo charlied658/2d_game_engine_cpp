@@ -11,8 +11,6 @@ namespace Shadows {
 
     void init();
 
-    void reload();
-
     void render();
 
     void render_holding();

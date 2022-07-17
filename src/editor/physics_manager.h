@@ -26,6 +26,11 @@ namespace Editor {
             CircleCollider::circle_collider circle_collider;
             bool has_box_collider;
             bool has_circle_collider;
+
+            template<class Archive>
+            void serialize(Archive &archive) {
+                archive(id, position, scale, velocity, acceleration, box_collider, circle_collider, has_box_collider, has_circle_collider);
+            }
         };
 
         void init(Editor::PhysicsManager::physics_manager *py_manager);

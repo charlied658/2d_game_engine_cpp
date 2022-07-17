@@ -47,6 +47,8 @@ namespace Editor {
 
         void init(Editor::GameObject::game_object *obj);
 
+        void init_transient(Editor::GameObject::game_object *obj);
+
         void init_sprite_manager(Editor::GameObject::game_object *obj, Editor::SpriteManager::sprite_manager *spr_manager);
 
         void init_physics_manager(Editor::GameObject::game_object *obj, Editor::PhysicsManager::physics_manager *py_manager);

@@ -5,10 +5,17 @@
 
 #pragma once
 
+#include <string>
+
 namespace ItemBox {
 
     struct item_box {
+        std::string type;
 
+        template<class Archive>
+        void serialize(Archive &archive) {
+            archive(type);
+        }
     };
 
 }

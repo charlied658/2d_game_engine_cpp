@@ -14,8 +14,6 @@ namespace Preview {
 
     void init();
 
-    void reload();
-
     void update();
 
     void render();

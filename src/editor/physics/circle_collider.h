@@ -14,6 +14,11 @@ namespace CircleCollider {
         glm::vec2 position;
         float radius;
 
+        template<class Archive>
+        void serialize(Archive &archive) {
+            archive(position, radius);
+        }
+
     };
 
 }

@@ -12,8 +12,6 @@ namespace Holding {
 
     void init();
 
-    void reload();
-
     void generate_holding_object(Sprite::sprite *spr, const std::string& name);
 
     void update();

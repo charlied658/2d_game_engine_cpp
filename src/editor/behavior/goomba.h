@@ -5,10 +5,17 @@
 
 #pragma once
 
+#include <string>
+
 namespace Goomba {
 
     struct goomba {
+        std::string type;
 
+        template<class Archive>
+        void serialize(Archive &archive) {
+            archive(type);
+        }
     };
 
 }

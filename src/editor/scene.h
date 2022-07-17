@@ -21,9 +21,13 @@ namespace Editor {
 
         void remove_game_objects();
 
+        void init_transient_game_object(Editor::GameObject::game_object **obj);
+
         void get_game_objects_list(Editor::GameObject::game_object **objects, int *object_count);
 
         void get_active_game_object(Editor::GameObject::game_object ***object);
+
+        void get_transient_game_objects_list(Editor::GameObject::game_object **objects, int *object_count);
 
         void save_level();
 

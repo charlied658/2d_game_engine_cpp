@@ -9,6 +9,7 @@ namespace Editor {
     namespace GameObject {
 
         static int id_counter = 0;
+        static int transient_id_counter = 0;
 
         void init(Editor::GameObject::game_object *obj) {
             obj->id = id_counter;
@@ -17,6 +18,16 @@ namespace Editor {
             obj->has_physics_manager = false;
             obj->has_behavior_manager = false;
             obj->transient = false;
+            obj->dead = false;
+        }
+
+        void init_transient(Editor::GameObject::game_object *obj) {
+            obj->id = transient_id_counter;
+            transient_id_counter++;
+            obj->has_sprite_manager = false;
+            obj->has_physics_manager = false;
+            obj->has_behavior_manager = false;
+            obj->transient = true;
             obj->dead = false;
         }
 

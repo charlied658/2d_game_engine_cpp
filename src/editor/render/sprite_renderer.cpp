@@ -18,13 +18,17 @@ namespace Editor {
         static int batch_count = 0;
         static const int max_batch_size = 1000;
 
+        static Editor::SpriteBatch::sprite_batch transient_batches[100];
+        static int transient_batch_count = 0;
+        static int total_batch_count = 0;
+
         /**
          * Render sprites to the screen.
          */
         void render() {
             // Render each batch one at a time, in order of z-index
             //printf("Starting rendering\n");
-            for (int i = 0; i < batch_count; i++) {
+            for (int i = 0; i < total_batch_count; i++) {
                 //printf("Rendering batch %d\n",sorted_batches[i]->z_index);
                 Editor::SpriteBatch::render(sorted_batches[i]);
             }
@@ -35,7 +39,7 @@ namespace Editor {
          * @param obj Sprite
          */
         void add_sprite(Editor::SpriteManager::sprite_manager *obj) {
-            //printf("Added sprite %s with z-index %d\n", obj->name.c_str(), obj->z_index);
+            //printf("Added sprite %s with z-index %d\n", obj->game_object->name.c_str(), obj->z_index);
             for (int i = 0; i < batch_count; i++) {
                 // If there is enough space to add the sprite and its texture, and the z-index matches, add it to the first available batch
                 if (batches[i].has_room &&
@@ -49,13 +53,14 @@ namespace Editor {
             Editor::SpriteBatch::sprite_batch batch{};
             Editor::SpriteBatch::init(&batch, max_batch_size, obj->z_index);
             batches[batch_count] = batch;
-            sorted_batches[batch_count] = &batches[batch_count];
+            sorted_batches[total_batch_count] = &batches[batch_count];
             Editor::SpriteBatch::add_sprite(&batches[batch_count], obj);
             batch_count++;
+            total_batch_count = batch_count + transient_batch_count;
 
             // Sort the list of batches by z-index
-            for (int i = 0; i < batch_count - 1; i++) {
-                for (int j = 0; j < batch_count - 1 - i; j++) {
+            for (int i = 0; i < total_batch_count - 1; i++) {
+                for (int j = 0; j < total_batch_count - 1 - i; j++) {
                     if (sorted_batches[j]->z_index > sorted_batches[j + 1]->z_index) {
                         Editor::SpriteBatch::sprite_batch *temp;
                         temp = sorted_batches[j];
@@ -90,6 +95,40 @@ namespace Editor {
             add_sprite(obj);
         }
 
+        void add_transient_sprite(Editor::SpriteManager::sprite_manager *obj) {
+            for (int i = 0; i < transient_batch_count; i++) {
+                // If there is enough space to add the sprite and its texture, and the z-index matches, add it to the first available batch
+                if (transient_batches[i].has_room &&
+                    (Editor::SpriteBatch::contains_texture(&transient_batches[i], obj->sprite.texture_ID) || obj->sprite.is_null) &&
+                    obj->z_index == transient_batches[i].z_index) {
+                    //printf("Added transient sprite %s with z-index %d\n", obj->game_object->name.c_str(), obj->z_index);
+                    Editor::SpriteBatch::add_sprite(&transient_batches[i], obj);
+                    return;
+                }
+            }
+            //printf("Created new transient batch with z-index %d\n", obj->z_index);
+            // If no batch has space for the sprite or if there are no available texture slots, or if there is a new z-index, create a new batch
+            Editor::SpriteBatch::sprite_batch transient_batch{};
+            Editor::SpriteBatch::init(&transient_batch, max_batch_size, obj->z_index);
+            transient_batches[transient_batch_count] = transient_batch;
+            sorted_batches[total_batch_count] = &transient_batches[transient_batch_count];
+            Editor::SpriteBatch::add_sprite(&transient_batches[transient_batch_count], obj);
+            transient_batch_count++;
+            total_batch_count = batch_count + transient_batch_count;
+
+            // Sort the list of batches by z-index
+            for (int i = 0; i < total_batch_count - 1; i++) {
+                for (int j = 0; j < total_batch_count - 1 - i; j++) {
+                    if (sorted_batches[j]->z_index > sorted_batches[j + 1]->z_index) {
+                        Editor::SpriteBatch::sprite_batch *temp;
+                        temp = sorted_batches[j];
+                        sorted_batches[j] = sorted_batches[j + 1];
+                        sorted_batches[j + 1] = temp;
+                    }
+                }
+            }
+        }
+
         /**
          * Highlight the sprite under the mouse cursor.
          */
@@ -98,7 +137,7 @@ namespace Editor {
             double yPos = Mouse::get_worldY();
 
             // Loop through each batch, starting at the highest z-index
-            for (int i = batch_count - 1; i >= 0; i--) {
+            for (int i = total_batch_count - 1; i >= 0; i--) {
                 // Loop through the sprites, starting with the most recently rendered
                 for (int j = sorted_batches[i]->sprite_count - 1; j >= 0; j--) {
                     // Check if the mouse position is within the object's bounding box
@@ -129,7 +168,7 @@ namespace Editor {
             glm::vec2 selection_pos = selection_box->spr_manager->position;
             glm::vec2 selection_scale = selection_box->spr_manager->scale;
             // Loop through each batch
-            for (int i = batch_count - 1; i >= 0; i--) {
+            for (int i = total_batch_count - 1; i >= 0; i--) {
                 // Loop through the sprites
                 for (int j = sorted_batches[i]->sprite_count - 1; j >= 0; j--) {
                     // Check if the sprite's bounding box intersects with the selection box
@@ -160,6 +199,7 @@ namespace Editor {
                 delete batches[i].sprite_list;
             }
             batch_count = 0;
+            total_batch_count = batch_count + transient_batch_count;
         }
     }
 }

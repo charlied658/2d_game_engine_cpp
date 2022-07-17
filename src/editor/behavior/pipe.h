@@ -5,10 +5,17 @@
 
 #pragma once
 
+#include <string>
+
 namespace Pipe {
 
     struct pipe {
+        std::string type;
 
+        template<class Archive>
+        void serialize(Archive &archive) {
+            archive(type);
+        }
     };
 
 }

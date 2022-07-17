@@ -12,6 +12,8 @@
 #include "selected_objects.h"
 #include "object_manager.h"
 #include "editor/sprite_system.h"
+#include "editor/physics_system.h"
+#include "editor/behavior_system.h"
 #include "drag_objects.h"
 
 namespace Copy {
@@ -75,12 +77,23 @@ namespace Copy {
         for (int i = 0; i < copied_objects_count; i++) {
             Editor::GameObject::game_object *copy;
             Editor::Scene::init_game_object(&copy);
+            Editor::GameObject::init(copy);
+            copy->name = copied_objects[i]->name;
             Editor::SpriteSystem::init_sprite_manager(&copy->spr_manager);
             *copy->spr_manager = *copied_objects[i]->spr_manager;
-            copy->spr_manager->game_object = copy;
+            Editor::GameObject::init_sprite_manager(copy, copy->spr_manager);
             Editor::SpriteManager::set_position(copy->spr_manager, copy->spr_manager->position + copy_offset);
             Editor::Scene::get_game_objects_list(&game_objects, &game_object_count);
             Editor::SpriteRenderer::add_sprite(copy->spr_manager);
+
+            Editor::PhysicsSystem::init_physics_manager(&copy->py_manager);
+            *copy->py_manager = *copied_objects[i]->py_manager;
+            Editor::GameObject::init_physics_manager(copy, copy->py_manager);
+
+            Editor::BehaviorSystem::init_behavior_manager(&copy->bh_manager);
+            *copy->bh_manager = *copied_objects[i]->bh_manager;
+            Editor::GameObject::init_behavior_manager(copy, copy->bh_manager);
+
             // Set the pasted objects to be selected
             Editor::GameObject::game_object *obj = &game_objects[game_object_count - 1];
             Editor::SpriteManager::set_selected(obj->spr_manager, true);
@@ -96,6 +109,7 @@ namespace Copy {
     void delete_objects() {
         for (int i = 0; i < selected_object_count; i++) {
             selected_objects[i]->dead = true;
+            Editor::SpriteRenderer::remove_sprite(selected_objects[i]->spr_manager);
             if (!Drag::is_invalid_placement()) {
                 ChunkManager::set_solid_block(selected_objects[i]->spr_manager->grid_x,
                                               selected_objects[i]->spr_manager->grid_y, false);
@@ -105,11 +119,7 @@ namespace Copy {
         Selected::set_selected_objects_count(0);
         Editor::Scene::get_game_objects_list(&game_objects, &game_object_count);
 
-        // Rebuffer every update batch (since pointers to game objects are now invalid)
-        Editor::SpriteRenderer::clear_render_batches();
-        for (int i = 0; i < game_object_count; i++) {
-            Editor::SpriteRenderer::add_sprite(game_objects[i].spr_manager);
-        }
+        // Reload game data
         ObjectManager::reload();
     }
 

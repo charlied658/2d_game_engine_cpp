@@ -5,10 +5,17 @@
 
 #pragma once
 
+#include <string>
+
 namespace SolidBlock {
 
     struct solid_block {
+        std::string type;
 
+        template<class Archive>
+        void serialize(Archive &archive) {
+            archive(type);
+        }
     };
 
 };

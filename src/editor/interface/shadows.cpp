@@ -9,12 +9,13 @@
 #include "selected_objects.h"
 #include "holding_object.h"
 #include "editor/sprite_system.h"
+#include "editor/scene.h"
 
 namespace Shadows {
 
-    static Editor::GameObject::game_object *shadow_objects;
+    static Editor::GameObject::game_object **shadow_objects;
     static int shadow_object_count;
-    static Editor::GameObject::game_object holding_obj_shadow;
+    static Editor::GameObject::game_object *holding_obj_shadow;
 
     static Editor::GameObject::game_object **selected_objects;
     static int selected_object_count;
@@ -25,15 +26,7 @@ namespace Shadows {
      * Initialize shadow objects.
      */
     void init() {
-        shadow_objects = new Editor::GameObject::game_object[1000];
-        shadow_object_count = 0;
-        holding_shadow_added = false;
-    }
-
-    /**
-     * Reset variables when the scene is reloaded.
-     */
-    void reload() {
+        shadow_objects = new Editor::GameObject::game_object *[1000];
         shadow_object_count = 0;
         holding_shadow_added = false;
     }
@@ -48,20 +41,23 @@ namespace Shadows {
         // Render shadows for each selected game object
         for (int i = 0; i < selected_object_count; i++) {
             if (i >= shadow_object_count && shadow_object_count < 1000) {
-                Editor::SpriteSystem::init_sprite_manager(&shadow_objects[i].spr_manager);
+                Editor::Scene::init_transient_game_object(&shadow_objects[i]);
+                Editor::GameObject::init_transient(shadow_objects[i]);
+                Editor::SpriteSystem::init_sprite_manager(&shadow_objects[i]->spr_manager);
+                Editor::GameObject::init_sprite_manager(shadow_objects[i], shadow_objects[i]->spr_manager);
             }
             glm::vec2 position = selected_objects[i]->spr_manager->position + glm::vec2 {0.02f, -0.02f};
-            generate_shadow(shadow_objects[i].spr_manager, position, selected_objects[i]->spr_manager->scale, &selected_objects[i]->spr_manager->sprite);
+            generate_shadow(shadow_objects[i]->spr_manager, position, selected_objects[i]->spr_manager->scale, &selected_objects[i]->spr_manager->sprite);
             // Add new shadows if necessary
             if (i >= shadow_object_count && shadow_object_count < 1000) {
-                Editor::SpriteRenderer::add_sprite(shadow_objects[i].spr_manager);
+                Editor::SpriteRenderer::add_transient_sprite(shadow_objects[i]->spr_manager);
                 shadow_object_count++;
             }
         }
         // Set the remaining shadows to be invisible
         if (shadow_object_count > selected_object_count) {
             for (int i = selected_object_count; i < shadow_object_count; i++) {
-                Editor::SpriteManager::set_visible(shadow_objects[i].spr_manager, false);
+                Editor::SpriteManager::set_visible(shadow_objects[i]->spr_manager, false);
             }
         }
 
@@ -74,18 +70,23 @@ namespace Shadows {
     void render_holding() {
         // Put shadow under holding object
         Holding::get_holding_object(&holding_object);
-        if (!holding_shadow_added) {
-            Editor::SpriteSystem::init_sprite_manager(&holding_obj_shadow.spr_manager);
-        }
         if (holding_object && Holding::is_holding()) {
+            if (!holding_shadow_added) {
+                Editor::Scene::init_transient_game_object(&holding_obj_shadow);
+                Editor::GameObject::init_transient(holding_obj_shadow);
+                Editor::SpriteSystem::init_sprite_manager(&holding_obj_shadow->spr_manager);
+                Editor::GameObject::init_sprite_manager(holding_obj_shadow, holding_obj_shadow->spr_manager);
+            }
             glm::vec2 position = holding_object->spr_manager->position + glm::vec2 {0.02f, -0.02f};
-            generate_shadow(holding_obj_shadow.spr_manager, position, holding_object->spr_manager->scale, &holding_object->spr_manager->sprite);
+            generate_shadow(holding_obj_shadow->spr_manager, position, holding_object->spr_manager->scale, &holding_object->spr_manager->sprite);
             if (!holding_shadow_added) {
                 holding_shadow_added = true;
-                Editor::SpriteRenderer::add_sprite(holding_obj_shadow.spr_manager);
+                Editor::SpriteRenderer::add_transient_sprite(holding_obj_shadow->spr_manager);
             }
         } else {
-            Editor::SpriteManager::set_visible(holding_obj_shadow.spr_manager, false);
+            if (holding_shadow_added) {
+                Editor::SpriteManager::set_visible(holding_obj_shadow->spr_manager, false);
+            }
         }
     }
 

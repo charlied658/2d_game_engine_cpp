@@ -21,4 +21,8 @@ namespace Window {
 
     float get_aspect_ratio();
 
+    void change_scene(bool state);
+
+    void imgui();
+
 }

@@ -16,6 +16,8 @@
 #include "shader.h"
 #include "editor/render/sprite_renderer.h"
 #include "editor/render/line_renderer.h"
+#include "game/scene.h"
+
 #include <cstdio>
 
 static void error_callback(int error, const char* description) {
@@ -31,6 +33,7 @@ namespace Window {
     static int width, height;
     static float aspect_ratio;
     static double fps;
+    static bool editor_scene;
 
     static unsigned int sprite_shader;
     static std::string sprite_vertex_filepath;
@@ -114,6 +117,8 @@ namespace Window {
         Camera::init();
         ImGuiLayer::init(window);
 
+        editor_scene = true;
+
         return 0;
     }
 
@@ -123,9 +128,6 @@ namespace Window {
     void loop() {
         double startTime = glfwGetTime();
         double currentTime, dt;
-
-        // Set the clear color
-        glClearColor(0.9f,0.9f,0.9f,1.0f);
 
         // Main loop
         while(!glfwWindowShouldClose(window)) {
@@ -138,22 +140,36 @@ namespace Window {
             // Update the FPS (Frames per second)
             fps = 1.0f/dt;
 
-            // Update the scene
-            Editor::Scene::update(dt);
+            if (editor_scene) {
+                // Update the scene
+                Editor::Scene::update(dt);
 
-            // Clear the screen
-            glClear(GL_COLOR_BUFFER_BIT);
+                // Clear the screen
+                glClearColor(0.9f,0.9f,0.9f,1.0f);
+                glClear(GL_COLOR_BUFFER_BIT);
 
-            // Render lines
-            Shader::use_program(line_shader);
-            Editor::LineRenderer::render();
+                // Render lines
+                Shader::use_program(line_shader);
+                Editor::LineRenderer::render();
 
-            // Draw sprites to the screen
-            Shader::use_program(sprite_shader);
-            Editor::SpriteRenderer::render();
+                // Draw sprites to the screen
+                Shader::use_program(sprite_shader);
+                Editor::SpriteRenderer::render();
+            } else {
+                Game::Scene::update(dt);
+
+                // Clear the screen
+                glClearColor(0.3f,0.6f,0.9f,1.0f);
+                glClear(GL_COLOR_BUFFER_BIT);
+
+                // Draw sprites to the screen
+                Shader::use_program(sprite_shader);
+                Editor::SpriteRenderer::render();
+            }
 
             // Render ImGui elements
             ImGuiLayer::render();
+
 
             // Swap buffers and poll events
             glfwSwapBuffers(window);
@@ -183,5 +199,17 @@ namespace Window {
 
     float get_aspect_ratio() {
         return aspect_ratio;
+    }
+
+    void change_scene(bool state) {
+        editor_scene = state;
+    }
+
+    void imgui() {
+        if (editor_scene) {
+            Editor::Scene::imgui();
+        } else {
+            Game::Scene::imgui();
+        }
     }
 }

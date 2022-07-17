@@ -82,6 +82,11 @@ namespace MainMenuBar {
                 }
                 ImGui::EndMenu();
             }
+            // Start game
+            if (ImGui::BeginMenu("Play")) {
+                Window::change_scene(false);
+                ImGui::EndMenu();
+            }
             ImGui::EndMainMenuBar();
         }
     }

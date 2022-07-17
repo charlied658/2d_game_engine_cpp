@@ -7,6 +7,7 @@
 
 #include "editor/scene.h"
 #include "editor/interface/main_menu_bar.h"
+#include "core/window.h"
 
 namespace ImGuiLayer {
 
@@ -36,7 +37,7 @@ namespace ImGuiLayer {
         if (MainMenuBar::show_imgui_demo_window()) {
             ImGui::ShowDemoWindow();
         }
-        Editor::Scene::imgui();
+        Window::imgui();
 
         // Render data
         ImGui::Render();

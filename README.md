@@ -12,6 +12,13 @@ Tools this project is built on:
 - [X] [Dear ImGui](https://github.com/ocornut/imgui) - User Interface
 - [ ] [Box2D](https://box2d.org/) - Physics
 
+## Features
+- Efficient OpenGL batch rendering
+- Fully-fledged level editor
+- Level serialization
+- [Entity Component System](https://en.wikipedia.org/wiki/Entity_component_system) architecture
+- 2D physics integration (*in progress*)
+
 ## Running
 After cloning this repository, navigate to `src/util/properties.h.example`.
 Replace the `PROJECT_PATH` identifier with the absolute path of this project on your machine,

@@ -197,6 +197,8 @@ namespace Editor {
             PhysicsSystem::reload();
             BehaviorSystem::reload();
 
+            GameObject::set_id(0);
+
             printf("Created new level\n");
         }
 

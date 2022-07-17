@@ -7,9 +7,8 @@
 
 #include "game/render/sprite_renderer.h"
 #include "sprite_manager.h"
-#include "core/camera.h"
-#include "core/mouse_listener.h"
 #include "editor/serialization/serializer.h"
+#include "game/interface/main_menu_bar.h"
 
 namespace Game {
     namespace Scene {
@@ -33,10 +32,10 @@ namespace Game {
          */
         void update(double dt) {
             // Camera controls
-            Camera::update(dt);
+            //Camera::update(dt);
 
             // Update mouse position
-            Mouse::calculate_world_coords();
+            //Mouse::calculate_world_coords();
         }
 
         /**
@@ -91,6 +90,10 @@ namespace Game {
          */
         void clear_game_objects() {
             game_object_count = 0;
+        }
+
+        void imgui() {
+            Game::MainMenuBar::imgui();
         }
     }
 }

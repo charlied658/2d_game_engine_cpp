@@ -22,5 +22,7 @@ namespace Game {
 
         void clear_game_objects();
 
+        void imgui();
+
     }
 }

@@ -13,10 +13,6 @@
 
 #include "core/sprite.h"
 
-namespace glm {
-    template<class Archive> void serialize(Archive& archive, glm::vec4& v) { archive(v.x, v.y, v.z, v.w); }
-}
-
 namespace Game {
     namespace SpriteManager {
         struct sprite_manager {

@@ -2,7 +2,7 @@
 Once you have the project compiling and running, this document
 explains how to navigate the game engine interface.
 
-<img width="1440" alt="gameEngine8" src="https://user-images.githubusercontent.com/80932655/178528574-6adf2057-21ba-4308-8437-802547aa21b1.png">
+<img width="1440" alt="gameEngine 9 5" src="https://user-images.githubusercontent.com/80932655/180059736-60cfca5b-a738-4bdd-b869-17895e515a59.png">
 
 ## First Time Startup
 Upon starting the engine for the first time you may need to resize

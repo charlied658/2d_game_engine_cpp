@@ -5,51 +5,124 @@
 
 #include "object_picker.h"
 
+#include <utility>
+
 #include "imgui/imgui.h"
 #include "core/spritesheet.h"
 #include "holding_object.h"
 
 namespace ObjectPicker {
 
-    // Blocks
-    static Spritesheet::spritesheet spritesheet1;
-    static Sprite::sprite *sprite_list1;
-    static int selected_obj1;
+    // Spritesheets
+    static Spritesheet::spritesheet decorations_and_blocks;
+    static Spritesheet::spritesheet icons;
+    static Spritesheet::spritesheet items;
+
+    static Spritesheet::spritesheet *current_spritesheet;
+    static Sprite::sprite *current_list;
+    static int *current_count;
+
+    // Solid blocks
+    static Sprite::sprite *solid_blocks;
+    static int solid_block_count;
+    static int selected_solid_block;
 
     // Objects
-    static Spritesheet::spritesheet spritesheet2;
-    static Sprite::sprite *sprite_list2;
-    static int selected_obj2;
+    static Sprite::sprite *objects;
+    static int object_count;
+    static int selected_object;
 
-    // Items
-    static Spritesheet::spritesheet spritesheet3;
-    static Sprite::sprite *sprite_list3;
-    static int selected_obj3;
+    // Decorations
+    static Sprite::sprite *decorations;
+    static int decoration_count;
+    static int selected_decoration;
+
+    // Misc
+    static Sprite::sprite *misc_objects;
+    static int misc_objects_count;
+    static int selected_misc_object;
 
 
     /**
      * Initialize sprites to update as buttons.
      */
     void init() {
-        // Blocks
-        Spritesheet::init(&spritesheet1, 7,12,"assets/images/spritesheets/decorationsAndBlocks.png");
-        sprite_list1 = new Sprite::sprite[81];
-        for (int i = 0; i < 81; i++) {
-            sprite_list1[i] = Spritesheet::get_sprite(&spritesheet1, i);
-        }
+        // Initialize spritesheets
+        Spritesheet::init(&decorations_and_blocks, 7, 12, "assets/images/spritesheets/decorationsAndBlocks.png");
+        Spritesheet::init(&icons, 7, 3, "assets/images/spritesheets/icons.png");
+        Spritesheet::init(&items, 7, 5, "assets/images/items.png");
+
+        solid_block_count = 0;
+        object_count = 0;
+        decoration_count = 0;
+        misc_objects_count = 0;
+
+        // Solid Blocks
+        solid_blocks = new Sprite::sprite[50];
+        set_current_list(solid_blocks, &solid_block_count);
+        set_current_spritesheet(&decorations_and_blocks);
+        add_sprite(0);
+        add_sprite(1);
+        add_sprite(7);
+        add_sprite(8);
+        add_sprite(14);
+        add_sprite(17);
+        add_sprite(21);
+        add_sprite(22);
+        add_sprite(28);
+        add_sprite(29);
+        add_sprite(33);
+        add_sprite(35);
+        add_sprite(36);
+        add_sprite(37);
+        add_sprite(42);
+        add_sprite(43);
+        add_sprite(44);
 
         // Objects
-        Spritesheet::init(&spritesheet2, 7,3,"assets/images/spritesheets/icons.png");
-        sprite_list2 = new Sprite::sprite[16];
-        for (int i = 0; i < 16; i++) {
-            sprite_list2[i] = Spritesheet::get_sprite(&spritesheet2, i);
+        objects = new Sprite::sprite[20];
+        set_current_list(objects, &object_count);
+        set_current_spritesheet(&icons);
+        add_sprite(0);
+        add_sprite(1);
+        add_sprite(15);
+        for (int i = 5; i <=14; i++) {
+            add_sprite(i);
+        }
+        set_current_spritesheet(&items);
+        add_sprite(6);
+
+        // Decorations
+        decorations = new Sprite::sprite[50];
+        set_current_list(decorations, &decoration_count);
+        set_current_spritesheet(&decorations_and_blocks);
+        add_sprite(34);
+        add_sprite(38);
+        add_sprite(39);
+        add_sprite(40);
+        add_sprite(41);
+        add_sprite(45);
+        add_sprite(46);
+        add_sprite(47);
+        add_sprite(48);
+        for (int i = 49; i <= 60; i++) {
+            add_sprite(i);
         }
 
-        // Items
-        Spritesheet::init(&spritesheet3, 7,5,"assets/images/items.png");
-        sprite_list3 = new Sprite::sprite[34];
+        // Misc
+        misc_objects = new Sprite::sprite[200];
+        set_current_list(misc_objects, &misc_objects_count);
+        set_current_spritesheet(&decorations_and_blocks);
+        for (int i = 0; i < 81; i++) {
+            add_sprite(i);
+        }
+        set_current_spritesheet(&icons);
+        for (int i = 0; i < 16; i++) {
+            add_sprite(i);
+        }
+        set_current_spritesheet(&items);
         for (int i = 0; i < 34; i++) {
-            sprite_list3[i] = Spritesheet::get_sprite(&spritesheet3, i);
+            add_sprite(i);
         }
 
         ObjectPicker::reset();
@@ -59,9 +132,10 @@ namespace ObjectPicker {
      * Reset the selected block.
      */
     void reset() {
-        selected_obj1 = -1;
-        selected_obj2 = -1;
-        selected_obj3 = -1;
+        selected_solid_block = -1;
+        selected_object = -1;
+        selected_decoration = -1;
+        selected_misc_object = -1;
     }
 
     /**
@@ -70,16 +144,20 @@ namespace ObjectPicker {
     void imgui() {
         ImGui::Begin("Object Picker");
         if (ImGui::BeginTabBar("TabBar")) {
-            if (ImGui::BeginTabItem("Blocks")) {
-                dynamic_button_grid(&sprite_list1, 81, "block", &selected_obj1);
+            if (ImGui::BeginTabItem("Solid Blocks")) {
+                dynamic_button_grid(&solid_blocks, solid_block_count, "block", &selected_solid_block);
                 ImGui::EndTabItem();
             }
             if (ImGui::BeginTabItem("Objects")) {
-                dynamic_button_grid(&sprite_list2, 16, "object", &selected_obj2);
+                dynamic_button_grid(&objects, object_count, "object", &selected_object);
                 ImGui::EndTabItem();
             }
-            if (ImGui::BeginTabItem("Items")) {
-                dynamic_button_grid(&sprite_list3, 34, "item", &selected_obj3);
+            if (ImGui::BeginTabItem("Decorations")) {
+                dynamic_button_grid(&decorations, decoration_count, "item", &selected_decoration);
+                ImGui::EndTabItem();
+            }
+            if (ImGui::BeginTabItem("Misc")) {
+                dynamic_button_grid(&misc_objects, misc_objects_count, "misc", &selected_misc_object);
                 ImGui::EndTabItem();
             }
             ImGui::EndTabBar();
@@ -133,5 +211,20 @@ namespace ObjectPicker {
                 ImGui::SameLine();
             ImGui::PopID();
         }
+    }
+
+    void set_current_list(Sprite::sprite *list, int *count) {
+        current_list = list;
+        current_count = count;
+    }
+
+    void set_current_spritesheet(Spritesheet::spritesheet *spr_sheet) {
+        current_spritesheet = spr_sheet;
+    }
+
+    void add_sprite(int spr_index) {
+        Sprite::sprite spr = Spritesheet::get_sprite(current_spritesheet, spr_index);
+        current_list[*current_count] = spr;
+        *current_count = *current_count + 1;
     }
 }

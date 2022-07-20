@@ -40,3 +40,9 @@ In the Main Menu, select file to bring up the save / load options
 - Press Load to load the saved level
 - Press New to create a new level
 - Press Exit to close the engine without saving
+
+By default, the engine saves the level state to `level.txt`.
+If this file does not exist, it will create one.
+An example level is provided in `level.txt.example`.
+Simply remove the `.example` extension or copy it
+into the `level.txt` file to view the example level.

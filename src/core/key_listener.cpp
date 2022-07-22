@@ -4,7 +4,6 @@
  */
 
 #include "glfw/include/GLFW/glfw3.h"
-#include <cstdio>
 #include "key_listener.h"
 
 namespace Key {

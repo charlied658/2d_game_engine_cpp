@@ -20,7 +20,6 @@ namespace Mouse {
      * Handle mouse events.
      */
     void update() {
-        //printf("Mouse update\n");
         if (Mouse::get_mouse_pressed(GLFW_MOUSE_BUTTON_LEFT)) {
             if (Key::get_key_pressed(GLFW_KEY_LEFT_SHIFT)) {
                 // Shift click
@@ -90,7 +89,6 @@ namespace Mouse {
      * Handle what happens when the mouse is released.
      */
     static void mouse_release() {
-        //printf("Mouse release\n");
         // If the mouse was performing a multiselect action, releasing the mouse will select all highlighted objects
         if (SelectionBox::is_multiselect()) {
             Selected::select_highlighted_objects();
@@ -104,7 +102,6 @@ namespace Mouse {
         // Reset variables
         mouse_down = false;
         SelectionBox::hide();
-        //printf("End mouse release\n");
     }
 
     /**

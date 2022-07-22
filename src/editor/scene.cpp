@@ -119,7 +119,6 @@ namespace Editor {
          * @param obj Pointer to available memory
          */
         void init_game_object(Editor::GameObject::game_object **obj) {
-            //printf("Added game object %d\n", game_object_count);
             if (game_object_count < 10000) {
                 *obj = &game_objects[game_object_count];
                 game_object_count++;
@@ -164,7 +163,6 @@ namespace Editor {
         }
 
         void init_transient_game_object(Editor::GameObject::game_object **obj) {
-            //printf("Added transient game object %d\n", transient_game_object_count);
             if (transient_game_object_count < 10000) {
                 *obj = &transient_game_objects[transient_game_object_count];
                 transient_game_object_count++;

@@ -38,14 +38,12 @@ namespace Selected {
      * Get object information before updating.
      */
     void start_frame() {
-        //printf("Start frame selected\n");
         Highlight::get_highlighted_objects(&highlighted_objects, &highlighted_object_count);
         Highlight::get_highlighted_object(&highlighted_obj);
 
         for (int i = 0; i < selected_object_count; i++) {
             selected_objects[i]->spr_manager->new_z_index = 5;
         }
-        //printf("End frame selected\n");
     }
 
     /**
@@ -104,16 +102,12 @@ namespace Selected {
      * Select all highlighted objects.
      */
     void select_highlighted_objects() {
-        //printf("Begin select\n");
         if (highlighted_object_count > 0) {
             for (int i = 0; i < highlighted_object_count; i++) {
-                //printf("Selecting object %d\n",i);
                 selected_objects[i] = highlighted_objects[i];
-                //printf("pointer: %p\n", (void *)&selected_objects[i]->spr_manager);
                 Editor::SpriteManager::set_selected(selected_objects[i]->spr_manager, true);
             }
             selected_object_count = highlighted_object_count;
-            //printf("Selected objects: %d\n", selected_object_count);
             Highlight::reload();
         }
     }

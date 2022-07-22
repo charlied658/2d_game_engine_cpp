@@ -3,7 +3,6 @@
  * Created on 7/12/22.
  */
 
-#include <cstdio>
 #include "chunk.h"
 
 namespace Chunk {
@@ -35,7 +34,6 @@ namespace Chunk {
      * @return True if block is solid
      */
     bool is_solid_block(Chunk::chunk *chunk, int x, int y) {
-        //printf("Querying block %d, %d\n", x,y);
         return chunk->grid[x][y].solid_block;
     }
 
@@ -47,7 +45,6 @@ namespace Chunk {
      * @param state True if block is to be solid
      */
     void set_solid_block(Chunk::chunk *chunk, int x, int y, bool state) {
-        //printf("Placed block %d, %d\n", x,y);
         chunk->grid[x][y].solid_block = state;
     }
 }

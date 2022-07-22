@@ -45,7 +45,6 @@ namespace Highlight {
      * Update highlighted objects.
      */
     void update() {
-        //printf("Update highlight\n");
         Editor::Scene::get_game_objects_list(&game_objects, &game_object_count);
         SelectionBox::get_selection_box(&selection_box);
         Highlight::reset();

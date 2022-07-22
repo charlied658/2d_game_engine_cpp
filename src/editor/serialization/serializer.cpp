@@ -97,7 +97,6 @@ namespace Serializer {
             if (obj->id > max_game_object_ID) {
                 max_game_object_ID = obj->id;
             }
-            //printf("Added game object with ID %d\n", obj->id);
         }
 
         // Re-add sprite managers
@@ -136,7 +135,6 @@ namespace Serializer {
             // Sprite manager
             for (int j = 0; j < sprite_manager_count; j++) {
                 if (sprite_manager_list[j].id == game_objects_list[i].id) {
-                    //printf("Found sprite renderer for object %d\n", game_objects_list[i].id);
                     Editor::GameObject::init_sprite_manager(&game_objects_list[i], &sprite_manager_list[j]);
                     Editor::SpriteRenderer::add_sprite(game_objects_list[i].spr_manager);
                     break;

@@ -26,7 +26,6 @@ namespace Editor {
 
         void init_sprite_manager(Editor::SpriteManager::sprite_manager **spr_manager) {
             if (sprite_manager_count < 10000) {
-                //printf("Added sprite manager %d\n", sprite_manager_count);
                 *spr_manager = &sprite_manager_list[sprite_manager_count];
                 sprite_manager_count++;
             }
@@ -34,7 +33,6 @@ namespace Editor {
 
         void init_transient_sprite_manager(Editor::SpriteManager::sprite_manager **spr_manager) {
             if (transient_sprite_manager_count < 10000) {
-                //printf("Added sprite manager %d\n", sprite_manager_count);
                 *spr_manager = &transient_sprite_manager_list[transient_sprite_manager_count];
                 transient_sprite_manager_count++;
             }

@@ -28,9 +28,7 @@ namespace Editor {
          */
         void render() {
             // Render each batch one at a time, in order of z-index
-            //printf("Starting rendering\n");
             for (int i = 0; i < total_batch_count; i++) {
-                //printf("Rendering batch %d\n",sorted_batches[i]->z_index);
                 Editor::SpriteBatch::render(sorted_batches[i]);
             }
         }
@@ -40,7 +38,6 @@ namespace Editor {
          * @param obj Sprite
          */
         void add_sprite(Editor::SpriteManager::sprite_manager *obj) {
-            //printf("Added sprite %s with z-index %d and id %d\n", obj->game_object->name.c_str(), obj->z_index, obj->id);
             for (int i = 0; i < batch_count; i++) {
                 // If there is enough space to add the sprite and its texture, and the z-index matches, add it to the first available batch
                 if (batches[i].has_room &&
@@ -94,12 +91,10 @@ namespace Editor {
                 if (transient_batches[i].has_room &&
                     (Editor::SpriteBatch::contains_texture(&transient_batches[i], obj->sprite.texture_ID) || obj->sprite.is_null) &&
                     obj->z_index == transient_batches[i].z_index) {
-                    //printf("Added transient sprite %s with z-index %d\n", obj->game_object->name.c_str(), obj->z_index);
                     Editor::SpriteBatch::add_sprite(&transient_batches[i], obj);
                     return;
                 }
             }
-            //printf("Created new transient batch with z-index %d\n", obj->z_index);
             // If no batch has space for the sprite or if there are no available texture slots, or if there is a new z-index, create a new batch
             Editor::SpriteBatch::sprite_batch transient_batch{};
             Editor::SpriteBatch::init(&transient_batch, max_batch_size, obj->z_index);
@@ -164,8 +159,6 @@ namespace Editor {
                         Math::line_segment_collision(obj->position.y, obj->position.y + obj->scale.y, selection_pos.y,
                                                      selection_pos.y + selection_scale.y)) {
                         Editor::SpriteManager::set_highlighted(obj, true);
-                        //printf("Highlighted object %d\n", j);
-                        //printf("Name: %s\n", obj->game_object->spr_manager->name.c_str());
                         highlighted_objects[*highlighted_count] = obj->game_object;
                         *highlighted_count = *highlighted_count + 1;
                     } else {

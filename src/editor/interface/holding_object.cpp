@@ -39,7 +39,6 @@ namespace Holding {
      * @param spr Sprite reference
      */
     void generate_holding_object(Sprite::sprite *spr, const std::string& name) {
-        //printf("Name: %s\n",name.c_str());
         Selected::reset_selected();
         Holding::set_holding(true);
         // Get the holding object
@@ -49,7 +48,6 @@ namespace Holding {
             Editor::SpriteManager::set_sprite(holding_object->spr_manager, spr);
             return;
         }
-        //printf("Generating holding...\n");
         Editor::Scene::init_transient_game_object(&holding_object);
         Editor::GameObject::init_transient(holding_object);
         holding_object->name = name;
@@ -63,14 +61,12 @@ namespace Holding {
         Editor::GameObject::init_physics_manager(holding_object, holding_object->py_manager);
         Editor::GameObject::init_behavior_manager(holding_object, holding_object->bh_manager);
         generated_holding = true;
-        //printf("Finished generating holding\n");
     }
 
     /**
      * Update the position of the holding object.
      */
     void update() {
-        //printf("Holding object update\n");
         if (Holding::is_holding()) {
             Editor::SpriteManager::set_position(holding_object->spr_manager, glm::vec2{
                 Mouse::get_worldX() - holding_object->spr_manager->scale.x / 2,
@@ -94,18 +90,14 @@ namespace Holding {
 
         // Check that the block can be placed
         if (ChunkManager::is_solid_block(grid_x,grid_y)) {
-            //printf("Cannot place block %d,%d\n", grid_x, grid_y);
             return;
         } else {
-            //printf("Placed block %d,%d\n", grid_x, grid_y);
             ChunkManager::set_solid_block(grid_x, grid_y, true);
         }
-        //printf("Generating object\n");
         // Generate a new game object to place
         Editor::GameObject::game_object *generated;
         Editor::Scene::init_game_object(&generated);
         Holding::generate_game_object(generated);
-        //printf("Finished generating object\n");
 
         generated->spr_manager->z_index = 0;
         generated->spr_manager->pickable = true;
@@ -116,10 +108,8 @@ namespace Holding {
         Editor::SpriteManager::set_position(generated->spr_manager, position);
         generated->spr_manager->last_position = position;
 
-        //printf("Adding to sprite renderer\n");
         // Add the new object to the sprite renderer
         Editor::SpriteRenderer::add_sprite(generated->spr_manager);
-        //printf("Added successfully\n");
 
         // Destroy the holding object if the function call requested it
         if (destroy) {
@@ -128,7 +118,6 @@ namespace Holding {
             Selected::select_holding_object(&game_object_list[game_object_count - 1]);
             Holding::destroy_holding_object();
         }
-        //printf("Destroyed holding object\n");
     }
 
     /**

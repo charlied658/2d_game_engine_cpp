@@ -41,4 +41,4 @@ make
 
 I am running macOS and using the CLion IDE.
 
-For information about navigating the game engine interface, see CONTROLS.md
+For information about navigating the game engine interface, see [CONTROLS.md](CONTROLS.md)
